@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Smartpush Sample App</string>
+    <string name="wait">Aguarde...</string>
+    <!-- -->
+    <string name="smartpush_appid">000000000000001</string>
+    <string name="smartpush_apikey">CN6Z8Eka3FSQ9IA</string>
+</resources>

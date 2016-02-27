@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black">
+
+    <SurfaceView
+        android:id="@+id/surface"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true" />
+
+    <ProgressBar
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/loading"
+        android:layout_centerInParent="true"/>
+
+    <!-- player controls -->
+    <LinearLayout
+        android:layout_alignBottom="@id/surface"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="36dp"
+        android:padding="5dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:background="#99323232"
+        android:id="@+id/controls"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#FFF"
+            android:text="00:30"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+
+        <!-- close control -->
+        <Button
+            android:id="@+id/btnClose"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#FFF"
+            android:background="@android:color/transparent"
+            android:text="@string/smartp_close_ads"/>
+
+    </LinearLayout>
+
+    <ProgressBar
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:id="@+id/progressbar"
+        android:max="100"
+        android:layout_alignBottom="@+id/surface"/>
+
+</RelativeLayout>

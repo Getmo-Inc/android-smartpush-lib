@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="br.com.getmo">
+
+    <!-- copy & adjust & adjust -->
+    <permission
+        android:name="br.com.getmo.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+    <uses-permission
+        android:name="br.com.getmo.permission.C2D_MESSAGE" />
+    <!-- copy & adjust & adjust -->
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+
+        <!-- copy & adjust & adjust -->
+        <meta-data android:name="br.com.smartpush.APPID"  android:value="@string/smartpush_appid" />
+        <meta-data android:name="br.com.smartpush.APIKEY" android:value="@string/smartpush_apikey"/>
+        <meta-data android:name="br.com.smartpush.PROXY" android:value="https://api.getmo.com.br/"/>
+        <meta-data android:name="br.com.smartpush.LOCATIONUPDT" android:value="IMMEDIATELY"/>
+        <!-- copy & adjust & adjust -->
+
+        <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- start : copy & paste area -->
+        <receiver
+            android:name="com.google.android.gms.gcm.GcmReceiver"
+            android:exported="true"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <category android:name="br.com.getmo" />
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name="br.com.smartpush.SmartpushIDListenerService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.android.gms.iid.InstanceID" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name="br.com.smartpush.SmartpushService"
+            android:exported="false"/>
+
+        <activity
+            android:name="br.com.smartpush.SmartpushActivity"
+            android:hardwareAccelerated="true"
+            android:launchMode="singleTask"
+            android:taskAffinity=""
+            android:excludeFromRecents="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <!-- end : copy & paste area -->
+
+        <!-- start : custom config area -->
+        <service
+            android:name=".MySmartpushListenerService"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+            </intent-filter>
+        </service>
+        <!-- end : custom config area -->
+
+    </application>
+
+</manifest>
