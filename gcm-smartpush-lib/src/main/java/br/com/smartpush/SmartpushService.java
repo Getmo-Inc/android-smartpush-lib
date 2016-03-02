@@ -494,8 +494,10 @@ public class SmartpushService extends IntentService {
 
             // Testa se distancia do pto atual em relaçao ao ultimo ponto enviado é maior
             // que 1.000 mts, ou se deve enviar IMEDIATAMENTE para o backend do SMARTPUSH!
-            wantSend = ( distance > 1.0 || SmartpushUtils.getSmartPushMetadata( this, SmartpushUtils.SMARTP_LOCATIONUPDT )
-                           .equals(SmartpushUtils.SMARTP_LOCATIONUPDT_IMMEDIATELY) );
+            wantSend = ( distance > 1.0
+                    || SmartpushUtils.SMARTP_LOCATIONUPDT_IMMEDIATELY
+                           .equals( SmartpushUtils.getSmartPushMetadata(
+                                   this, SmartpushUtils.SMARTP_LOCATIONUPDT ) ) );
 
         } else {
             Log.d( TAG, "geo : [overpassed] : [true]" );
