@@ -247,7 +247,7 @@ public class SmartpushService extends IntentService {
         Intent intent = new Intent( context, SmartpushService.class ) ;
         intent.setAction( ACTION_SMARTP_SET_TAG ) ;
         intent.putExtra( EXTRA_KEY, key );
-        intent.putExtra( EXTRA_TYPE, "TIMESTAMP");
+        intent.putExtra(EXTRA_TYPE, "TIMESTAMP");
         intent.putExtra( EXTRA_METHOD_DEL, true );
 
         if ( temp != null )
@@ -415,7 +415,7 @@ public class SmartpushService extends IntentService {
         params.put( "_method", "PUT" );
         params.put( "block", data.getBooleanExtra( EXTRA_VALUE, false ) ? "1" : "0" );
 
-        SmartpushHttpClient.post( "device/optout", params, this );
+        SmartpushHttpClient.post("device/optout", params, this);
     }
 
     /**
@@ -448,7 +448,7 @@ public class SmartpushService extends IntentService {
             Log.e( TAG, e.getMessage(), e) ;
         }
 
-        LocalBroadcastManager.getInstance( this ).sendBroadcast( it );
+        LocalBroadcastManager.getInstance( this ).sendBroadcast(it);
     }
 
     private void handleActionNearestZone( Intent data ) {
@@ -467,15 +467,18 @@ public class SmartpushService extends IntentService {
         // Obtem acesso ao banco de dados
         SQLiteDatabase db = new OpenDBHelper( this ).getWritableDatabase();
 
+        // Recupera a localização salva no último envio...
+        ArrayList<Location> locations = (ArrayList<Location>) LocationDAO.listAll( db );
+        if ( locations.size() == 0 ) {
+            LocationDAO.save( db, currentLocation );
+        }
+
         // Verifica se atravessou alguma geofence...
         Overpass overpassed =
                 Geozone.overpassed(
                         currentLocation.getLat(),
                         currentLocation.getLng(),
                         (ArrayList<Geozone>) GeozoneDAO.listAll( db ) );
-
-        // Recupera a localização salva no último envio...
-        ArrayList<Location> locations = (ArrayList<Location>) LocationDAO.listAll( db );
 
         boolean wantSend;
 
