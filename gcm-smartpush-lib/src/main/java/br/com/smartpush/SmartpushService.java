@@ -458,6 +458,7 @@ public class SmartpushService extends IntentService {
 
         double lat = data.getDoubleExtra( EXTRA_LAT, 0 );
         double lng = data.getDoubleExtra( EXTRA_LNG, 0) ;
+        boolean firstPoint = false;
 
         // Current location...
         Location currentLocation = new Location( lat, lng );
@@ -471,6 +472,7 @@ public class SmartpushService extends IntentService {
         ArrayList<Location> locations = (ArrayList<Location>) LocationDAO.listAll( db );
         if ( locations.size() == 0 ) {
             LocationDAO.save( db, currentLocation );
+            firstPoint = true;
         }
 
         // Verifica se atravessou alguma geofence...
@@ -497,8 +499,7 @@ public class SmartpushService extends IntentService {
 
             // Testa se distancia do pto atual em relaçao ao ultimo ponto enviado é maior
             // que 1.000 mts, ou se deve enviar IMEDIATAMENTE para o backend do SMARTPUSH!
-            wantSend = ( distance > 1.0
-                    || SmartpushUtils.SMARTP_LOCATIONUPDT_IMMEDIATELY
+            wantSend = ( firstPoint || distance > 1.0 || SmartpushUtils.SMARTP_LOCATIONUPDT_IMMEDIATELY
                            .equals( SmartpushUtils.getSmartPushMetadata(
                                    this, SmartpushUtils.SMARTP_LOCATIONUPDT ) ) );
 
