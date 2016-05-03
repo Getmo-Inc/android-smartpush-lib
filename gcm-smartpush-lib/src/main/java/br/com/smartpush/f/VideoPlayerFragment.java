@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,7 +23,6 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.json.JSONArray;
@@ -94,23 +94,27 @@ public class VideoPlayerFragment extends Fragment implements
     @Override
     public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
         Log.i( TAG, "onCreateView" );
-        RelativeLayout root = ( RelativeLayout ) inflater.inflate( R.layout.player, null );
-        loading       = ( ProgressBar )root.findViewById( R.id.loading );
-        surfaceView   = ( SurfaceView ) root.findViewById( R.id.surface );
+        return inflater.inflate( R.layout.player, null );
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        Log.i( TAG, "onViewCreated" );
+        loading       = ( ProgressBar )view.findViewById( R.id.loading );
+        surfaceView   = ( SurfaceView ) view.findViewById( R.id.surface );
         surfaceHolder = surfaceView.getHolder();
 
         surfaceHolder.addCallback( this );
         surfaceView.setOnClickListener( this );
 
         // Controls
-        mControls = ( LinearLayout ) root.findViewById( R.id.controls );
-        mBtnClose = ( Button ) root.findViewById( R.id.btnClose );
+        mControls = ( LinearLayout ) view.findViewById( R.id.controls );
+        mBtnClose = ( Button ) view.findViewById( R.id.btnClose );
         mBtnClose.setOnClickListener( this );
-        duration  = ( TextView ) root.findViewById( R.id.duration );
+        duration  = ( TextView ) view.findViewById( R.id.duration );
 
-        progressbar = ( ProgressBar ) root.findViewById( R.id.progressbar );
+        progressbar = ( ProgressBar ) view.findViewById( R.id.progressbar );
 
-        return root;
     }
 
     @Override
@@ -229,16 +233,18 @@ public class VideoPlayerFragment extends Fragment implements
     }
 
     private void goForward() {
-        String url = getActivity().getIntent().getExtras().getString( SmartpushListenerService.URL );
+
+        String url = getArguments().getString( SmartpushListenerService.URL );
 
         if ( url != null ) {
-            if ( url.startsWith( "http" ) ) {
+            if ( url.startsWith( "http" ) || url.startsWith( "https" ) ) {
                 Intent it = new Intent( getActivity(), SmartpushActivity.class );
                 it.putExtra( SmartpushListenerService.URL, url );
                 it.putExtra( SmartpushUtils.ONLY_PORTRAIT, true );
                 it.putExtra( SmartpushUtils.REDIRECTED, true );
                 it.putExtra( SmartpushHitUtils.Fields.PUSH_ID.getParamName(),
                         getArguments().getString( SmartpushHitUtils.Fields.PUSH_ID.getParamName() ) );
+                it.addFlags( Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP );
                 startActivity(it);
             } else if ( url.startsWith( "market://details?id=" ) ) {
                 Intent it = new Intent( Intent.ACTION_VIEW );
@@ -246,16 +252,16 @@ public class VideoPlayerFragment extends Fragment implements
                 if ( it.resolveActivity(getActivity().getPackageManager()) != null ) {
                     startActivity(it);
                 }
+                getActivity().finish();
             } else {
                 Intent intent = new Intent();
                 intent.setData( Uri.parse( url ) );
                 if ( intent.resolveActivity(getActivity().getPackageManager() ) != null ) {
                     startActivity(intent);
                 }
+                getActivity().finish();
             }
         }
-
-        getActivity().finish();
     }
 
     private void createMediaPlayer( Uri video ) {

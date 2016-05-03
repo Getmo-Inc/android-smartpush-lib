@@ -80,6 +80,7 @@ public abstract class SmartpushListenerService extends GcmListenerService {
     public void onMessageReceived( String from, Bundle data ) {
 
         if ( data != null && !data.isEmpty() ) {  // has effect of unparcelling Bundle
+
             String adType = data.getString( "adtype" );
             String adNet  = data.getString( "adnetwork" );
 

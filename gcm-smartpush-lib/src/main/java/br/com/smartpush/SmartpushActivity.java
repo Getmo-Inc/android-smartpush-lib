@@ -56,11 +56,14 @@ public final class SmartpushActivity extends AppCompatActivity {
             String pushId = SmartpushHitUtils
                     .getValueFromPayload( SmartpushHitUtils.Fields.PUSH_ID, extras );
 
-            SmartpushHitUtils.Action action =
-                    ( extras.containsKey( SmartpushUtils.REDIRECTED ) )
-                            ? SmartpushHitUtils.Action.REDIRECTED : SmartpushHitUtils.Action.CLICKED;
-            if ( !"".equals( pushId ) )
-                Smartpush.hit( this, pushId, null, null, action, null );
+            if ( extras != null && !"".equals( pushId ) ) {
+
+                SmartpushHitUtils.Action action =
+                        ( extras.containsKey( SmartpushUtils.REDIRECTED ) )
+                                ? SmartpushHitUtils.Action.REDIRECTED : SmartpushHitUtils.Action.CLICKED;
+
+                Smartpush.hit(this, pushId, null, null, action, null);
+            }
             // [END] Tracking
 
             // Add the fragment to the 'fragment_container' FrameLayout
@@ -97,11 +100,13 @@ public final class SmartpushActivity extends AppCompatActivity {
         String pushId = SmartpushHitUtils
                 .getValueFromPayload( SmartpushHitUtils.Fields.PUSH_ID, extras );
 
-        SmartpushHitUtils.Action action =
-                ( extras.containsKey( SmartpushUtils.REDIRECTED ) )
-                        ? SmartpushHitUtils.Action.REDIRECTED : SmartpushHitUtils.Action.CLICKED;
-        if ( !"".equals( pushId ) )
+        if ( extras != null && !"".equals( pushId ) ) {
+            SmartpushHitUtils.Action action =
+                    ( extras.containsKey( SmartpushUtils.REDIRECTED ) )
+                            ? SmartpushHitUtils.Action.REDIRECTED : SmartpushHitUtils.Action.CLICKED;
+
             Smartpush.hit( this, pushId, null, null, action, null );
+        }
         // [END] Tracking
 
         // Add the fragment to the 'fragment_container' FrameLayout
