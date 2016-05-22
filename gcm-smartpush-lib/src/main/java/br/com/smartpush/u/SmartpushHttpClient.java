@@ -42,7 +42,7 @@ public class SmartpushHttpClient {
 
         urlStr += op;
 
-        Log.d( SmartpushUtils.TAG, "url : " + urlStr );
+//        Log.d( SmartpushUtils.TAG, "url : " + urlStr );
 
         return urlStr;
     }
@@ -73,8 +73,8 @@ public class SmartpushHttpClient {
             conn.setRequestProperty( "Content-Type", contentType );
             conn.setDoOutput(true);
 
-            Log.d( SmartpushUtils.TAG, "method: POST" );
-            Log.d( SmartpushUtils.TAG, "params : " + params );
+//            Log.d( SmartpushUtils.TAG, "method: POST" );
+//            Log.d( SmartpushUtils.TAG, "params : " + params );
 
             // set params
             OutputStream os = conn.getOutputStream();
@@ -92,7 +92,7 @@ public class SmartpushHttpClient {
                 response.append( line );
             }
 
-            Log.d( SmartpushUtils.TAG, "rsp : " + response.toString() );
+//            Log.d( SmartpushUtils.TAG, "rsp : " + response.toString() );
 
             br.close();
             conn.disconnect();
@@ -115,8 +115,8 @@ public class SmartpushHttpClient {
             String qs = ( params != null ) ? "?" + getQueryString( params ) : "";
             URL url = new URL( genURL( _c, op ) + qs );
 
-            Log.d( SmartpushUtils.TAG, "method: GET" );
-            Log.d( SmartpushUtils.TAG, "params : " + qs );
+//            Log.d( SmartpushUtils.TAG, "method: GET" );
+//            Log.d( SmartpushUtils.TAG, "params : " + qs );
 
             HttpURLConnection conn = ( HttpURLConnection ) url.openConnection();
             conn.setRequestProperty( "User-Agent", genUserAgent( _c ) );
@@ -130,7 +130,7 @@ public class SmartpushHttpClient {
                 response.append(line);
             }
 
-            Log.d(SmartpushUtils.TAG, "rsp : " + response.toString());
+//            Log.d(SmartpushUtils.TAG, "rsp : " + response.toString());
 
             br.close();
             conn.disconnect();

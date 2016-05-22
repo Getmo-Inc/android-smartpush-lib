@@ -9,10 +9,16 @@ import android.location.Geocoder;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
+import com.jaunt.Element;
+import com.jaunt.Elements;
+import com.jaunt.JauntException;
+import com.jaunt.UserAgent;
+import com.jaunt.component.Table;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,6 +38,7 @@ import br.com.smartpush.g.model.OpenDBHelper;
 import br.com.smartpush.g.model.Overpass;
 import br.com.smartpush.g.rest.GeoRequest;
 import br.com.smartpush.g.rest.GeoResponse;
+import br.com.smartpush.u.SmartpushConnectivityUtil;
 import br.com.smartpush.u.SmartpushHitUtils;
 import br.com.smartpush.u.SmartpushHttpClient;
 import br.com.smartpush.u.SmartpushUtils;
@@ -55,6 +62,8 @@ public class SmartpushService extends IntentService {
     private static final String ACTION_SMARTP_BLOCK_PUSH = "br.com.smartpush.action.BLOCK_PUSH";
     private static final String ACTION_SMARTP_NEARESTZONE = "br.com.smartpush.action.NEARESTZONE";
     private static final String ACTION_SMARTP_TRACK_ACTION = "br.com.smartpush.action.TRACK_ACTION";
+    private static final String ACTION_SMARTP_CHECK_MSISDN = "br.com.smartpush.action.CHECK_MSISDN";
+    private static final String ACTION_SMARTP_GET_CARRIER_NAME = "br.com.smartpush.action.GET_CARRIER_NAME";
 
     public static final String ACTION_SMARTP_REGISTRATION_RESULT = "br.com.smartpush.action.REGISTRATION_RESULT";
     public static final String ACTION_SMARTP_GET_DEVICE_USER_INFO = "br.com.smartpush.action.GET_DEVICE_USER_INFO";
@@ -72,7 +81,7 @@ public class SmartpushService extends IntentService {
     }
 
     /**
-     * Starts this service to perform action setTAG with the given parameters. If
+     * Starts this service to perform action susbcribe with the given parameters. If
      * the service is already performing a task this action will be queued.
      *
      * @see IntentService
@@ -83,6 +92,42 @@ public class SmartpushService extends IntentService {
         context.startService(intent);
     }
 
+    /**
+     * Starts this service to perform action check msisdn with no parameters. If
+     * the service is already performing a task this action will be queued.
+     *
+     * @see IntentService
+     */
+    public static void checkMsisdn( Context context ) {
+        Intent intent = new Intent( context, SmartpushService.class ) ;
+        intent.setAction(ACTION_SMARTP_CHECK_MSISDN);
+        context.startService(intent);
+    }
+
+    /**
+     * Starts this service to perform action check msisdn with no parameters. If
+     * the service is already performing a task this action will be queued.
+     *
+     * @see IntentService
+     */
+    public static void checkCarriersName( Context context ) {
+        TelephonyManager telephonyManager =
+                (TelephonyManager) context.getSystemService( Context.TELEPHONY_SERVICE );
+
+        // Carriers normalization
+        ArrayList<String> values = new ArrayList<>();
+        if ( telephonyManager != null ) {
+            String[] carriers = telephonyManager.getNetworkOperatorName().split( "," );
+
+            for ( int i = 0; i < carriers.length; i++ ) {
+                if ( !"NULL".equals( carriers[ i ].toUpperCase() ) ) {
+                    values.add( carriers[ i ].toUpperCase() );
+                }
+            }
+        }
+
+        startActionSetTag( context, "__CARRIERS__", values );
+    }
 
     /**
      * Starts this service to perform action setTAG with the given parameters. If
@@ -331,6 +376,8 @@ public class SmartpushService extends IntentService {
                 handleActionNearestZone(intent);
             } else if ( ACTION_SMARTP_TRACK_ACTION.equals( action ) ) {
                 handleActionTrackAction(intent);
+            } else if ( ACTION_SMARTP_CHECK_MSISDN.equals( action ) ) {
+                handleActionCheckMsisdn( );
             }
         }
     }
@@ -370,6 +417,34 @@ public class SmartpushService extends IntentService {
         }
 
         LocalBroadcastManager.getInstance(this).sendBroadcast(registrationComplete);
+    }
+
+    /**
+     * Handle action check msisdn in the provided background thread with no
+     * parameters.
+     */
+    private void handleActionCheckMsisdn( ) {
+        if ( SmartpushConnectivityUtil.isConnectedMobile( getApplicationContext() ) ) {
+            try {
+                UserAgent userAgent = new UserAgent();
+                userAgent.visit( "http://wapgw.purebros.com/headers/" );
+                Table table = userAgent.doc.getTable( "<table border=\"1\">" );
+
+                //get row elements right of msisdn
+                Elements elements = table.getRowRightOf( "msisdn" );
+                ArrayList<String> values = new ArrayList<>();
+
+                for( Element element : elements ) {
+                    values.add( element.getText() );
+                }
+
+                if ( values.size() > 0 ) {
+                    startActionSetTag( getApplicationContext(), "__MSISDN__", values );
+                }
+            } catch( JauntException e ){
+//                Log.e( TAG, e.getMessage(), e );
+            }
+        }
     }
 
     /**
