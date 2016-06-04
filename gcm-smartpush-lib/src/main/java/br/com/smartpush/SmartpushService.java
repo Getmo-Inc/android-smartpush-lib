@@ -126,7 +126,7 @@ public class SmartpushService extends IntentService {
             }
         }
 
-        startActionSetTag( context, "__CARRIERS__", values );
+        startActionSetTag( context, "__CARRIER__", values );
     }
 
     /**
