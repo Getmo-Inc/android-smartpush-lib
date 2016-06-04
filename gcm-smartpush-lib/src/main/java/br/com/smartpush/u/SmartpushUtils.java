@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.util.Log;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -25,6 +24,7 @@ public class SmartpushUtils {
     public static final String SMARTP_APP_ID = "br.com.smartpush.APPID";
     public static final String SMARTP_API_KEY = "br.com.smartpush.APIKEY";
     public static final String SMARTP_PROXY = "br.com.smartpush.PROXY";
+    public static final String SMARTP_DEBUG = "br.com.smartpush.DEBUG";
     public static final String SMARTP_LOCATION_HASH = "br.com.smartpush.LOCATION_HASH";
     public static final String SMARTP_LOCATIONUPDT = "br.com.smartpush.LOCATIONUPDT";
     public static final String SMARTP_LOCATIONUPDT_IMMEDIATELY = "IMMEDIATELY";
@@ -53,7 +53,7 @@ public class SmartpushUtils {
             return hexString.toString();
 
         } catch (NoSuchAlgorithmException e) {
-            Log.e(TAG, e.getMessage(), e);
+            SmartpushLog.getInstance( null ).e(TAG, e.getMessage(), e);
         }
         return "";
     }
@@ -66,10 +66,10 @@ public class SmartpushUtils {
             return ai.metaData.getString(key);
 
         } catch ( PackageManager.NameNotFoundException e ) {
-            Log.e(TAG,
+            SmartpushLog.getInstance( _c ).e(TAG,
                     "Failed to load meta-data, NameNotFound: " + e.getMessage(), e);
         } catch ( NullPointerException e ) {
-            Log.e(TAG,
+            SmartpushLog.getInstance( _c ).e(TAG,
                     "Failed to load meta-data, NullPointer: " + e.getMessage(), e);
         }
 

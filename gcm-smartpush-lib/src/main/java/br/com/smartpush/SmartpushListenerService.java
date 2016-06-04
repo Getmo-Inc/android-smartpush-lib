@@ -13,7 +13,6 @@ import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.WindowManager;
 
 import com.google.android.gms.gcm.GcmListenerService;
@@ -24,6 +23,7 @@ import java.net.MalformedURLException;
 import br.com.smartpush.u.SmartpushHitUtils;
 import br.com.smartpush.u.SmartpushHttpClient;
 import br.com.smartpush.u.SmartpushIntentUtils;
+import br.com.smartpush.u.SmartpushLog;
 
 import static br.com.smartpush.u.SmartpushUtils.ONLY_PORTRAIT;
 import static br.com.smartpush.u.SmartpushUtils.TAG;
@@ -188,7 +188,7 @@ public abstract class SmartpushListenerService extends GcmListenerService {
                 builder.setLargeIcon( Bitmap.createScaledBitmap( b, size, size, false ) );
             }
         } catch ( IOException e) {
-            Log.e( TAG, e.getMessage(), e );
+            SmartpushLog.getInstance( getApplicationContext() ).e( TAG, e.getMessage(), e );
         }
     }
 
@@ -306,10 +306,10 @@ public abstract class SmartpushListenerService extends GcmListenerService {
             bitmap = SmartpushHttpClient.loadBitmap(extras.getString(NOTIF_BANNER));
 
         } catch ( MalformedURLException e1 ) {
-            Log.e( TAG, e1.getMessage(), e1 );
+            SmartpushLog.getInstance( getApplicationContext() ).e( TAG, e1.getMessage(), e1 );
             return null;
         } catch (IOException e1) {
-            Log.e( TAG, e1.getMessage(), e1 );
+            SmartpushLog.getInstance( getApplicationContext() ).e( TAG, e1.getMessage(), e1 );
             return null;
         }
 
@@ -328,7 +328,7 @@ public abstract class SmartpushListenerService extends GcmListenerService {
 
         int newHeight = ( int )( imageHeight * scaleFactor );
 
-        Log.i( TAG, "Picture size: " + newWidth + "," + newHeight );
+        SmartpushLog.getInstance( getApplicationContext() ).d( TAG, "Picture size: " + newWidth + "," + newHeight );
 
         Bitmap resizedBitmap = Bitmap.createScaledBitmap( bitmap, newWidth, newHeight, true );
 
@@ -373,9 +373,9 @@ public abstract class SmartpushListenerService extends GcmListenerService {
                     addIntent.putExtra( Intent.EXTRA_SHORTCUT_ICON, Bitmap.createScaledBitmap( b, size, size, false ) );
                 }
             } catch ( MalformedURLException e ) {
-                Log.e( TAG, e.getMessage(), e );
+                SmartpushLog.getInstance( getApplicationContext() ).e( TAG, e.getMessage(), e );
             } catch ( IOException e) {
-                Log.e( TAG, e.getMessage(), e );
+                SmartpushLog.getInstance( getApplicationContext() ).e( TAG, e.getMessage(), e );
             }
         }
 

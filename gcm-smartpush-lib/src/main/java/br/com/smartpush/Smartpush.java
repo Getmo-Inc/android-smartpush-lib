@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -14,6 +13,7 @@ import java.util.Date;
 
 import br.com.smartpush.e.SmartpushConfigurationsException;
 import br.com.smartpush.u.SmartpushHitUtils;
+import br.com.smartpush.u.SmartpushLog;
 import br.com.smartpush.u.SmartpushUtils;
 
 import static br.com.smartpush.u.SmartpushUtils.TAG;
@@ -146,7 +146,7 @@ public class Smartpush {
 
 
     private static boolean checkSmartpush(Context context) {
-        Log.d( TAG, "checkSmartpush() : begin - Configurations tests : " + context.getPackageName() );
+        SmartpushLog.getInstance( context ).d( TAG, "checkSmartpush() : begin - Configurations tests : " + context.getPackageName() );
 
         if ( SmartpushUtils.getSmartPushMetadata( context, SmartpushUtils.SMARTP_API_KEY) == null ) {
             throw new SmartpushConfigurationsException(
@@ -158,7 +158,7 @@ public class Smartpush {
                     "Metadata not found! Add \"" + SmartpushUtils.SMARTP_APP_ID + "\" to your manifest file!" );
         }
 
-        Log.d( TAG, "checkSmartpush() : Metadata, pass!" );
+        SmartpushLog.getInstance( context ).d( TAG, "checkSmartpush() : Metadata, pass!" );
 
         try {
             PackageInfo packageInfo =
@@ -201,14 +201,14 @@ public class Smartpush {
                         "Activity not found! Add \"br.com.smartpush.SmartpushActivity\" to your manifest file!");
             }
 
-            Log.d( TAG, "checkSmartpush() : Activity, pass!" );
+            SmartpushLog.getInstance( context ).d( TAG, "checkSmartpush() : Activity, pass!" );
 
         } catch ( PackageManager.NameNotFoundException e ) {
             // should never happen
             throw new RuntimeException( "Could not get package name: " + e );
         }
 
-        Log.d( TAG, "checkSmartpush() : end - Configurations tests : " + context.getPackageName() );
+        SmartpushLog.getInstance( context ).d( TAG, "checkSmartpush() : end - Configurations tests : " + context.getPackageName() );
 
         return true;
     }

@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -38,6 +37,7 @@ import br.com.smartpush.SmartpushListenerService;
 import br.com.smartpush.u.SmartpushConnectivityUtil;
 import br.com.smartpush.u.SmartpushHitUtils;
 import br.com.smartpush.u.SmartpushHttpClient;
+import br.com.smartpush.u.SmartpushLog;
 import br.com.smartpush.u.SmartpushUtils;
 
 import static br.com.smartpush.u.SmartpushUtils.TAG;
@@ -74,7 +74,7 @@ public class VideoPlayerFragment extends Fragment implements
 
     @Override
     public void onCreate( Bundle savedInstanceState) {
-        Log.i( TAG, "onCreate" );
+        SmartpushLog.getInstance( getActivity() ).d( TAG, "onCreate" );
         super.onCreate(savedInstanceState);
 
         setRetainInstance(true);
@@ -93,13 +93,13 @@ public class VideoPlayerFragment extends Fragment implements
 
     @Override
     public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
-        Log.i( TAG, "onCreateView" );
+        SmartpushLog.getInstance( getActivity() ).d( TAG, "onCreateView" );
         return inflater.inflate( R.layout.player, null );
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        Log.i( TAG, "onViewCreated" );
+        SmartpushLog.getInstance( getActivity() ).d( TAG, "onViewCreated" );
         loading       = ( ProgressBar )view.findViewById( R.id.loading );
         surfaceView   = ( SurfaceView ) view.findViewById( R.id.surface );
         surfaceHolder = surfaceView.getHolder();
@@ -119,7 +119,7 @@ public class VideoPlayerFragment extends Fragment implements
 
     @Override
     public void onStart() {
-        Log.i( TAG, "onStart" );
+        SmartpushLog.getInstance( getActivity() ).d( TAG, "onStart" );
         super.onStart();
 
         if ( mediaPlayer != null ) {
@@ -140,10 +140,10 @@ public class VideoPlayerFragment extends Fragment implements
 
     @Override
     public void onStop() {
-        Log.i( TAG, "onStop" );
+        SmartpushLog.getInstance( getActivity() ).d( TAG, "onStop" );
         super.onStop();
         if( getActivity().isChangingConfigurations() ) {
-            Log.i( TAG, "configuration is changing: keep playing" );
+            SmartpushLog.getInstance( getActivity() ).d( TAG, "configuration is changing: keep playing" );
         } else {
             destroyMediaPlayer();
         }
@@ -152,7 +152,7 @@ public class VideoPlayerFragment extends Fragment implements
 
     @Override
     public void onCompletion( MediaPlayer mp ) {
-        Log.i( TAG, "onCompletion" );
+        SmartpushLog.getInstance( getActivity() ).d( TAG, "onCompletion" );
 
         // Tracking
         hit( STATE.FINISHED.name() );
@@ -163,7 +163,7 @@ public class VideoPlayerFragment extends Fragment implements
 
     @Override
     public void onPrepared( MediaPlayer mp ) {
-        Log.d( TAG, "onPrepared" );
+        SmartpushLog.getInstance( getActivity() ).d( TAG, "onPrepared" );
 //        handler.post( resizeSurfaceTask );
         handler.post( showSurface );
         finalTime = mediaPlayer.getDuration();
@@ -177,13 +177,13 @@ public class VideoPlayerFragment extends Fragment implements
 
     @Override
     public boolean onError( MediaPlayer mp, int what, int extra ) {
-        Log.d( TAG, "onError" );
+        SmartpushLog.getInstance( getActivity() ).d( TAG, "onError" );
         return false;
     }
 
     @Override
     public void surfaceCreated( SurfaceHolder holder ) {
-        Log.d( TAG, "surfaceCreated" );
+        SmartpushLog.getInstance( getActivity() ).d( TAG, "surfaceCreated" );
 
         mediaPlayer.setDisplay( holder );
         handler.post( resizeSurfaceTask );
@@ -196,21 +196,20 @@ public class VideoPlayerFragment extends Fragment implements
 
     @Override
     public void surfaceDestroyed( SurfaceHolder holder) {
-        Log.d(TAG, "surfaceDestroyed");
+        SmartpushLog.getInstance( getActivity() ).d(TAG, "surfaceDestroyed");
         if ( mediaPlayer != null )
             mediaPlayer.setDisplay( null );
     }
 
     @Override
     public void onBufferingUpdate(MediaPlayer mp, int percent) {
-//        Log.d( TAG, "onBufferingUpdate percent:" + percent );
         if ( percent <= 100 ) {
             progressbar.setSecondaryProgress( percent );
         }
     }
 
     private void setSurfaceSize() {
-        Log.d(TAG, "setSurfaceSize");
+        SmartpushLog.getInstance( getActivity() ).d(TAG, "setSurfaceSize");
         // get the dimensions of the video (only valid when surfaceView is set)
         float videoWidth = mediaPlayer.getVideoWidth();
         float videoHeight = mediaPlayer.getVideoHeight();
@@ -265,7 +264,7 @@ public class VideoPlayerFragment extends Fragment implements
     }
 
     private void createMediaPlayer( Uri video ) {
-        Log.i(TAG, "createMediaPlayer");
+        SmartpushLog.getInstance( getActivity() ).d(TAG, "createMediaPlayer");
         try {
             mediaPlayer = new MediaPlayer();
             mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -276,12 +275,12 @@ public class VideoPlayerFragment extends Fragment implements
             //player will be started after completion of preparing...
             mediaPlayer.prepareAsync();
         } catch (Exception e) {
-            Log.e( TAG, e.getMessage(), e );
+            SmartpushLog.getInstance( getActivity() ).e( TAG, e.getMessage(), e );
         }
     }
 
     private void destroyMediaPlayer() {
-        Log.i( TAG, "destroyMediaPlayer" );
+        SmartpushLog.getInstance( getActivity() ).d( TAG, "destroyMediaPlayer" );
 
         mediaPlayer.stop();
         mediaPlayer.reset();
@@ -405,7 +404,7 @@ public class VideoPlayerFragment extends Fragment implements
                 }
 
             } catch ( JSONException e ) {
-                Log.e( TAG, e.getMessage(), e );
+                SmartpushLog.getInstance( getActivity() ).e( TAG, e.getMessage(), e );
             }
 
             return null;

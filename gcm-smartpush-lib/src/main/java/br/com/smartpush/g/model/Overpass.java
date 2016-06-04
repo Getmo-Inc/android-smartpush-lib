@@ -1,7 +1,6 @@
 package br.com.smartpush.g.model;
 
-import android.util.Log;
-
+import br.com.smartpush.u.SmartpushLog;
 import br.com.smartpush.u.SmartpushUtils;
 
 /**
@@ -20,7 +19,7 @@ public class Overpass {
         lat = geozone.lat;
         lng = geozone.lng;
 
-        Log.d( SmartpushUtils.TAG, toString() );
+        SmartpushLog.getInstance( null ).d( SmartpushUtils.TAG, toString() );
     }
 
     @Override

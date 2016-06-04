@@ -6,7 +6,6 @@ import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
-import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -42,7 +41,7 @@ public class SmartpushHttpClient {
 
         urlStr += op;
 
-//        Log.d( SmartpushUtils.TAG, "url : " + urlStr );
+        SmartpushLog.getInstance( _c ).d( SmartpushUtils.TAG, "url : " + urlStr );
 
         return urlStr;
     }
@@ -51,7 +50,7 @@ public class SmartpushHttpClient {
         try {
             return post( op, getQueryString( params ), "application/x-www-form-urlencoded", _c);
         } catch ( UnsupportedEncodingException e ) {
-            Log.e( SmartpushUtils.TAG, e.getMessage(), e);
+            SmartpushLog.getInstance( _c ).e( SmartpushUtils.TAG, e.getMessage(), e);
         }
         return null;
     }
@@ -73,8 +72,8 @@ public class SmartpushHttpClient {
             conn.setRequestProperty( "Content-Type", contentType );
             conn.setDoOutput(true);
 
-//            Log.d( SmartpushUtils.TAG, "method: POST" );
-//            Log.d( SmartpushUtils.TAG, "params : " + params );
+            SmartpushLog.getInstance( _c ).d( SmartpushUtils.TAG, "method: POST" );
+            SmartpushLog.getInstance( _c ).d( SmartpushUtils.TAG, "params : " + params );
 
             // set params
             OutputStream os = conn.getOutputStream();
@@ -92,7 +91,7 @@ public class SmartpushHttpClient {
                 response.append( line );
             }
 
-//            Log.d( SmartpushUtils.TAG, "rsp : " + response.toString() );
+            SmartpushLog.getInstance( _c ).d( SmartpushUtils.TAG, "rsp : " + response.toString() );
 
             br.close();
             conn.disconnect();
@@ -100,7 +99,7 @@ public class SmartpushHttpClient {
             return response.toString();
 
         } catch ( Exception e ) {
-            Log.e( SmartpushUtils.TAG, e.getMessage(), e );
+            SmartpushLog.getInstance( _c ).e( SmartpushUtils.TAG, e.getMessage(), e );
         }
 
         return null;
@@ -115,8 +114,8 @@ public class SmartpushHttpClient {
             String qs = ( params != null ) ? "?" + getQueryString( params ) : "";
             URL url = new URL( genURL( _c, op ) + qs );
 
-//            Log.d( SmartpushUtils.TAG, "method: GET" );
-//            Log.d( SmartpushUtils.TAG, "params : " + qs );
+            SmartpushLog.getInstance( _c ).d( SmartpushUtils.TAG, "method: GET" );
+            SmartpushLog.getInstance( _c ).d( SmartpushUtils.TAG, "params : " + qs );
 
             HttpURLConnection conn = ( HttpURLConnection ) url.openConnection();
             conn.setRequestProperty( "User-Agent", genUserAgent( _c ) );
@@ -130,14 +129,14 @@ public class SmartpushHttpClient {
                 response.append(line);
             }
 
-//            Log.d(SmartpushUtils.TAG, "rsp : " + response.toString());
+            SmartpushLog.getInstance( _c ).d(SmartpushUtils.TAG, "rsp : " + response.toString());
 
             br.close();
             conn.disconnect();
 
             return response.toString();
         } catch ( IOException e ) {
-            Log.e( SmartpushUtils.TAG, e.getMessage(), e );
+            SmartpushLog.getInstance( _c ).e( SmartpushUtils.TAG, e.getMessage(), e );
         }
 
         return null;

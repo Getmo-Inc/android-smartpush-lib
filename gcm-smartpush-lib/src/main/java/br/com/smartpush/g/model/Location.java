@@ -1,7 +1,6 @@
 package br.com.smartpush.g.model;
 
 import android.database.Cursor;
-import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -9,6 +8,7 @@ import org.json.JSONObject;
 import java.util.Calendar;
 import java.util.TimeZone;
 
+import br.com.smartpush.u.SmartpushLog;
 import br.com.smartpush.u.SmartpushUtils;
 
 /**
@@ -41,7 +41,7 @@ public class Location {
                 time = o.getLong( TIME.toLowerCase() );
             }
         } catch (JSONException e) {
-            Log.e( SmartpushUtils.TAG, e.getMessage(), e );
+            SmartpushLog.getInstance( null ).e( SmartpushUtils.TAG, e.getMessage(), e );
         }
     }
 

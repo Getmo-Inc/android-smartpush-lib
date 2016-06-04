@@ -1,7 +1,5 @@
 package br.com.smartpush.g.rest;
 
-import android.util.Log;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -10,6 +8,7 @@ import java.util.ArrayList;
 
 import br.com.smartpush.g.model.Geozone;
 import br.com.smartpush.u.SmartpushArraysUtil;
+import br.com.smartpush.u.SmartpushLog;
 import br.com.smartpush.u.SmartpushUtils;
 
 /**
@@ -45,7 +44,7 @@ public class GeoResponse {
                 }
             }
         } catch( JSONException e ) {
-            Log.e( SmartpushUtils.TAG, e.getMessage(), e );
+            SmartpushLog.getInstance( null ).e( SmartpushUtils.TAG, e.getMessage(), e );
         }
     }
 

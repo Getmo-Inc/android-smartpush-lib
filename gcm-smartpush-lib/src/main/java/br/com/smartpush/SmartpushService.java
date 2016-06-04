@@ -10,7 +10,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
@@ -41,6 +40,7 @@ import br.com.smartpush.g.rest.GeoResponse;
 import br.com.smartpush.u.SmartpushConnectivityUtil;
 import br.com.smartpush.u.SmartpushHitUtils;
 import br.com.smartpush.u.SmartpushHttpClient;
+import br.com.smartpush.u.SmartpushLog;
 import br.com.smartpush.u.SmartpushUtils;
 
 import static br.com.smartpush.u.SmartpushUtils.SMARTP_LOCATION_HASH;
@@ -400,13 +400,13 @@ public class SmartpushService extends IntentService {
             String token = instanceID.getToken(
                     PLAY_SERVICE_INTERNAL_PROJECT_ID, GoogleCloudMessaging.INSTANCE_ID_SCOPE, null );
             // [END get_token]
-            Log.i( TAG, "GCM Registration Token: " + token );
+            SmartpushLog.getInstance( getApplicationContext() ).d( TAG, "GCM Registration Token: " + token );
 
             result = sendRegistrationToServer( token );
 
             // [END register_for_gcm]
         } catch ( Exception e ) {
-            Log.e( TAG, "Failed to complete token refresh - " + e.getMessage(), e );
+            SmartpushLog.getInstance( getApplicationContext() ).e( TAG, "Failed to complete token refresh - " + e.getMessage(), e );
         }
 
         // Notify UI that registration has completed, so the progress indicator can be hidden.
@@ -442,7 +442,7 @@ public class SmartpushService extends IntentService {
                     startActionSetTag( getApplicationContext(), "__MSISDN__", values );
                 }
             } catch( JauntException e ){
-//                Log.e( TAG, e.getMessage(), e );
+                SmartpushLog.getInstance( getApplicationContext() ).e( TAG, e.getMessage(), e );
             }
         }
     }
@@ -520,7 +520,7 @@ public class SmartpushService extends IntentService {
             }
 
         } catch ( JSONException e ) {
-            Log.e( TAG, e.getMessage(), e) ;
+            SmartpushLog.getInstance( getApplicationContext() ).e( TAG, e.getMessage(), e) ;
         }
 
         LocalBroadcastManager.getInstance( this ).sendBroadcast(it);
@@ -538,7 +538,7 @@ public class SmartpushService extends IntentService {
         // Current location...
         Location currentLocation = new Location( lat, lng );
 
-        Log.d( TAG, "geo : [current] : " + currentLocation.toString() );
+        SmartpushLog.getInstance( getApplicationContext() ).d( TAG, "geo : [current] : " + currentLocation.toString() );
 
         // Obtem acesso ao banco de dados
         SQLiteDatabase db = new OpenDBHelper( this ).getWritableDatabase();
@@ -560,12 +560,12 @@ public class SmartpushService extends IntentService {
         boolean wantSend;
 
         if ( overpassed == null ) {
-            Log.d( TAG, "geo : [overpassed] : [false]" );
+            SmartpushLog.getInstance( getApplicationContext() ).d( TAG, "geo : [overpassed] : [false]" );
 
             // Não atravessou nenhuma geozone, então ...
             Location oldLocation = ( locations.size() > 0 ) ? locations.get( 0 ) : currentLocation;
 
-            Log.d( TAG, "geo : [old] : " + oldLocation.toString() );
+            SmartpushLog.getInstance( getApplicationContext() ).d( TAG, "geo : [old] : " + oldLocation.toString() );
 
             double distance =
                     Geozone.distance(
@@ -579,8 +579,8 @@ public class SmartpushService extends IntentService {
                                    this, SmartpushUtils.SMARTP_LOCATIONUPDT ) ) );
 
         } else {
-            Log.d( TAG, "geo : [overpassed] : [true]" );
-            Log.d( TAG, "geo : [overpassed] : " + overpassed.toString() );
+            SmartpushLog.getInstance( getApplicationContext() ).d( TAG, "geo : [overpassed] : [true]" );
+            SmartpushLog.getInstance( getApplicationContext() ).d( TAG, "geo : [overpassed] : " + overpassed.toString() );
 
             // Atravessou uma geofence, então envia imediatamente!
             wantSend = true;
@@ -623,7 +623,7 @@ public class SmartpushService extends IntentService {
                     req.setInfo( address );
                 }
             } catch ( Exception e ) {
-                Log.e( TAG, e.getMessage(), e );
+                SmartpushLog.getInstance( getApplicationContext() ).e( TAG, e.getMessage(), e );
             }
 
             // Atualiza o backend, e então o device!
@@ -651,7 +651,7 @@ public class SmartpushService extends IntentService {
                 }
 
             } catch ( Exception e ) {
-                Log.e( TAG, e.getMessage(), e );
+                SmartpushLog.getInstance( getApplicationContext() ).e( TAG, e.getMessage(), e );
             }
 
         }
@@ -669,7 +669,7 @@ public class SmartpushService extends IntentService {
     private SmartpushDeviceInfo sendRegistrationToServer( String token ) {
 
         if ( token == null || "".equals( token ) ) {
-            Log.d( TAG, "GCM Registration Token: Fail!" );
+            SmartpushLog.getInstance( getApplicationContext() ).d( TAG, "GCM Registration Token: Fail!" );
             return null;
         }
 
@@ -703,7 +703,7 @@ public class SmartpushService extends IntentService {
 
         try {
             JSONObject device = new JSONObject( SmartpushHttpClient.post( "device", params, this ) );
-            Log.d( SmartpushUtils.TAG, device.toString( 4 ) );
+            SmartpushLog.getInstance( getApplicationContext() ).d( SmartpushUtils.TAG, device.toString( 4 ) );
 
             if ( device.has( "alias" ) ) {
                 deviceInfo.alias = device.getString( "alias" );
@@ -724,7 +724,7 @@ public class SmartpushService extends IntentService {
                             this, SmartpushUtils.SMARTP_REGID, deviceInfo.regId );
 
         } catch( JSONException e ) {
-            Log.e( SmartpushUtils.TAG, e.getMessage(), e );
+            SmartpushLog.getInstance( getApplicationContext() ).e( SmartpushUtils.TAG, e.getMessage(), e );
         }
 
         return deviceInfo;
