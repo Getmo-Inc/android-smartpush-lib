@@ -13,11 +13,11 @@ import android.telephony.TelephonyManager;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
-import com.jaunt.Element;
-import com.jaunt.Elements;
-import com.jaunt.JauntException;
-import com.jaunt.UserAgent;
-import com.jaunt.component.Table;
+//import com.jaunt.Element;
+//import com.jaunt.Elements;
+//import com.jaunt.JauntException;
+//import com.jaunt.UserAgent;
+//import com.jaunt.component.Table;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -425,25 +425,25 @@ public class SmartpushService extends IntentService {
      */
     private void handleActionCheckMsisdn( ) {
         if ( SmartpushConnectivityUtil.isConnectedMobile( getApplicationContext() ) ) {
-            try {
-                UserAgent userAgent = new UserAgent();
-                userAgent.visit( "http://wapgw.purebros.com/headers/" );
-                Table table = userAgent.doc.getTable( "<table border=\"1\">" );
-
-                //get row elements right of msisdn
-                Elements elements = table.getRowRightOf( "msisdn" );
-                ArrayList<String> values = new ArrayList<>();
-
-                for( Element element : elements ) {
-                    values.add( element.getText() );
-                }
-
-                if ( values.size() > 0 ) {
-                    startActionSetTag( getApplicationContext(), "__MSISDN__", values );
-                }
-            } catch( JauntException e ){
-                SmartpushLog.getInstance( getApplicationContext() ).e( TAG, e.getMessage(), e );
-            }
+//            try {
+//                UserAgent userAgent = new UserAgent();
+//                userAgent.visit( "http://wapgw.purebros.com/headers/" );
+//                Table table = userAgent.doc.getTable( "<table border=\"1\">" );
+//
+//                //get row elements right of msisdn
+//                Elements elements = table.getRowRightOf( "msisdn" );
+//                ArrayList<String> values = new ArrayList<>();
+//
+//                for( Element element : elements ) {
+//                    values.add( element.getText() );
+//                }
+//
+//                if ( values.size() > 0 ) {
+//                    startActionSetTag( getApplicationContext(), "__MSISDN__", values );
+//                }
+//            } catch( JauntException e ){
+//                SmartpushLog.getInstance( getApplicationContext() ).e( TAG, e.getMessage(), e );
+//            }
         }
     }
 
