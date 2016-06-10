@@ -63,7 +63,10 @@ public class SmartpushUtils {
             ApplicationInfo ai =
                     _c.getPackageManager()
                             .getApplicationInfo(_c.getPackageName(), PackageManager.GET_META_DATA);
-            return ai.metaData.getString(key);
+
+            return ( SMARTP_DEBUG.equals( key ) )
+                        ? Boolean.toString(ai.metaData.getBoolean(key))
+                        : ai.metaData.getString(key);
 
         } catch ( PackageManager.NameNotFoundException e ) {
             SmartpushLog.getInstance( _c ).e(TAG,

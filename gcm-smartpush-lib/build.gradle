@@ -26,5 +26,4 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.google.android.gms:play-services:8.4.0'
-    compile files('libs/jaunt1.1.7.jar')
 }

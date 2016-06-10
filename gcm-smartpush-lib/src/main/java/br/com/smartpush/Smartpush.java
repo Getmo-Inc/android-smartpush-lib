@@ -31,7 +31,7 @@ public class Smartpush {
         return !block;
     }
 
-    public void getUserInfo( final Context context ) {
+    public static void getUserInfo( final Context context ) {
         if ( isRegistered( context ) ) {
             SmartpushService.startActionGetDeviceUserInfo(context);
         }
