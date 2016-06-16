@@ -144,7 +144,6 @@ public class Smartpush {
         return ( resultCode == ConnectionResult.SUCCESS );
     }
 
-
     private static boolean checkSmartpush(Context context) {
         SmartpushLog.getInstance( context ).d( TAG, "checkSmartpush() : begin - Configurations tests : " + context.getPackageName() );
 

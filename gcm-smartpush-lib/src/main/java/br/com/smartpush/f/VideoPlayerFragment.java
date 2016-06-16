@@ -232,9 +232,16 @@ public class VideoPlayerFragment extends Fragment implements
 
     private void goForward() {
 
-        String url = getArguments().getString( SmartpushListenerService.URL );
+        String url         = getArguments().getString( SmartpushListenerService.URL );
+        String packageName = getArguments().getString( SmartpushListenerService.PACKAGENAME );
 
-        if ( url != null ) {
+        if ( packageName != null ) {
+            Intent intent = getActivity().getPackageManager().getLaunchIntentForPackage( packageName );
+            intent.putExtras( getArguments() );
+            intent.setFlags( Intent.FLAG_ACTIVITY_NEW_TASK );
+            startActivity( intent );
+            getActivity().finish();
+        } else if ( url != null ) {
             if ( url.startsWith( "http" ) || url.startsWith( "https" ) ) {
                 Intent it = new Intent( getActivity(), SmartpushActivity.class );
                 it.putExtra( SmartpushListenerService.URL, url );
@@ -247,13 +254,16 @@ public class VideoPlayerFragment extends Fragment implements
             } else if ( url.startsWith( "market://details?id=" ) ) {
                 Intent it = new Intent( Intent.ACTION_VIEW );
                 it.setData(Uri.parse(url));
+                it.setFlags( Intent.FLAG_ACTIVITY_NEW_TASK );
                 if ( it.resolveActivity(getActivity().getPackageManager()) != null ) {
                     startActivity(it);
                 }
                 getActivity().finish();
             } else {
                 Intent intent = new Intent();
+                intent.putExtras( getArguments() );
                 intent.setData( Uri.parse( url ) );
+                intent.setFlags( Intent.FLAG_ACTIVITY_NEW_TASK );
                 if ( intent.resolveActivity(getActivity().getPackageManager() ) != null ) {
                     startActivity(intent);
                 }
