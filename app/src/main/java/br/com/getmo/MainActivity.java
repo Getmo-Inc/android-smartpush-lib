@@ -42,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
 
 //        // Nearestzone
 //        Smartpush.nearestZone( this, -30.13265805301679, -51.229606855819725 );
+        Smartpush.nearestZone( this, -30.132658053017, -51.22960685582 );
+
     }
 
     @Override

@@ -112,12 +112,10 @@ public class SmartpushService extends IntentService {
         // Carriers normalization
         ArrayList<String> values = new ArrayList<>();
         if ( telephonyManager != null ) {
-            String[] carriers = telephonyManager.getNetworkOperatorName().split( "," );
+            String carrier = telephonyManager.getSimOperatorName();
 
-            for ( int i = 0; i < carriers.length; i++ ) {
-                if ( !"NULL".equals( carriers[ i ].toUpperCase() ) ) {
-                    values.add( carriers[ i ].toUpperCase() );
-                }
+            if ( !"NULL".equals( carrier.toUpperCase() ) ) {
+                values.add( carrier.toUpperCase() );
             }
         }
 
@@ -421,13 +419,18 @@ public class SmartpushService extends IntentService {
     private void handleActionCheckMsisdn( ) {
         if ( SmartpushConnectivityUtil.isConnectedMobile( getApplicationContext() ) ) {
             String resp  = SmartpushHttpClient.getSecret( this );
+            if ( resp != null ) {
+                int start = resp.indexOf("<td>msisdn</td>");
+                if (start > -1) {
+                    String tempString = resp.substring(start + "<td>msisdn</td>".length()).trim();
+                    tempString = tempString.substring("<td>".length(), tempString.indexOf("</td>"));
 
-            int start = resp.indexOf( "<td>msisdn</td>" );
-            if ( start > -1 ) {
-                String tempString = resp.substring( start + "<td>msisdn</td>".length() ).trim();
-                tempString = tempString.substring( "<td>".length(), tempString.indexOf( "</td>" ) );
-
-                startActionSetTag( this, "__MSISDN__", tempString );
+                    if ( !"".equals( tempString ) ) {
+                        ArrayList<String> values = new ArrayList<>();
+                        values.add(tempString);
+                        startActionSetTag(this, "__MSISDN__", values);
+                    }
+                }
             }
         }
     }

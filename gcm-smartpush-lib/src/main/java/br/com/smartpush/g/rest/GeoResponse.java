@@ -18,7 +18,7 @@ public class GeoResponse {
 
     public boolean status;
 
-    public int code;
+//    public int code;
 
     public String message;
 
@@ -31,7 +31,7 @@ public class GeoResponse {
         try{
             if( o != null ) {
                 status = o.getBoolean("status");
-                code = o.getInt("code");
+//                code = o.getInt("code");
                 message = o.getString("message");
                 hash = o.getString( "hash" );
 
@@ -51,7 +51,7 @@ public class GeoResponse {
     @Override
     public String toString() {
         return "{ \"status\":" + status +
-                ", \"code\":" + code +
+//                ", \"code\":" + code +
                 ", \"message\":\"" + message + "\"" +
                 ", \"hash\":\"" + hash + "\"" +
                 ( ( geozones != null ) ? ", \"geozones\":[" + new SmartpushArraysUtil<Geozone>().toString( geozones ) + "]" : "" ) + "}";
