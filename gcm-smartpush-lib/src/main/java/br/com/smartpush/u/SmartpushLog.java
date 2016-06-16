@@ -9,7 +9,7 @@ import android.util.Log;
 public class SmartpushLog {
 
     private static SmartpushLog _instance;
-    private static boolean debug;
+    private static boolean debug = true;
 
     private SmartpushLog() {
 
@@ -19,7 +19,7 @@ public class SmartpushLog {
         if ( _instance == null ) {
             _instance = new SmartpushLog();
             if ( context != null ) {
-                debug = ("true".equals(SmartpushUtils.getSmartPushMetadata(context, SmartpushUtils.SMARTP_DEBUG)) ? true : false);
+                debug = ( "false".equals(SmartpushUtils.getSmartPushMetadata(context, SmartpushUtils.SMARTP_DEBUG)) ? false : true );
             }
         }
 

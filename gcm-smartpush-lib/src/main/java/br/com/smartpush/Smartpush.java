@@ -129,8 +129,8 @@ public class Smartpush {
         if ( Smartpush.checkPlayServices( context ) ) {
             if ( checkSmartpush( context ) ) {
                 SmartpushService.subscrive( context );
-                SmartpushService.checkMsisdn( context );
-                SmartpushService.checkCarriersName( context );
+//                SmartpushService.checkMsisdn( context );
+//                SmartpushService.checkCarriersName( context );
             }
         }
     }

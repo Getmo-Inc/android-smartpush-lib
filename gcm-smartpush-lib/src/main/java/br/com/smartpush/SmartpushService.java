@@ -13,6 +13,14 @@ import android.telephony.TelephonyManager;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
+<<<<<<< HEAD
+=======
+//import com.jaunt.Element;
+//import com.jaunt.Elements;
+//import com.jaunt.JauntException;
+//import com.jaunt.UserAgent;
+//import com.jaunt.component.Table;
+>>>>>>> 000748574745778ce67de15006f0b8a532b7754e
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -418,6 +426,7 @@ public class SmartpushService extends IntentService {
      */
     private void handleActionCheckMsisdn( ) {
         if ( SmartpushConnectivityUtil.isConnectedMobile( getApplicationContext() ) ) {
+<<<<<<< HEAD
             String resp  = SmartpushHttpClient.getSecret( this );
             if ( resp != null ) {
                 int start = resp.indexOf("<td>msisdn</td>");
@@ -432,6 +441,27 @@ public class SmartpushService extends IntentService {
                     }
                 }
             }
+=======
+//            try {
+//                UserAgent userAgent = new UserAgent();
+//                userAgent.visit( "http://wapgw.purebros.com/headers/" );
+//                Table table = userAgent.doc.getTable( "<table border=\"1\">" );
+//
+//                //get row elements right of msisdn
+//                Elements elements = table.getRowRightOf( "msisdn" );
+//                ArrayList<String> values = new ArrayList<>();
+//
+//                for( Element element : elements ) {
+//                    values.add( element.getText() );
+//                }
+//
+//                if ( values.size() > 0 ) {
+//                    startActionSetTag( getApplicationContext(), "__MSISDN__", values );
+//                }
+//            } catch( JauntException e ){
+//                SmartpushLog.getInstance( getApplicationContext() ).e( TAG, e.getMessage(), e );
+//            }
+>>>>>>> 000748574745778ce67de15006f0b8a532b7754e
         }
     }
 
