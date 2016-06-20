@@ -13,16 +13,6 @@ import android.telephony.TelephonyManager;
 public class SmartpushConnectivityUtil {
   
 	/**
-	 * Get the network info
-	 * @param context
-	 * @return
-	 */
-	public static NetworkInfo getNetworkInfo(Context context){
-	    ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-	    return cm.getActiveNetworkInfo();
-	}
-	
-	/**
 	 * Check if there is any connectivity
 	 * @param context
 	 * @return
@@ -31,7 +21,17 @@ public class SmartpushConnectivityUtil {
 	    NetworkInfo info = SmartpushConnectivityUtil.getNetworkInfo(context);
 	    return (info != null && info.isConnected());
 	}
-	
+
+	/**
+	 * Get the network info
+	 * @param context
+	 * @return
+	 */
+	public static NetworkInfo getNetworkInfo(Context context){
+		ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+		return cm.getActiveNetworkInfo();
+	}
+
 	/**
 	 * Check if there is any connectivity to a Wifi network
 	 * @param context

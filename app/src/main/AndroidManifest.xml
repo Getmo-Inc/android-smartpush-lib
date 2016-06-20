@@ -10,6 +10,8 @@
         android:name="br.com.getmo.permission.C2D_MESSAGE" />
     <!-- copy & adjust & adjust -->
 
+    <!-- -->
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -22,7 +24,7 @@
         <meta-data android:name="br.com.smartpush.APIKEY" android:value="@string/smartpush_apikey"/>
         <meta-data android:name="br.com.smartpush.PROXY" android:value="https://api.getmo.com.br/"/>
         <meta-data android:name="br.com.smartpush.LOCATIONUPDT" android:value="IMMEDIATELY"/>
-        <meta-data android:name="br.com.smartpush.DEBUG" android:value="false"/>
+        <meta-data android:name="br.com.smartpush.DEBUG" android:value="true"/>
         <!-- copy & adjust & adjust -->
 
         <activity android:name=".MainActivity">

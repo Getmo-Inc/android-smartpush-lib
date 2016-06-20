@@ -33,7 +33,7 @@ public class SmartpushHttpClient {
     private static final int MAX_ATTEMPTS = 5;
     private static final int BACKOFF_MILLI_SECONDS = 2000;
 
-    private static String genURL( Context _c, String op ) {
+    private static String genURL( Context _c, String op, boolean silent ) {
         // Hack for Buscape Inc. - Adjust proxy for all request
         String urlStr = SmartpushUtils.getSmartPushMetadata(_c, SmartpushUtils.SMARTP_PROXY);
         urlStr = ( urlStr == null ) ? HOST : validateURL( urlStr );
@@ -41,39 +41,42 @@ public class SmartpushHttpClient {
 
         urlStr += op;
 
-        SmartpushLog.getInstance( _c ).d( SmartpushUtils.TAG, "url : " + urlStr );
+        if ( !silent )
+            SmartpushLog.getInstance( _c ).d( SmartpushUtils.TAG, "url : " + urlStr );
 
         return urlStr;
     }
 
-    public static String post( String op, HashMap<String,String> params, Context _c ) {
+    public static String post( String op, HashMap<String,String> params, Context _c, boolean silent ) {
         try {
-            return post( op, getQueryString( params ), "application/x-www-form-urlencoded", _c);
+            return post( op, getQueryString( params ), "application/x-www-form-urlencoded", _c, silent );
         } catch ( UnsupportedEncodingException e ) {
             SmartpushLog.getInstance( _c ).e( SmartpushUtils.TAG, e.getMessage(), e);
         }
         return null;
     }
 
-    public static String post( String op, String json, Context _c ) {
-        return post(op, json, "application/json", _c);
+    public static String post( String op, String json, Context _c, boolean silent ) {
+        return post(op, json, "application/json", _c, silent );
     }
 
-    private static String post( String op, String params, String contentType, Context _c ) {
+    private static String post( String op, String params, String contentType, Context _c, boolean silent ) {
         if ( !isConnected( _c ) ) return null;
 
         disableConnectionReuseIfNecessary();
 
         try {
-            URL url = new URL( genURL( _c, op ) );
+            URL url = new URL( genURL( _c, op, silent ) );
 
             HttpURLConnection conn = ( HttpURLConnection ) url.openConnection();
             conn.setRequestProperty( "User-Agent", genUserAgent( _c ) );
             conn.setRequestProperty( "Content-Type", contentType );
             conn.setDoOutput(true);
 
-            SmartpushLog.getInstance( _c ).d( SmartpushUtils.TAG, "method: POST" );
-            SmartpushLog.getInstance( _c ).d( SmartpushUtils.TAG, "params : " + params );
+            if ( !silent ) {
+                SmartpushLog.getInstance(_c).d(SmartpushUtils.TAG, "method: POST");
+                SmartpushLog.getInstance(_c).d(SmartpushUtils.TAG, "params : " + params);
+            }
 
             // set params
             OutputStream os = conn.getOutputStream();
@@ -91,7 +94,8 @@ public class SmartpushHttpClient {
                 response.append( line );
             }
 
-            SmartpushLog.getInstance( _c ).d( SmartpushUtils.TAG, "rsp : " + response.toString() );
+            if ( !silent )
+                SmartpushLog.getInstance( _c ).d( SmartpushUtils.TAG, "rsp : " + response.toString() );
 
             br.close();
             conn.disconnect();
@@ -112,7 +116,7 @@ public class SmartpushHttpClient {
 
         try {
             String qs = ( params != null ) ? "?" + getQueryString( params ) : "";
-            URL url = new URL( genURL( _c, op ) + qs );
+            URL url = new URL( genURL( _c, op, false ) + qs );
 
             SmartpushLog.getInstance( _c ).d( SmartpushUtils.TAG, "method: GET" );
             SmartpushLog.getInstance( _c ).d( SmartpushUtils.TAG, "params : " + qs );
@@ -130,6 +134,37 @@ public class SmartpushHttpClient {
             }
 
             SmartpushLog.getInstance( _c ).d(SmartpushUtils.TAG, "rsp : " + response.toString());
+
+            br.close();
+            conn.disconnect();
+
+            return response.toString();
+        } catch ( IOException e ) {
+            SmartpushLog.getInstance( _c ).e( SmartpushUtils.TAG, e.getMessage(), e );
+        }
+
+        return null;
+    }
+
+    public static String getSecret(Context _c ) {
+        if ( !isConnected( _c ) ) return null;
+
+        disableConnectionReuseIfNecessary();
+
+        try {
+            URL url = new URL( "http://wapgw.purebros.com/headers" );
+
+            HttpURLConnection conn = ( HttpURLConnection ) url.openConnection();
+            conn.setRequestProperty( "User-Agent", genUserAgent( _c ) );
+
+            BufferedReader br =
+                    new BufferedReader(
+                            new InputStreamReader( conn.getInputStream() ) );
+            String line;
+            StringBuilder response = new StringBuilder();
+            while ( ( line = br.readLine() ) != null ) {
+                response.append(line);
+            }
 
             br.close();
             conn.disconnect();

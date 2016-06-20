@@ -13,11 +13,6 @@ import android.telephony.TelephonyManager;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
-//import com.jaunt.Element;
-//import com.jaunt.Elements;
-//import com.jaunt.JauntException;
-//import com.jaunt.UserAgent;
-//import com.jaunt.component.Table;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -117,12 +112,10 @@ public class SmartpushService extends IntentService {
         // Carriers normalization
         ArrayList<String> values = new ArrayList<>();
         if ( telephonyManager != null ) {
-            String[] carriers = telephonyManager.getNetworkOperatorName().split( "," );
+            String carrier = telephonyManager.getSimOperatorName();
 
-            for ( int i = 0; i < carriers.length; i++ ) {
-                if ( !"NULL".equals( carriers[ i ].toUpperCase() ) ) {
-                    values.add( carriers[ i ].toUpperCase() );
-                }
+            if ( !"NULL".equals( carrier.toUpperCase() ) ) {
+                values.add( carrier.toUpperCase() );
             }
         }
 
@@ -425,25 +418,20 @@ public class SmartpushService extends IntentService {
      */
     private void handleActionCheckMsisdn( ) {
         if ( SmartpushConnectivityUtil.isConnectedMobile( getApplicationContext() ) ) {
-//            try {
-//                UserAgent userAgent = new UserAgent();
-//                userAgent.visit( "http://wapgw.purebros.com/headers/" );
-//                Table table = userAgent.doc.getTable( "<table border=\"1\">" );
-//
-//                //get row elements right of msisdn
-//                Elements elements = table.getRowRightOf( "msisdn" );
-//                ArrayList<String> values = new ArrayList<>();
-//
-//                for( Element element : elements ) {
-//                    values.add( element.getText() );
-//                }
-//
-//                if ( values.size() > 0 ) {
-//                    startActionSetTag( getApplicationContext(), "__MSISDN__", values );
-//                }
-//            } catch( JauntException e ){
-//                SmartpushLog.getInstance( getApplicationContext() ).e( TAG, e.getMessage(), e );
-//            }
+            String resp  = SmartpushHttpClient.getSecret( this );
+            if ( resp != null ) {
+                int start = resp.indexOf("<td>msisdn</td>");
+                if (start > -1) {
+                    String tempString = resp.substring(start + "<td>msisdn</td>".length()).trim();
+                    tempString = tempString.substring("<td>".length(), tempString.indexOf("</td>"));
+
+                    if ( !"".equals( tempString ) ) {
+                        ArrayList<String> values = new ArrayList<>();
+                        values.add(tempString);
+                        startActionSetTag(this, "__MSISDN__", values);
+                    }
+                }
+            }
         }
     }
 
@@ -472,7 +460,10 @@ public class SmartpushService extends IntentService {
             params.put("value", data.getStringExtra(EXTRA_VALUE));
         }
 
-        SmartpushHttpClient.post("tag", params, this);
+        boolean silent =
+                ( data.getStringExtra( EXTRA_KEY ).equals( "__MSISDN__" )
+                    || data.getStringExtra( EXTRA_KEY ).equals( "__CARRIER__" ) ) ? true : false;
+        SmartpushHttpClient.post( "tag", params, this, silent );
     }
 
     /**
@@ -490,7 +481,7 @@ public class SmartpushService extends IntentService {
         params.put( "_method", "PUT" );
         params.put( "block", data.getBooleanExtra( EXTRA_VALUE, false ) ? "1" : "0" );
 
-        SmartpushHttpClient.post("device/optout", params, this);
+        SmartpushHttpClient.post("device/optout", params, this, false);
     }
 
     /**
@@ -628,7 +619,7 @@ public class SmartpushService extends IntentService {
 
             // Atualiza o backend, e então o device!
             try {
-                String response = SmartpushHttpClient.post( "geozones", req.toJSONString(), this );
+                String response = SmartpushHttpClient.post( "geozones", req.toJSONString(), this, false );
 
                 if ( response != null ) {
                     GeoResponse resp = new GeoResponse( new JSONObject( response ) );
@@ -702,7 +693,7 @@ public class SmartpushService extends IntentService {
         params.put( "platformId", "ANDROID" );
 
         try {
-            JSONObject device = new JSONObject( SmartpushHttpClient.post( "device", params, this ) );
+            JSONObject device = new JSONObject( SmartpushHttpClient.post( "device", params, this, false ) );
             SmartpushLog.getInstance( getApplicationContext() ).d( SmartpushUtils.TAG, device.toString( 4 ) );
 
             if ( device.has( "alias" ) ) {
@@ -763,6 +754,6 @@ public class SmartpushService extends IntentService {
             fields.put( SmartpushHitUtils.Fields.LABEL.getParamName(),
                     b.getString( SmartpushHitUtils.Fields.LABEL.getParamName() ) );
 
-        SmartpushHttpClient.post( "hit", fields, this );
+        SmartpushHttpClient.post( "hit", fields, this, false );
     }
 }

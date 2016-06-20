@@ -41,6 +41,7 @@ public abstract class SmartpushListenerService extends GcmListenerService {
     public static String VIDEO_URI    = "video";
     public static String AUTO_CANCEL  = "ac";
     public static String VIBRATE      = "vib";
+    public static String PACKAGENAME  = "package";
 
     public static String NOTIF_BANNER = "banner";
     public static String LAUNCH_ICON  = "icon";

@@ -88,7 +88,6 @@ public class VideoPlayerFragment extends Fragment implements
         fadeIn = new AlphaAnimation( 0, 1 );
         fadeIn.setInterpolator(new DecelerateInterpolator());
         fadeIn.setDuration(250);
-
     }
 
     @Override
@@ -233,9 +232,16 @@ public class VideoPlayerFragment extends Fragment implements
 
     private void goForward() {
 
-        String url = getArguments().getString( SmartpushListenerService.URL );
+        String url         = getArguments().getString( SmartpushListenerService.URL );
+        String packageName = getArguments().getString( SmartpushListenerService.PACKAGENAME );
 
-        if ( url != null ) {
+        if ( packageName != null ) {
+            Intent intent = getActivity().getPackageManager().getLaunchIntentForPackage( packageName );
+            intent.putExtras( getArguments() );
+            intent.setFlags( Intent.FLAG_ACTIVITY_NEW_TASK );
+            startActivity( intent );
+            getActivity().finish();
+        } else if ( url != null ) {
             if ( url.startsWith( "http" ) || url.startsWith( "https" ) ) {
                 Intent it = new Intent( getActivity(), SmartpushActivity.class );
                 it.putExtra( SmartpushListenerService.URL, url );
@@ -248,13 +254,16 @@ public class VideoPlayerFragment extends Fragment implements
             } else if ( url.startsWith( "market://details?id=" ) ) {
                 Intent it = new Intent( Intent.ACTION_VIEW );
                 it.setData(Uri.parse(url));
+                it.setFlags( Intent.FLAG_ACTIVITY_NEW_TASK );
                 if ( it.resolveActivity(getActivity().getPackageManager()) != null ) {
                     startActivity(it);
                 }
                 getActivity().finish();
             } else {
                 Intent intent = new Intent();
+                intent.putExtras( getArguments() );
                 intent.setData( Uri.parse( url ) );
+                intent.setFlags( Intent.FLAG_ACTIVITY_NEW_TASK );
                 if ( intent.resolveActivity(getActivity().getPackageManager() ) != null ) {
                     startActivity(intent);
                 }
@@ -281,11 +290,12 @@ public class VideoPlayerFragment extends Fragment implements
 
     private void destroyMediaPlayer() {
         SmartpushLog.getInstance( getActivity() ).d( TAG, "destroyMediaPlayer" );
-
-        mediaPlayer.stop();
-        mediaPlayer.reset();
-        mediaPlayer.release();
-        mediaPlayer = null;
+        if ( mediaPlayer != null ) {
+            mediaPlayer.stop();
+            mediaPlayer.reset();
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
     }
 
     @Override
@@ -379,28 +389,40 @@ public class VideoPlayerFragment extends Fragment implements
 
             try {
                 JSONObject json = new JSONObject( resp );
-                int code = json.has( "code" ) ? json.getInt( "code" ) : 0;
+                boolean status = json.has( "status" ) ? json.getBoolean( "status" ) : false;
 
-                if ( code == 200 ) {
+                if ( status ) {
                     JSONArray videos = json.getJSONArray( "videos" );
+
+                    int idSelected = -1;
+                    String extension = ( SmartpushConnectivityUtil.isConnectedWifi( getActivity() ) ) ? "mp4" : "3gp";
+
+                    int bestSize = ( "mp4".equals( extension ) ) ? Integer.MAX_VALUE : Integer.MIN_VALUE;
+
                     for ( int i = 0; i < videos.length(); i++ ) {
                         JSONObject o = videos.getJSONObject( i );
-                        if ( SmartpushConnectivityUtil.isConnectedWifi( getActivity() )
-                            || ( SmartpushConnectivityUtil.isConnectedMobile( getActivity() )
-                                && SmartpushConnectivityUtil.isConnectedFast( getActivity() ) ) ) {
 
-                            if ( o.getString( "resolution" ).equals( "640x360" )
-                                    && o.getString( "extension" ).equals( "mp4" ) ) {
-                                return o.getString( "url" );
-                            }
+                        if ( o.getString( "extension" ).equals( extension ) ) {
+                            int currentSize = o.getInt( "filesize" );
 
-                        } else {
-                            if ( o.getString( "resolution" ).equals( "320x240" )
-                                    && o.getString( "extension" ).equals( "3gp" ) ) {
-                                return o.getString( "url" );
+                            if ( "3gp".equals( extension ) ) {
+                                if (bestSize < currentSize) {
+                                    bestSize = currentSize;
+                                    idSelected = i;
+                                }
+                            } else {
+                                if (bestSize > currentSize) {
+                                    bestSize = currentSize;
+                                    idSelected = i;
+                                }
                             }
                         }
                     }
+
+                    String linkVideo = ( idSelected != -1 ) ? videos.getJSONObject( idSelected ).getString( "url" ) : null;
+                    SmartpushLog.getInstance( getActivity() ).d( TAG, "---> " + linkVideo );
+
+                    return linkVideo;
                 }
 
             } catch ( JSONException e ) {

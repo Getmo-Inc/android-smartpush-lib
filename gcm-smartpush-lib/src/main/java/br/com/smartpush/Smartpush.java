@@ -31,7 +31,7 @@ public class Smartpush {
         return !block;
     }
 
-    public void getUserInfo( final Context context ) {
+    public static void getUserInfo( final Context context ) {
         if ( isRegistered( context ) ) {
             SmartpushService.startActionGetDeviceUserInfo(context);
         }
@@ -143,7 +143,6 @@ public class Smartpush {
         int resultCode = apiAvailability.isGooglePlayServicesAvailable( _c );
         return ( resultCode == ConnectionResult.SUCCESS );
     }
-
 
     private static boolean checkSmartpush(Context context) {
         SmartpushLog.getInstance( context ).d( TAG, "checkSmartpush() : begin - Configurations tests : " + context.getPackageName() );
