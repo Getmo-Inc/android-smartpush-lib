@@ -113,7 +113,6 @@ public class VideoPlayerFragment extends Fragment implements
         duration  = ( TextView ) view.findViewById( R.id.duration );
 
         progressbar = ( ProgressBar ) view.findViewById( R.id.progressbar );
-
     }
 
     @Override
@@ -121,19 +120,23 @@ public class VideoPlayerFragment extends Fragment implements
         SmartpushLog.getInstance( getActivity() ).d( TAG, "onStart" );
         super.onStart();
 
-        if ( mediaPlayer != null ) {
-            handler.post( showSurface );
-            handler.postDelayed( updateSeekBarTime, 10 );
-
-            if ( isControlsVisible ) {
-                handler.post( showHideControlsTask );
-                isControlsVisible = !isControlsVisible;
-            }
+        if ( isSetToPlayOnlyWifi() && !SmartpushConnectivityUtil.isConnectedWifi( getActivity() ) ) {
+                goForward();
         } else {
-            new FetchVideoDeepLink()
-                    .execute(
-                            getActivity().getIntent().getStringExtra(
-                                    SmartpushListenerService.VIDEO_URI ) );
+            if ( mediaPlayer != null ) {
+                handler.post( showSurface );
+                handler.postDelayed( updateSeekBarTime, 10 );
+
+                if ( isControlsVisible ) {
+                    handler.post( showHideControlsTask );
+                    isControlsVisible = !isControlsVisible;
+                }
+            } else {
+                new FetchVideoDeepLink()
+                        .execute(
+                                getActivity().getIntent().getStringExtra(
+                                        SmartpushListenerService.VIDEO_URI ) );
+            }
         }
     }
 
@@ -231,7 +234,6 @@ public class VideoPlayerFragment extends Fragment implements
     }
 
     private void goForward() {
-
         String url         = getArguments().getString( SmartpushListenerService.URL );
         String packageName = getArguments().getString( SmartpushListenerService.PACKAGENAME );
 
@@ -452,5 +454,16 @@ public class VideoPlayerFragment extends Fragment implements
             Smartpush.hit( getActivity(), pushId, "PLAYER", null, action, null );
         }
         //
+    }
+
+    private boolean isSetToPlayOnlyWifi() {
+        boolean playVideoOnlyWifi = false;
+        Bundle extras = getArguments();
+        if ( extras != null && extras.containsKey( SmartpushListenerService.PLAY_VIDEO_ONLY_WIFI ) ) {
+            playVideoOnlyWifi =
+                    ( extras.getString( SmartpushListenerService.PLAY_VIDEO_ONLY_WIFI ).equals( "1" ) ) ? true : false;
+        }
+
+        return playVideoOnlyWifi;
     }
 }
