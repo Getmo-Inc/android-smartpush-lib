@@ -44,33 +44,28 @@ public class Smartpush {
     }
 
     public static void setTag(final Context context, final String key, final Boolean value) {
-        if ( isRegistered( context ) ) {
+        if ( isRegistered( context ) && value != null )
             SmartpushService.startActionSetTag(context, key, value);
-        }
     }
 
     public static void setTag(final Context context, final String key, final Double value) {
-        if ( isRegistered( context ) ) {
+        if ( isRegistered( context ) && value != null )
             SmartpushService.startActionSetTag(context, key, value);
-        }
     }
 
     public static void setTag(final Context context, final String key, final ArrayList<String> values) {
-        if ( isRegistered( context ) ) {
+        if ( isRegistered( context ) && values != null && values.size() > 0 )
             SmartpushService.startActionSetTag(context, key, values);
-        }
     }
 
     public static void setTag( final Context context, final String key, final String value ) {
-        if ( isRegistered( context ) ) {
+        if ( isRegistered( context ) && value != null )
             SmartpushService.startActionSetTag(context, key, value);
-        }
     }
 
     public static void setTag( final Context context, final String key, final Date value ) {
-        if ( isRegistered( context ) ) {
+        if ( isRegistered( context ) && value != null )
             SmartpushService.startActionSetTag(context, key, value);
-        }
     }
 
     public static void delTagOrValue(final Context context, final String key, final Boolean value) {
