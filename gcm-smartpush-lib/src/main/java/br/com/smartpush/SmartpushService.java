@@ -119,7 +119,9 @@ public class SmartpushService extends IntentService {
             }
         }
 
-        startActionSetTag( context, "__CARRIER__", values );
+        if ( values.size() > 0 ) {
+            startActionSetTag(context, "__CARRIER__", values);
+        }
     }
 
     /**
@@ -595,7 +597,7 @@ public class SmartpushService extends IntentService {
 
             // Faz o Geocode Reverse do ponto lido para enviar p/ o SMARTPUSH
             try {
-                Geocoder geocoder = new Geocoder( this, Locale.getDefault() );
+                Geocoder geocoder = new Geocoder( this, new Locale( "pt", "BR" ) );
                 List<Address> addresses =
                         geocoder.getFromLocation(
                                 currentLocation.getLat(), currentLocation.getLng(), 1 ) ;
