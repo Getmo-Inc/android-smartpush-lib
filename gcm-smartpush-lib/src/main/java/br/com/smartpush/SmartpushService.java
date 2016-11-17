@@ -730,9 +730,10 @@ public class SmartpushService extends IntentService {
         // TODO implements
         HashMap<String,String> fields = new HashMap<>();
         fields.put( "uuid", SmartpushUtils.readFromPreferences( this, SmartpushUtils.SMARTP_HWID ) );
-        fields.put( "latlong", "0,0" );
+//        fields.put( "latlong", "0,0" );
         fields.put( "appid", SmartpushUtils.getSmartPushMetadata(this, SmartpushUtils.SMARTP_APP_ID) );
         fields.put( "devid", SmartpushUtils.getSmartPushMetadata( this, SmartpushUtils.SMARTP_API_KEY ) );
+        fields.put( "regid", SmartpushUtils.readFromPreferences( this, SmartpushUtils.SMARTP_REGID ) );
         fields.put( "framework", Build.VERSION.RELEASE );
         fields.put( "sdk_v", getString(R.string.smartp_version) );
         fields.put( "plataformId", "ANDROID" );
