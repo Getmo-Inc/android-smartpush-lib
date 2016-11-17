@@ -183,7 +183,7 @@ public abstract class SmartpushListenerService extends GcmListenerService {
 //			int w = ( int ) getResources().getDimension( android.R.dimen.notification_large_icon_width );
 
             float scaleFactor = getResources().getDisplayMetrics().density;
-            int size = ( int ) ( 24 * scaleFactor + 0.5f );
+            int size = ( int ) ( 48 * scaleFactor + 0.5f );
 
             Bitmap b = SmartpushHttpClient.loadBitmap(urlpath);
             if ( b != null ) {

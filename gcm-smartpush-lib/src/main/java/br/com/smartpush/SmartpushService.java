@@ -447,6 +447,7 @@ public class SmartpushService extends IntentService {
         params.put( "uuid",  SmartpushUtils.readFromPreferences( this, SmartpushUtils.SMARTP_HWID ) );
         params.put( "appid", SmartpushUtils.getSmartPushMetadata( this, SmartpushUtils.SMARTP_APP_ID ) );
         params.put( "devid", SmartpushUtils.getSmartPushMetadata( this, SmartpushUtils.SMARTP_API_KEY ) );
+        params.put( "regid", SmartpushUtils.readFromPreferences( this, SmartpushUtils.SMARTP_REGID ) );
 
         // tag info
         params.put( "key", data.getStringExtra( EXTRA_KEY ) );
@@ -478,6 +479,7 @@ public class SmartpushService extends IntentService {
         params.put( "uuid",  SmartpushUtils.readFromPreferences(this, SmartpushUtils.SMARTP_HWID) );
         params.put( "appid", SmartpushUtils.getSmartPushMetadata( this, SmartpushUtils.SMARTP_APP_ID ) );
         params.put( "devid", SmartpushUtils.getSmartPushMetadata( this, SmartpushUtils.SMARTP_API_KEY ) );
+        params.put( "regid", SmartpushUtils.readFromPreferences( this, SmartpushUtils.SMARTP_REGID ) );
 
         // tag info
         params.put( "_method", "PUT" );
@@ -496,6 +498,7 @@ public class SmartpushService extends IntentService {
         params.put( "uuid",  SmartpushUtils.readFromPreferences ( this, SmartpushUtils.SMARTP_HWID ) );
         params.put( "appid", SmartpushUtils.getSmartPushMetadata( this, SmartpushUtils.SMARTP_APP_ID ) );
         params.put( "devid", SmartpushUtils.getSmartPushMetadata( this, SmartpushUtils.SMARTP_API_KEY ) );
+        params.put( "regid", SmartpushUtils.readFromPreferences( this, SmartpushUtils.SMARTP_REGID ) );
 
         String resp  = SmartpushHttpClient.get( "device", params, this );
 
@@ -668,21 +671,21 @@ public class SmartpushService extends IntentService {
 
         SmartpushDeviceInfo deviceInfo = new SmartpushDeviceInfo( token );
 
-        if ( token.equals( SmartpushUtils.readFromPreferences( this, SmartpushUtils.SMARTP_REGID ) ) ) {
-            // Já registrado, retorna com dados locais...
-            deviceInfo.alias = SmartpushUtils.readFromPreferences( this, SmartpushUtils.SMARTP_ALIAS );
-            deviceInfo.hwId  = SmartpushUtils.readFromPreferences( this, SmartpushUtils.SMARTP_HWID );
-            return deviceInfo;
-        } else {
-            // Novo registro, ou atualizacao...
-            SmartpushUtils.deleteFromPreferences( this, SmartpushUtils.SMARTP_REGID );
-            SmartpushUtils.deleteFromPreferences( this, SmartpushUtils.SMARTP_ALIAS );
-            SmartpushUtils.deleteFromPreferences( this, SmartpushUtils.SMARTP_HWID );
-        }
+//        if ( token.equals( SmartpushUtils.readFromPreferences( this, SmartpushUtils.SMARTP_REGID ) ) ) {
+//            // Já registrado, retorna com dados locais...
+//            deviceInfo.alias = SmartpushUtils.readFromPreferences( this, SmartpushUtils.SMARTP_ALIAS );
+//            deviceInfo.hwId  = SmartpushUtils.readFromPreferences( this, SmartpushUtils.SMARTP_HWID );
+//            return deviceInfo;
+//        } else {
+//            // Novo registro, ou atualizacao...
+//            SmartpushUtils.deleteFromPreferences( this, SmartpushUtils.SMARTP_REGID );
+//            SmartpushUtils.deleteFromPreferences( this, SmartpushUtils.SMARTP_ALIAS );
+//            SmartpushUtils.deleteFromPreferences( this, SmartpushUtils.SMARTP_HWID );
+//        }
 
         HashMap<String, String> params = new HashMap<>();
 
-        params.put( "uuid", SmartpushUtils.readFromPreferences  ( this, SmartpushUtils.SMARTP_HWID ) );
+        params.put( "uuid",  SmartpushUtils.readFromPreferences ( this, SmartpushUtils.SMARTP_HWID ) );
         params.put( "appid", SmartpushUtils.getSmartPushMetadata( this, SmartpushUtils.SMARTP_APP_ID ) );
         params.put( "devid", SmartpushUtils.getSmartPushMetadata( this, SmartpushUtils.SMARTP_API_KEY ) );
         params.put( "regid", token );
@@ -690,7 +693,7 @@ public class SmartpushService extends IntentService {
         // device info
         params.put( "device", SmartpushUtils.getDeviceName());
         params.put( "manufacturer", SmartpushUtils.getDeviceManufacturer());
-        params.put( "latlong", "0,0");
+//        params.put( "latlong", "0,0");
         params.put( "framework", Build.VERSION.RELEASE);
         params.put( "platformId", "ANDROID" );
 
