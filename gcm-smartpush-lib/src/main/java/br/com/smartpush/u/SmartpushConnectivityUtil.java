@@ -11,47 +11,49 @@ import android.telephony.TelephonyManager;
  *
  */
 public class SmartpushConnectivityUtil {
-  
-	/**
+
+    /**
+     * Get the network info
+     * @param context
+     * @return
+     */
+    public static NetworkInfo getNetworkInfo( Context context ){
+        if ( context == null ) return null;
+
+        ConnectivityManager cm =
+                ( ConnectivityManager ) context.getSystemService( Context.CONNECTIVITY_SERVICE );
+
+        return ( cm != null ) ? cm.getActiveNetworkInfo() : null;
+    }
+
+    /**
 	 * Check if there is any connectivity
 	 * @param context
 	 * @return
 	 */
-	public static boolean isConnected(Context context){
-	    NetworkInfo info = SmartpushConnectivityUtil.getNetworkInfo(context);
-	    return (info != null && info.isConnected());
-	}
-
-	/**
-	 * Get the network info
-	 * @param context
-	 * @return
-	 */
-	public static NetworkInfo getNetworkInfo(Context context){
-		ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-		return cm.getActiveNetworkInfo();
+	public static boolean isConnected( Context context ){
+	    NetworkInfo info = getNetworkInfo( context );
+	    return ( info != null && info.isConnected() );
 	}
 
 	/**
 	 * Check if there is any connectivity to a Wifi network
 	 * @param context
-	 * @param type
 	 * @return
 	 */
-	public static boolean isConnectedWifi(Context context){
-	    NetworkInfo info = SmartpushConnectivityUtil.getNetworkInfo(context);
-	    return (info != null && info.isConnected() && info.getType() == ConnectivityManager.TYPE_WIFI);
+	public static boolean isConnectedWifi( Context context ){
+	    NetworkInfo info = getNetworkInfo(context);
+	    return ( info != null && info.isConnected() && info.getType() == ConnectivityManager.TYPE_WIFI );
 	}
 	
 	/**
 	 * Check if there is any connectivity to a mobile network
 	 * @param context
-	 * @param type
 	 * @return
 	 */
-	public static boolean isConnectedMobile(Context context){
-	    NetworkInfo info = SmartpushConnectivityUtil.getNetworkInfo(context);
-	    return (info != null && info.isConnected() && info.getType() == ConnectivityManager.TYPE_MOBILE);
+	public static boolean isConnectedMobile( Context context ){
+	    NetworkInfo info = getNetworkInfo( context );
+	    return ( info != null && info.isConnected() && info.getType() == ConnectivityManager.TYPE_MOBILE );
 	}
 	
 	/**
@@ -60,7 +62,7 @@ public class SmartpushConnectivityUtil {
 	 * @return
 	 */
 	public static boolean isConnectedFast(Context context){
-	    NetworkInfo info = SmartpushConnectivityUtil.getNetworkInfo(context);
+	    NetworkInfo info = getNetworkInfo(context);
 	    return (info != null && info.isConnected() && SmartpushConnectivityUtil.isConnectionFast(info.getType(), info.getSubtype()));
 	}
 	

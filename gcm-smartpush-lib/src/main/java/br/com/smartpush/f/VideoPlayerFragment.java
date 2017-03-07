@@ -427,7 +427,7 @@ public class VideoPlayerFragment extends Fragment implements
                     return linkVideo;
                 }
 
-            } catch ( JSONException e ) {
+            } catch ( Exception e ) {
                 SmartpushLog.getInstance( getActivity() ).e( TAG, e.getMessage(), e );
             }
 
