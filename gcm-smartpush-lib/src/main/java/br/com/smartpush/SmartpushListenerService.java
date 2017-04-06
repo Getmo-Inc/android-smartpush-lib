@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
@@ -47,6 +48,9 @@ public abstract class SmartpushListenerService extends GcmListenerService {
     public static String NOTIF_BANNER = "banner";
     public static String LAUNCH_ICON  = "icon";
 
+    // Se o array de icones for alterado tem de ajustar o indice desta variavel.
+    private static final int CATEGORY_BUSCAPE = 18;
+
     private int[] pushIcons = {
             R.drawable.ic_esporte,
             R.drawable.ic_cultura,
@@ -64,7 +68,8 @@ public abstract class SmartpushListenerService extends GcmListenerService {
             R.drawable.ic_promocoes,
             R.drawable.ic_bebes_criancas,
             R.drawable.ic_casa_jardim,
-            R.drawable.ic_animais
+            R.drawable.ic_animais,
+            R.drawable.ic_sp_notif_buscape  // BUSCAPE
     };
 
     private static final int PUSH_INTERNAL_ID = 0;
@@ -136,7 +141,8 @@ public abstract class SmartpushListenerService extends GcmListenerService {
     }
 
     private int getPushIcon( Bundle extras ) {
-        int category = Integer.parseInt( getValue(extras.getString("category"), "0")  ) ;
+        int category = Integer.parseInt( getValue( extras.getString( "category" ), "1" )  ) ;
+        category = ( category >= pushIcons.length ) ? 1 : category;
         return pushIcons[ category - 1 ];
     }
 
@@ -144,7 +150,7 @@ public abstract class SmartpushListenerService extends GcmListenerService {
     private void createNotification(Bundle extras) {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder( this )
-                .setSmallIcon(getPushIcon(extras))           // Set Small Icon
+                .setSmallIcon(getPushIcon(extras))              // Set Small Icon
                 .setAutoCancel( isAutoCancel( extras ) )         // Set Auto Cancel Action
                 .setContentIntent( addMainAction( extras ) )     // Set Main Action
                 .setContentTitle ( extras.getString( TITLE ) )  // Set Title
@@ -176,7 +182,16 @@ public abstract class SmartpushListenerService extends GcmListenerService {
 
     private void loadNotificationBigIcon( Bundle extras, NotificationCompat.Builder builder ) {
         String urlpath = extras.getString( LAUNCH_ICON );
-        if ( urlpath == null ) return;
+
+        if ( urlpath == null ) {
+            int category = Integer.parseInt( getValue( extras.getString( "category" ), "1" ) ) ;
+            category = ( category >= pushIcons.length ) ? 1 : category;
+
+            if ( category == CATEGORY_BUSCAPE ) {
+                builder.setLargeIcon( BitmapFactory.decodeResource( getResources(), R.drawable.ic_sp_buscape ) );
+            }
+            return;
+        }
 
         try {
 //			int h = ( int ) getResources().getDimension( android.R.dimen.notification_large_icon_height );
