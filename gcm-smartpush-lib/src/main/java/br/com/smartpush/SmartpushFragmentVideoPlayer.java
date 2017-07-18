@@ -1,4 +1,4 @@
-package br.com.smartpush.f;
+package br.com.smartpush;
 
 
 import android.content.Intent;
@@ -25,27 +25,15 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.concurrent.TimeUnit;
 
-import br.com.smartpush.R;
-import br.com.smartpush.Smartpush;
-import br.com.smartpush.SmartpushActivity;
-import br.com.smartpush.SmartpushListenerService;
-import br.com.smartpush.u.SmartpushConnectivityUtil;
-import br.com.smartpush.u.SmartpushHitUtils;
-import br.com.smartpush.u.SmartpushHttpClient;
-import br.com.smartpush.u.SmartpushLog;
-import br.com.smartpush.u.SmartpushUtils;
-
-import static br.com.smartpush.u.SmartpushUtils.TAG;
 
 /**
  * Created by fabio.licks on 20/08/15.
  */
-public class VideoPlayerFragment extends Fragment implements
+public final class SmartpushFragmentVideoPlayer extends Fragment implements
         MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener, MediaPlayer.OnErrorListener,
         MediaPlayer.OnBufferingUpdateListener, SurfaceHolder.Callback, View.OnClickListener {
 
@@ -74,7 +62,7 @@ public class VideoPlayerFragment extends Fragment implements
 
     @Override
     public void onCreate( Bundle savedInstanceState) {
-        SmartpushLog.getInstance( getActivity() ).d( TAG, "onCreate" );
+        SmartpushLog.d( Utils.TAG, "onCreate" );
         super.onCreate(savedInstanceState);
 
         setRetainInstance(true);
@@ -92,13 +80,13 @@ public class VideoPlayerFragment extends Fragment implements
 
     @Override
     public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
-        SmartpushLog.getInstance( getActivity() ).d( TAG, "onCreateView" );
+        SmartpushLog.d( Utils.TAG, "onCreateView" );
         return inflater.inflate( R.layout.player, null );
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        SmartpushLog.getInstance( getActivity() ).d( TAG, "onViewCreated" );
+        SmartpushLog.d( Utils.TAG, "onViewCreated" );
         loading       = ( ProgressBar )view.findViewById( R.id.loading );
         surfaceView   = ( SurfaceView ) view.findViewById( R.id.surface );
         surfaceHolder = surfaceView.getHolder();
@@ -117,7 +105,7 @@ public class VideoPlayerFragment extends Fragment implements
 
     @Override
     public void onStart() {
-        SmartpushLog.getInstance( getActivity() ).d( TAG, "onStart" );
+        SmartpushLog.d( Utils.TAG, "onStart" );
         super.onStart();
 
         if ( isSetToPlayOnlyWifi() && !SmartpushConnectivityUtil.isConnectedWifi( getActivity() ) ) {
@@ -142,10 +130,10 @@ public class VideoPlayerFragment extends Fragment implements
 
     @Override
     public void onStop() {
-        SmartpushLog.getInstance( getActivity() ).d( TAG, "onStop" );
+        SmartpushLog.d( Utils.TAG, "onStop" );
         super.onStop();
         if( getActivity().isChangingConfigurations() ) {
-            SmartpushLog.getInstance( getActivity() ).d( TAG, "configuration is changing: keep playing" );
+            SmartpushLog.d( Utils.TAG, "configuration is changing: keep playing" );
         } else {
             destroyMediaPlayer();
         }
@@ -154,7 +142,7 @@ public class VideoPlayerFragment extends Fragment implements
 
     @Override
     public void onCompletion( MediaPlayer mp ) {
-        SmartpushLog.getInstance( getActivity() ).d( TAG, "onCompletion" );
+        SmartpushLog.d( Utils.TAG, "onCompletion" );
 
         // Tracking
         hit( STATE.FINISHED.name() );
@@ -165,7 +153,7 @@ public class VideoPlayerFragment extends Fragment implements
 
     @Override
     public void onPrepared( MediaPlayer mp ) {
-        SmartpushLog.getInstance( getActivity() ).d( TAG, "onPrepared" );
+        SmartpushLog.d( Utils.TAG, "onPrepared" );
 //        handler.post( resizeSurfaceTask );
         handler.post( showSurface );
         finalTime = mediaPlayer.getDuration();
@@ -179,13 +167,13 @@ public class VideoPlayerFragment extends Fragment implements
 
     @Override
     public boolean onError( MediaPlayer mp, int what, int extra ) {
-        SmartpushLog.getInstance( getActivity() ).d( TAG, "onError" );
+        SmartpushLog.d( Utils.TAG, "onError" );
         return false;
     }
 
     @Override
     public void surfaceCreated( SurfaceHolder holder ) {
-        SmartpushLog.getInstance( getActivity() ).d( TAG, "surfaceCreated" );
+        SmartpushLog.d( Utils.TAG, "surfaceCreated" );
 
         mediaPlayer.setDisplay( holder );
         handler.post( resizeSurfaceTask );
@@ -198,7 +186,7 @@ public class VideoPlayerFragment extends Fragment implements
 
     @Override
     public void surfaceDestroyed( SurfaceHolder holder) {
-        SmartpushLog.getInstance( getActivity() ).d(TAG, "surfaceDestroyed");
+        SmartpushLog.d( Utils.TAG, "surfaceDestroyed");
         if ( mediaPlayer != null )
             mediaPlayer.setDisplay( null );
     }
@@ -211,7 +199,7 @@ public class VideoPlayerFragment extends Fragment implements
     }
 
     private void setSurfaceSize() {
-        SmartpushLog.getInstance( getActivity() ).d(TAG, "setSurfaceSize");
+        SmartpushLog.d( Utils.TAG, "setSurfaceSize");
         // get the dimensions of the video (only valid when surfaceView is set)
         float videoWidth = mediaPlayer.getVideoWidth();
         float videoHeight = mediaPlayer.getVideoHeight();
@@ -247,8 +235,8 @@ public class VideoPlayerFragment extends Fragment implements
             if ( url.startsWith( "http" ) || url.startsWith( "https" ) ) {
                 Intent it = new Intent( getActivity(), SmartpushActivity.class );
                 it.putExtra( SmartpushListenerService.URL, url );
-                it.putExtra( SmartpushUtils.ONLY_PORTRAIT, true );
-                it.putExtra( SmartpushUtils.REDIRECTED, true );
+                it.putExtra( Utils.Constants.ONLY_PORTRAIT, true );
+                it.putExtra( Utils.Constants.REDIRECTED, true );
                 it.putExtra( SmartpushHitUtils.Fields.PUSH_ID.getParamName(),
                         getArguments().getString( SmartpushHitUtils.Fields.PUSH_ID.getParamName() ) );
                 it.addFlags( Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP );
@@ -275,7 +263,7 @@ public class VideoPlayerFragment extends Fragment implements
     }
 
     private void createMediaPlayer( Uri video ) {
-        SmartpushLog.getInstance( getActivity() ).d(TAG, "createMediaPlayer");
+        SmartpushLog.d( Utils.TAG, "createMediaPlayer");
         try {
             mediaPlayer = new MediaPlayer();
             mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -286,12 +274,12 @@ public class VideoPlayerFragment extends Fragment implements
             //player will be started after completion of preparing...
             mediaPlayer.prepareAsync();
         } catch (Exception e) {
-            SmartpushLog.getInstance( getActivity() ).e( TAG, e.getMessage(), e );
+            SmartpushLog.e( Utils.TAG, e.getMessage(), e );
         }
     }
 
     private void destroyMediaPlayer() {
-        SmartpushLog.getInstance( getActivity() ).d( TAG, "destroyMediaPlayer" );
+        SmartpushLog.d( Utils.TAG, "destroyMediaPlayer" );
         if ( mediaPlayer != null ) {
             mediaPlayer.stop();
             mediaPlayer.reset();
@@ -422,13 +410,13 @@ public class VideoPlayerFragment extends Fragment implements
                     }
 
                     String linkVideo = ( idSelected != -1 ) ? videos.getJSONObject( idSelected ).getString( "url" ) : null;
-                    SmartpushLog.getInstance( getActivity() ).d( TAG, "---> " + linkVideo );
+                    SmartpushLog.d( Utils.TAG, "---> " + linkVideo );
 
                     return linkVideo;
                 }
 
             } catch ( Exception e ) {
-                SmartpushLog.getInstance( getActivity() ).e( TAG, e.getMessage(), e );
+                SmartpushLog.e( Utils.TAG, e.getMessage(), e );
             }
 
             return null;

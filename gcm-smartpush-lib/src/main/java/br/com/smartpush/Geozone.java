@@ -1,4 +1,4 @@
-package br.com.smartpush.g.model;
+package br.com.smartpush;
 
 import android.database.Cursor;
 
@@ -8,13 +8,11 @@ import org.json.JSONObject;
 import java.util.Iterator;
 import java.util.List;
 
-import br.com.smartpush.u.SmartpushLog;
-import br.com.smartpush.u.SmartpushUtils;
 
 /**
  * Created by fabio.licks on 09/02/2016.
  */
-public class Geozone {
+class Geozone {
 
     public static final String ALIAS  = "ALIAS";
     public static final String LAT    = "LAT";
@@ -39,7 +37,7 @@ public class Geozone {
                 radius = o.getInt( RADIUS.toLowerCase() );
             }
         } catch (JSONException e) {
-            SmartpushLog.getInstance( null ).e( SmartpushUtils.TAG, e.getMessage(), e );
+            SmartpushLog.e( Utils.TAG, e.getMessage(), e );
         }
 
     }
@@ -56,13 +54,11 @@ public class Geozone {
 
     @Override
     public String toString() {
-        return "{ \"alias\":\"" + alias + "\"" +
-                ", \"lat\":" + lat +
-                ", \"lng\":" + lng +
+        return "{ \"alias\":\"" + alias + "\"" + ", \"lat\":" + lat + ", \"lng\":" + lng +
                 ", \"radius\":" + radius + '}';
     }
 
-    public static Overpass overpassed ( double lat, double lon, List<Geozone> geozones ) {
+    public static GeoOverpass overpassed (double lat, double lon, List<Geozone> geozones ) {
         Iterator<Geozone> iterator = ( geozones != null ) ? geozones.iterator() : null;
 
         while( iterator != null && iterator.hasNext() ) {
@@ -71,7 +67,7 @@ public class Geozone {
             double distance = distance( lat, lon, geozone.lat, geozone.lng, "K" );
             double radiusInKM = ( double )( geozone.radius / 1000.0 );
             if ( distance < radiusInKM ) {
-                return new Overpass( geozone );
+                return new GeoOverpass( geozone );
             }
         }
 

@@ -1,35 +1,29 @@
-package br.com.smartpush.g.rest;
+package br.com.smartpush;
 
 import android.content.Context;
 
 import java.util.ArrayList;
 
-import br.com.smartpush.g.model.Address;
-import br.com.smartpush.g.model.Location;
-import br.com.smartpush.g.model.Overpass;
-import br.com.smartpush.u.SmartpushArraysUtil;
-import br.com.smartpush.u.SmartpushUtils;
-
 /**
- * Created by leticia on 02/10/15.
+ * Created by fabio.licks on 02/10/15.
  */
-public class GeoRequest {
+final class GeoRequest {
 
     private String devid;
     private String appid;
     private String hwid;
 
     private String hash;
-    private Address info;
-    private ArrayList<Location> locations;
+    private GeoAddress info;
+    private ArrayList<GeoLocation> locations;
 
-    private Overpass overpass;
+    private GeoOverpass overpass;
 
     public GeoRequest( Context context, String hash ) {
 
-        devid = SmartpushUtils.getSmartPushMetadata( context, SmartpushUtils.SMARTP_API_KEY );
-        appid = SmartpushUtils.getSmartPushMetadata(context, SmartpushUtils.SMARTP_APP_ID);
-        hwid  = SmartpushUtils.readFromPreferences( context, SmartpushUtils.SMARTP_HWID );
+        devid = Utils.Smartpush.getMetadata( context, Utils.Constants.SMARTP_API_KEY );
+        appid = Utils.Smartpush.getMetadata(context, Utils.Constants.SMARTP_APP_ID);
+        hwid  = Utils.PreferenceUtils.readFromPreferences( context, Utils.Constants.SMARTP_HWID );
 
         locations = new ArrayList<>();
 
@@ -60,27 +54,27 @@ public class GeoRequest {
         this.hash = hash;
     }
 
-    public Address getInfo() {
+    public GeoAddress getInfo() {
         return info;
     }
 
-    public void setInfo( Address info ) {
+    public void setInfo( GeoAddress info ) {
         this.info = info;
     }
 
-    public ArrayList<Location> getLocations() {
+    public ArrayList<GeoLocation> getLocations() {
         return locations;
     }
 
-    public void setLocations( ArrayList<Location> locations ) {
+    public void setLocations( ArrayList<GeoLocation> locations ) {
         this.locations = locations;
     }
 
-    public Overpass getOverpass() {
+    public GeoOverpass getOverpass() {
         return overpass;
     }
 
-    public void setOverpass( Overpass overpass ) {
+    public void setOverpass( GeoOverpass overpass ) {
         this.overpass = overpass;
     }
 
@@ -90,7 +84,7 @@ public class GeoRequest {
                 ", \"hwid\":\"" + hwid + "\"" +
                 ", \"hash\":\"" + hash + "\"" +
                 ( ( info != null ) ? ", \"info\":" + info.toString() : "" ) +
-                ( ( locations != null ) ? ", \"locations\":" + new SmartpushArraysUtil<Location>().toString( locations ) : "" ) +
+                ( ( locations != null ) ? ", \"locations\":" + new Utils.ArrayUtils<GeoLocation>().toString( locations ) : "" ) +
                 ( ( overpass != null ) ? ", \"overpass\":" + overpass.toString() : "" ) + '}';
     }
 }

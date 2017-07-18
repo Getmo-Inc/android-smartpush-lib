@@ -13,7 +13,6 @@ import android.widget.TextView;
 import br.com.smartpush.Smartpush;
 import br.com.smartpush.SmartpushDeviceInfo;
 import br.com.smartpush.SmartpushService;
-import br.com.smartpush.u.SmartpushHitUtils;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -25,17 +24,9 @@ public class MainActivity extends AppCompatActivity {
         // Register at Smartpush!
         Smartpush.subscribe( this );
 
-        // optional
-        Bundle b = getIntent().getExtras();
-        if ( b != null && b.containsKey( SmartpushHitUtils.Fields.PUSH_ID.getParamName() ) ) {
-            Log.d( "SAMPLE", "Opened from push sent from SMARTPUSH" );
-
-//            // Tracking
-//            Smartpush.hit(
-//                    MainActivity.this,
-//                    SmartpushHitUtils.getValueFromPayload( SmartpushHitUtils.Fields.PUSH_ID, b ),
-//                    "MAIN", null, SmartpushHitUtils.Action.CLICKED, null);
-        }
+        // optional - Tracking :: Call this method always! if app was opened by push one event will
+        // be saved, if no nothing will happen.
+        Smartpush.hitClick( this, getIntent().getExtras() );
 
 //        //Tracking
 //        Smartpush.hit( this, null, "MAIN", null, "OPENED", null );

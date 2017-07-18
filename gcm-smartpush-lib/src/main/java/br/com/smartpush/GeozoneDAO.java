@@ -1,4 +1,4 @@
-package br.com.smartpush.g.model;
+package br.com.smartpush;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -8,10 +8,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import br.com.smartpush.Geozone;
+
 /**
  * Created by fabio.licks on 09/02/16.
  */
-public class GeozoneDAO {
+final class GeozoneDAO {
 
     public static final String TABLENAME = "GEOZONE";
 
@@ -53,5 +55,4 @@ public class GeozoneDAO {
 
         return row;
     }
-
 }

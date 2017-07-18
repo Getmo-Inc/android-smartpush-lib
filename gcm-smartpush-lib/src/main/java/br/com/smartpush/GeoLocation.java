@@ -1,4 +1,4 @@
-package br.com.smartpush.g.model;
+package br.com.smartpush;
 
 import android.database.Cursor;
 
@@ -8,13 +8,11 @@ import org.json.JSONObject;
 import java.util.Calendar;
 import java.util.TimeZone;
 
-import br.com.smartpush.u.SmartpushLog;
-import br.com.smartpush.u.SmartpushUtils;
 
 /**
  * Created by fabio.licks on 09/02/16.
  */
-public class Location {
+class GeoLocation {
 
     public static final String LAT   = "LAT";
     public static final String LNG   = "LNG";
@@ -24,7 +22,7 @@ public class Location {
     private double lng;
     private long  time; // timezone UTC (0)
 
-    public Location( double lat, double lng ) {
+    public GeoLocation(double lat, double lng ) {
         TimeZone timeZone = TimeZone.getTimeZone( "UTC" );
         Calendar calendar = Calendar.getInstance( timeZone );
         time = calendar.getTime().getTime() / 1000;
@@ -33,7 +31,7 @@ public class Location {
         this.lng = lng;
     }
 
-    public Location ( JSONObject o ) {
+    public GeoLocation(JSONObject o ) {
         try {
             if (o != null) {
                 lat = o.getDouble( LAT.toLowerCase() );
@@ -41,11 +39,11 @@ public class Location {
                 time = o.getLong( TIME.toLowerCase() );
             }
         } catch (JSONException e) {
-            SmartpushLog.getInstance( null ).e( SmartpushUtils.TAG, e.getMessage(), e );
+            SmartpushLog.e( Utils.TAG, e.getMessage(), e );
         }
     }
 
-    public Location ( Cursor cursor ) {
+    public GeoLocation(Cursor cursor ) {
         if ( cursor != null ) {
             lat = cursor.getDouble( cursor.getColumnIndex( LAT ) );
             lng = cursor.getDouble( cursor.getColumnIndex( LNG ) );
@@ -55,9 +53,7 @@ public class Location {
 
     @Override
     public String toString() {
-        return "{ \"lat\":" + lat +
-                ", \"lng\":" + lng +
-                ", \"time\":" + time + '}';
+        return "{ \"lat\":" + lat + ", \"lng\":" + lng + ", \"time\":" + time + '}';
     }
 
     public double getLat() {

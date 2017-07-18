@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.os.Bundle;
+import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -11,18 +13,11 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import java.util.ArrayList;
 import java.util.Date;
 
-import br.com.smartpush.e.SmartpushConfigurationsException;
-import br.com.smartpush.u.SmartpushHitUtils;
-import br.com.smartpush.u.SmartpushLog;
-import br.com.smartpush.u.SmartpushUtils;
-
-import static br.com.smartpush.u.SmartpushUtils.TAG;
-
 
 /**
  * Created by fabio.licks on 12/02/16.
  */
-public class Smartpush {
+public final class Smartpush {
 
     public static boolean blockPush( final Context context, final boolean block ) {
         if ( isRegistered( context ) ) {
@@ -98,6 +93,17 @@ public class Smartpush {
         }
     }
 
+    public static void hitClick( final Context context, Bundle bundle ) {
+        if ( isRegistered( context ) ) {
+            if ( bundle != null && bundle.containsKey( SmartpushHitUtils.Fields.PUSH_ID.getParamName() ) ) {
+                Log.d( Utils.TAG, "App opened from push sent by SMARTPUSH" );
+                SmartpushService.startActionTrackAction( context,
+                        SmartpushHitUtils.getValueFromPayload( SmartpushHitUtils.Fields.PUSH_ID, bundle ),
+                        "MAIN", null, SmartpushHitUtils.Action.CLICKED.name(), null );
+            }
+        }
+    }
+
     public static void hit( final Context context, String pushId, String screenName, String category, String action, String label ) {
         if ( isRegistered( context ) ) {
             SmartpushService.startActionTrackAction(context, pushId, screenName, category, action, label);
@@ -140,19 +146,19 @@ public class Smartpush {
     }
 
     private static boolean checkSmartpush(Context context) {
-        SmartpushLog.getInstance( context ).d( TAG, "checkSmartpush() : begin - Configurations tests : " + context.getPackageName() );
+        SmartpushLog.d( Utils.TAG, "checkSmartpush() : begin - Configurations tests : " + context.getPackageName() );
 
-        if ( SmartpushUtils.getSmartPushMetadata( context, SmartpushUtils.SMARTP_API_KEY) == null ) {
-            throw new SmartpushConfigurationsException(
-                    "Metadata not found! Add \"" + SmartpushUtils.SMARTP_API_KEY + "\" to your manifest file!" );
+        if ( Utils.Smartpush.getMetadata( context, Utils.Constants.SMARTP_API_KEY) == null ) {
+            throw new SmartpushException(
+                    "Metadata not found! Add \"" + Utils.Constants.SMARTP_API_KEY + "\" to your manifest file!" );
         }
 
-        if ( SmartpushUtils.getSmartPushMetadata( context, SmartpushUtils.SMARTP_APP_ID) == null ) {
-            throw new SmartpushConfigurationsException(
-                    "Metadata not found! Add \"" + SmartpushUtils.SMARTP_APP_ID + "\" to your manifest file!" );
+        if ( Utils.Smartpush.getMetadata( context, Utils.Constants.SMARTP_APP_ID) == null ) {
+            throw new SmartpushException(
+                    "Metadata not found! Add \"" + Utils.Constants.SMARTP_APP_ID + "\" to your manifest file!" );
         }
 
-        SmartpushLog.getInstance( context ).d( TAG, "checkSmartpush() : Metadata, pass!" );
+        SmartpushLog.d( Utils.TAG, "checkSmartpush() : Metadata, pass!" );
 
         try {
             PackageInfo packageInfo =
@@ -167,22 +173,22 @@ public class Smartpush {
                     ActivityInfo ac = activities[i];
 
                     if ( ac.screenOrientation != ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED ) {
-                        throw new SmartpushConfigurationsException(
+                        throw new SmartpushException(
                                 "[br.com.smartpush.SmartpushActivity] ScreenOrientation activity atribute found! Please, remove android:screenOrientation atribute from activity manifest tag!");
                     }
 
                     if ( ac.launchMode != ActivityInfo.LAUNCH_SINGLE_TASK ) {
-                        throw new SmartpushConfigurationsException(
+                        throw new SmartpushException(
                                 "[br.com.smartpush.SmartpushActivity] LaunchMode activity atribute not found! Add android:launchMode=\"singleTask\" to activity manifest tag!");
                     }
 
                     if ( ac.taskAffinity != null ) {
-                        throw new SmartpushConfigurationsException(
+                        throw new SmartpushException(
                                 "[br.com.smartpush.SmartpushActivity] TaskAffinity activity atribute is wrong! Please, set android:taskAffinity=\"\" to activity manifest tag!");
                     }
 
                     if ( ( ac.flags & ActivityInfo.FLAG_EXCLUDE_FROM_RECENTS ) != ActivityInfo.FLAG_EXCLUDE_FROM_RECENTS ) {
-                        throw new SmartpushConfigurationsException(
+                        throw new SmartpushException(
                                 "[br.com.smartpush.SmartpushActivity] ExcludeFromRecents activity atribute is wrong! Please, set android:excludeFromRecents=\"true\" to activity manifest tag!");
                     }
 
@@ -191,25 +197,25 @@ public class Smartpush {
             }
 
             if ( !found ) {
-                throw new SmartpushConfigurationsException(
+                throw new SmartpushException(
                         "Activity not found! Add \"br.com.smartpush.SmartpushActivity\" to your manifest file!");
             }
 
-            SmartpushLog.getInstance( context ).d( TAG, "checkSmartpush() : Activity, pass!" );
+            SmartpushLog.d( Utils.TAG, "checkSmartpush() : Activity, pass!" );
 
         } catch ( PackageManager.NameNotFoundException e ) {
             // should never happen
             throw new RuntimeException( "Could not get package name: " + e );
         }
 
-        SmartpushLog.getInstance( context ).d( TAG, "checkSmartpush() : end - Configurations tests : " + context.getPackageName() );
+        SmartpushLog.d( Utils.TAG, "checkSmartpush() : end - Configurations tests : " + context.getPackageName() );
 
         return true;
     }
 
     private static boolean isRegistered( Context context ) {
-        return ( SmartpushUtils.readFromPreferences( context, SmartpushUtils.SMARTP_REGID ) != null &&
-                 SmartpushUtils.readFromPreferences( context, SmartpushUtils.SMARTP_ALIAS ) != null &&
-                 SmartpushUtils.readFromPreferences( context, SmartpushUtils.SMARTP_HWID  ) != null ) ;
+        return ( Utils.PreferenceUtils.readFromPreferences( context, Utils.Constants.SMARTP_REGID ) != null &&
+                Utils.PreferenceUtils.readFromPreferences( context, Utils.Constants.SMARTP_ALIAS ) != null &&
+                Utils.PreferenceUtils.readFromPreferences( context, Utils.Constants.SMARTP_HWID  ) != null ) ;
     }
 }

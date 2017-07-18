@@ -5,7 +5,7 @@ import com.google.android.gms.iid.InstanceIDListenerService;
 /**
  * Created by fabio.licks on 09/02/16.
  */
-public class SmartpushIDListenerService extends InstanceIDListenerService {
+public final class SmartpushIDListenerService extends InstanceIDListenerService {
 
     /**
      * Called if InstanceID token is updated. This may occur if the security of

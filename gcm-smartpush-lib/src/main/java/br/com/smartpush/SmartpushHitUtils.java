@@ -1,4 +1,4 @@
-package br.com.smartpush.u;
+package br.com.smartpush;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -6,7 +6,7 @@ import android.os.Bundle;
 /**
  * Created by fabio.licks on 09/02/16.
  */
-public class SmartpushHitUtils {
+final class SmartpushHitUtils {
 
     private Context context;
 

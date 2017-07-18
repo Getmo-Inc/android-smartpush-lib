@@ -1,4 +1,4 @@
-package br.com.smartpush.u;
+package br.com.smartpush;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -10,7 +10,7 @@ import android.telephony.TelephonyManager;
  * @author fabio.licks
  *
  */
-public class SmartpushConnectivityUtil {
+final class SmartpushConnectivityUtil {
 
     /**
      * Get the network info

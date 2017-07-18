@@ -7,6 +7,25 @@
     android:gravity="center"
     tools:context="br.com.getmo.MainActivity">
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Switch
+            android:id="@+id/switch1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Push Notification ON "/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" OFF"
+            android:textColor="#000"/>
+
+    </LinearLayout>
+
     <TextView
         android:id="@+id/alias"
         android:layout_width="match_parent"
@@ -16,12 +35,5 @@
         android:background="#AACCCCCC"
         android:text="@string/wait"
         android:textSize="36sp"/>
-
-    <!--Button
-        android:layout_margin="10dp"
-        android:text="[UN]BLOCK PUSH"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="onClick"/-->
 
 </LinearLayout>

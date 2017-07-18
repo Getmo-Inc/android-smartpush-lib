@@ -1,4 +1,4 @@
-package br.com.smartpush.u;
+package br.com.smartpush;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -20,13 +20,12 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import br.com.smartpush.R;
 
 /**
  * Created by fabio.licks on 09/02/16.
  */
 
-public class SmartpushHttpClient {
+final class SmartpushHttpClient {
 
     public static final String HOST = "http://api.getmo.com.br/";
 
@@ -35,14 +34,14 @@ public class SmartpushHttpClient {
 
     private static String genURL( Context _c, String op, boolean silent ) {
         // Hack for Buscape Inc. - Adjust proxy for all request
-        String urlStr = SmartpushUtils.getSmartPushMetadata(_c, SmartpushUtils.SMARTP_PROXY);
+        String urlStr = Utils.Smartpush.getMetadata( _c, Utils.Constants.SMARTP_PROXY );
         urlStr = ( urlStr == null ) ? HOST : validateURL( urlStr );
         // Hack for Buscape Inc.
 
         urlStr += op;
 
         if ( !silent )
-            SmartpushLog.getInstance( _c ).d( SmartpushUtils.TAG, "url : " + urlStr );
+            SmartpushLog.d( Utils.TAG, "url : " + urlStr );
 
         return urlStr;
     }
@@ -51,7 +50,7 @@ public class SmartpushHttpClient {
         try {
             return post( op, getQueryString( params ), "application/x-www-form-urlencoded", _c, silent );
         } catch ( UnsupportedEncodingException e ) {
-            SmartpushLog.getInstance( _c ).e( SmartpushUtils.TAG, e.getMessage(), e);
+            SmartpushLog.e( Utils.TAG, e.getMessage(), e);
         }
         return null;
     }
@@ -74,8 +73,8 @@ public class SmartpushHttpClient {
             conn.setDoOutput(true);
 
             if ( !silent ) {
-                SmartpushLog.getInstance(_c).d(SmartpushUtils.TAG, "method: POST");
-                SmartpushLog.getInstance(_c).d(SmartpushUtils.TAG, "params : " + params);
+                SmartpushLog.d( Utils.TAG, "method: POST");
+                SmartpushLog.d( Utils.TAG, "params : " + params);
             }
 
             // set params
@@ -95,7 +94,7 @@ public class SmartpushHttpClient {
             }
 
             if ( !silent )
-                SmartpushLog.getInstance( _c ).d( SmartpushUtils.TAG, "rsp : " + response.toString() );
+                SmartpushLog.d( Utils.TAG, "rsp : " + response.toString() );
 
             br.close();
             conn.disconnect();
@@ -103,7 +102,7 @@ public class SmartpushHttpClient {
             return response.toString();
 
         } catch ( Exception e ) {
-            SmartpushLog.getInstance( _c ).e( SmartpushUtils.TAG, e.getMessage(), e );
+            SmartpushLog.e( Utils.TAG, e.getMessage(), e );
         }
 
         return null;
@@ -118,8 +117,8 @@ public class SmartpushHttpClient {
             String qs = ( params != null ) ? "?" + getQueryString( params ) : "";
             URL url = new URL( genURL( _c, op, false ) + qs );
 
-            SmartpushLog.getInstance( _c ).d( SmartpushUtils.TAG, "method: GET" );
-            SmartpushLog.getInstance( _c ).d( SmartpushUtils.TAG, "params : " + qs );
+            SmartpushLog.d( Utils.TAG, "method: GET" );
+            SmartpushLog.d( Utils.TAG, "params : " + qs );
 
             HttpURLConnection conn = ( HttpURLConnection ) url.openConnection();
             conn.setRequestProperty( "User-Agent", genUserAgent( _c ) );
@@ -133,14 +132,14 @@ public class SmartpushHttpClient {
                 response.append(line);
             }
 
-            SmartpushLog.getInstance( _c ).d(SmartpushUtils.TAG, "rsp : " + response.toString());
+            SmartpushLog.d( Utils.TAG, "rsp : " + response.toString());
 
             br.close();
             conn.disconnect();
 
             return response.toString();
         } catch ( IOException e ) {
-            SmartpushLog.getInstance( _c ).e( SmartpushUtils.TAG, e.getMessage(), e );
+            SmartpushLog.e( Utils.TAG, e.getMessage(), e );
         }
 
         return null;
@@ -171,7 +170,7 @@ public class SmartpushHttpClient {
 
             return response.toString();
         } catch ( IOException e ) {
-            SmartpushLog.getInstance( _c ).e( SmartpushUtils.TAG, e.getMessage(), e );
+            SmartpushLog.e( Utils.TAG, e.getMessage(), e );
         }
 
         return null;

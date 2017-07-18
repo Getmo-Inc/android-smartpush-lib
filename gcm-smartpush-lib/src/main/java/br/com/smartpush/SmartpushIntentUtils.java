@@ -1,4 +1,4 @@
-package br.com.smartpush.u;
+package br.com.smartpush;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * Created by fabio.licks on 10/02/16.
  */
-public class SmartpushIntentUtils {
+class SmartpushIntentUtils {
 
     /**
      * Open app page at Google Play. If Play Store application isn't available on the device

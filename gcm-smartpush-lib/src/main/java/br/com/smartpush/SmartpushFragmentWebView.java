@@ -1,4 +1,4 @@
-package br.com.smartpush.f;
+package br.com.smartpush;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -19,14 +19,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import br.com.smartpush.R;
-import br.com.smartpush.SmartpushListenerService;
-import br.com.smartpush.u.SmartpushHttpClient;
-
 /**
  * Created by fabio.licks on 02/09/15.
  */
-public class WebViewFragment extends Fragment {
+class SmartpushFragmentWebView extends Fragment {
 
     private ProgressBar progress;
     private WebView      webview;
@@ -83,7 +79,7 @@ public class WebViewFragment extends Fragment {
 
         webview.setWebChromeClient( new WebChromeClient() {
             public void onProgressChanged( WebView view, int progress ) {
-                WebViewFragment.this.setValue( progress );
+                SmartpushFragmentWebView.this.setValue( progress );
             }
         } );
 

@@ -24,22 +24,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
-import br.com.smartpush.g.model.Geozone;
-import br.com.smartpush.g.model.GeozoneDAO;
-import br.com.smartpush.g.model.Location;
-import br.com.smartpush.g.model.LocationDAO;
-import br.com.smartpush.g.model.OpenDBHelper;
-import br.com.smartpush.g.model.Overpass;
-import br.com.smartpush.g.rest.GeoRequest;
-import br.com.smartpush.g.rest.GeoResponse;
-import br.com.smartpush.u.SmartpushConnectivityUtil;
-import br.com.smartpush.u.SmartpushHitUtils;
-import br.com.smartpush.u.SmartpushHttpClient;
-import br.com.smartpush.u.SmartpushLog;
-import br.com.smartpush.u.SmartpushUtils;
-
-import static br.com.smartpush.u.SmartpushUtils.SMARTP_LOCATION_HASH;
-import static br.com.smartpush.u.SmartpushUtils.TAG;
+import static br.com.smartpush.Utils.Constants.SMARTP_LOCATION_HASH;
+import static br.com.smartpush.Utils.TAG;
 
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
@@ -395,13 +381,13 @@ public class SmartpushService extends IntentService {
             String token = instanceID.getToken(
                     PLAY_SERVICE_INTERNAL_PROJECT_ID, GoogleCloudMessaging.INSTANCE_ID_SCOPE, null );
             // [END get_token]
-            SmartpushLog.getInstance( getApplicationContext() ).d( TAG, "GCM Registration Token: " + token );
+            SmartpushLog.d( TAG, "GCM Registration Token: " + token );
 
             result = sendRegistrationToServer( token );
 
             // [END register_for_gcm]
         } catch ( Exception e ) {
-            SmartpushLog.getInstance( getApplicationContext() ).e( TAG, "Failed to complete token refresh - " + e.getMessage(), e );
+            SmartpushLog.e( TAG, "Failed to complete token refresh - " + e.getMessage(), e );
         }
 
         // Notify UI that registration has completed, so the progress indicator can be hidden.
@@ -444,10 +430,10 @@ public class SmartpushService extends IntentService {
     private void handleActionSetOrDeleteTag( Intent data ) {
         HashMap<String, String> params = new HashMap<>();
 
-        params.put( "uuid",  SmartpushUtils.readFromPreferences( this, SmartpushUtils.SMARTP_HWID ) );
-        params.put( "appid", SmartpushUtils.getSmartPushMetadata( this, SmartpushUtils.SMARTP_APP_ID ) );
-        params.put( "devid", SmartpushUtils.getSmartPushMetadata( this, SmartpushUtils.SMARTP_API_KEY ) );
-        params.put( "regid", SmartpushUtils.readFromPreferences( this, SmartpushUtils.SMARTP_REGID ) );
+        params.put( "uuid",  Utils.PreferenceUtils.readFromPreferences( this, Utils.Constants.SMARTP_HWID ) );
+        params.put( "appid", Utils.Smartpush.getMetadata( this, Utils.Constants.SMARTP_APP_ID ) );
+        params.put( "devid", Utils.Smartpush.getMetadata( this, Utils.Constants.SMARTP_API_KEY ) );
+        params.put( "regid", Utils.PreferenceUtils.readFromPreferences( this, Utils.Constants.SMARTP_REGID ) );
 
         // tag info
         params.put( "key", data.getStringExtra( EXTRA_KEY ) );
@@ -476,10 +462,10 @@ public class SmartpushService extends IntentService {
     private void handleActionBlockPush( Intent data ) {
         HashMap<String, String> params = new HashMap<String, String>();
 
-        params.put( "uuid",  SmartpushUtils.readFromPreferences(this, SmartpushUtils.SMARTP_HWID) );
-        params.put( "appid", SmartpushUtils.getSmartPushMetadata( this, SmartpushUtils.SMARTP_APP_ID ) );
-        params.put( "devid", SmartpushUtils.getSmartPushMetadata( this, SmartpushUtils.SMARTP_API_KEY ) );
-        params.put( "regid", SmartpushUtils.readFromPreferences( this, SmartpushUtils.SMARTP_REGID ) );
+        params.put( "uuid",  Utils.PreferenceUtils.readFromPreferences(this, Utils.Constants.SMARTP_HWID) );
+        params.put( "appid", Utils.Smartpush.getMetadata( this, Utils.Constants.SMARTP_APP_ID ) );
+        params.put( "devid", Utils.Smartpush.getMetadata( this, Utils.Constants.SMARTP_API_KEY ) );
+        params.put( "regid", Utils.PreferenceUtils.readFromPreferences( this, Utils.Constants.SMARTP_REGID ) );
 
         // tag info
         params.put( "_method", "PUT" );
@@ -495,10 +481,10 @@ public class SmartpushService extends IntentService {
     private void handleActionGetDeviceUserInfo( Intent data ) {
         HashMap<String, String> params = new HashMap<String, String>();
 
-        params.put( "uuid",  SmartpushUtils.readFromPreferences ( this, SmartpushUtils.SMARTP_HWID ) );
-        params.put( "appid", SmartpushUtils.getSmartPushMetadata( this, SmartpushUtils.SMARTP_APP_ID ) );
-        params.put( "devid", SmartpushUtils.getSmartPushMetadata( this, SmartpushUtils.SMARTP_API_KEY ) );
-        params.put( "regid", SmartpushUtils.readFromPreferences( this, SmartpushUtils.SMARTP_REGID ) );
+        params.put( "uuid",  Utils.PreferenceUtils.readFromPreferences ( this, Utils.Constants.SMARTP_HWID ) );
+        params.put( "appid", Utils.Smartpush.getMetadata( this, Utils.Constants.SMARTP_APP_ID ) );
+        params.put( "devid", Utils.Smartpush.getMetadata( this, Utils.Constants.SMARTP_API_KEY ) );
+        params.put( "regid", Utils.PreferenceUtils.readFromPreferences( this, Utils.Constants.SMARTP_REGID ) );
 
         String resp  = SmartpushHttpClient.get( "device", params, this );
 
@@ -516,7 +502,7 @@ public class SmartpushService extends IntentService {
             }
 
         } catch ( JSONException e ) {
-            SmartpushLog.getInstance( getApplicationContext() ).e( TAG, e.getMessage(), e) ;
+            SmartpushLog.e( TAG, e.getMessage(), e) ;
         }
 
         LocalBroadcastManager.getInstance( this ).sendBroadcast(it);
@@ -532,22 +518,22 @@ public class SmartpushService extends IntentService {
         boolean firstPoint = false;
 
         // Current location...
-        Location currentLocation = new Location( lat, lng );
+        GeoLocation currentLocation = new GeoLocation( lat, lng );
 
-        SmartpushLog.getInstance( getApplicationContext() ).d( TAG, "geo : [current] : " + currentLocation.toString() );
+        SmartpushLog.d( TAG, "geo : [current] : " + currentLocation.toString() );
 
         // Obtem acesso ao banco de dados
-        SQLiteDatabase db = new OpenDBHelper( this ).getWritableDatabase();
+        SQLiteDatabase db = new DBOpenerHelper( this ).getWritableDatabase();
 
         // Recupera a localização salva no último envio...
-        ArrayList<Location> locations = (ArrayList<Location>) LocationDAO.listAll( db );
+        ArrayList<GeoLocation> locations = (ArrayList<GeoLocation>) GeoLocationDAO.listAll( db );
         if ( locations.size() == 0 ) {
-            LocationDAO.save( db, currentLocation );
+            GeoLocationDAO.save( db, currentLocation );
             firstPoint = true;
         }
 
         // Verifica se atravessou alguma geofence...
-        Overpass overpassed =
+        GeoOverpass overpassed =
                 Geozone.overpassed(
                         currentLocation.getLat(),
                         currentLocation.getLng(),
@@ -556,12 +542,12 @@ public class SmartpushService extends IntentService {
         boolean wantSend;
 
         if ( overpassed == null ) {
-            SmartpushLog.getInstance( getApplicationContext() ).d( TAG, "geo : [overpassed] : [false]" );
+            SmartpushLog.d( TAG, "geo : [overpassed] : [false]" );
 
             // Não atravessou nenhuma geozone, então ...
-            Location oldLocation = ( locations.size() > 0 ) ? locations.get( 0 ) : currentLocation;
+            GeoLocation oldLocation = ( locations.size() > 0 ) ? locations.get( 0 ) : currentLocation;
 
-            SmartpushLog.getInstance( getApplicationContext() ).d( TAG, "geo : [old] : " + oldLocation.toString() );
+            SmartpushLog.d( TAG, "geo : [old] : " + oldLocation.toString() );
 
             double distance =
                     Geozone.distance(
@@ -570,13 +556,12 @@ public class SmartpushService extends IntentService {
 
             // Testa se distancia do pto atual em relaçao ao ultimo ponto enviado é maior
             // que 1.000 mts, ou se deve enviar IMEDIATAMENTE para o backend do SMARTPUSH!
-            wantSend = ( firstPoint || distance > 1.0 || SmartpushUtils.SMARTP_LOCATIONUPDT_IMMEDIATELY
-                           .equals( SmartpushUtils.getSmartPushMetadata(
-                                   this, SmartpushUtils.SMARTP_LOCATIONUPDT ) ) );
+            wantSend = ( firstPoint || distance > 1.0 || Utils.Constants.SMARTP_LOCATIONUPDT_IMMEDIATELY
+                           .equals( Utils.Smartpush.getMetadata(this, Utils.Constants.SMARTP_LOCATIONUPDT ) ) );
 
         } else {
-            SmartpushLog.getInstance( getApplicationContext() ).d( TAG, "geo : [overpassed] : [true]" );
-            SmartpushLog.getInstance( getApplicationContext() ).d( TAG, "geo : [overpassed] : " + overpassed.toString() );
+            SmartpushLog.d( TAG, "geo : [overpassed] : [true]" );
+            SmartpushLog.d( TAG, "geo : [overpassed] : " + overpassed.toString() );
 
             // Atravessou uma geofence, então envia imediatamente!
             wantSend = true;
@@ -586,7 +571,7 @@ public class SmartpushService extends IntentService {
             // Cria a request!
             GeoRequest req =
                     new GeoRequest(
-                            this, SmartpushUtils.readFromPreferences( this, SMARTP_LOCATION_HASH, "(null)" ) );
+                            this, Utils.PreferenceUtils.readFromPreferences( this, SMARTP_LOCATION_HASH, "(null)" ) );
 
             // Inicializa a lista de pontos com apenas o último ponto lido
             locations.clear();
@@ -607,8 +592,8 @@ public class SmartpushService extends IntentService {
 
                 if ( addresses != null && addresses.size() > 0 ) {
                     Address geoReverse = addresses.get(0);
-                    br.com.smartpush.g.model.Address address =
-                            new br.com.smartpush.g.model.Address(
+                    GeoAddress address =
+                            new GeoAddress(
                                     geoReverse.getCountryCode(),
                                     geoReverse.getCountryName(),
                                     geoReverse.getAdminArea(),
@@ -619,7 +604,7 @@ public class SmartpushService extends IntentService {
                     req.setInfo( address );
                 }
             } catch ( Exception e ) {
-                SmartpushLog.getInstance( getApplicationContext() ).e( TAG, e.getMessage(), e );
+                SmartpushLog.e( TAG, e.getMessage(), e );
             }
 
             // Atualiza o backend, e então o device!
@@ -630,12 +615,12 @@ public class SmartpushService extends IntentService {
                     GeoResponse resp = new GeoResponse( new JSONObject( response ) );
 
                     // Exclui todas as localizações salvas no dispositivo!
-                    LocationDAO.deleteAll( db );
+                    GeoLocationDAO.deleteAll( db );
 
                     // Salva a nova última localização enviada ao backend
-                    LocationDAO.save( db, currentLocation );
+                    GeoLocationDAO.save( db, currentLocation );
 
-                    SmartpushUtils.saveOnPreferences( this, SMARTP_LOCATION_HASH, resp.hash );
+                    Utils.PreferenceUtils.saveOnPreferences( this, SMARTP_LOCATION_HASH, resp.hash );
 
                     if ( resp.geozones != null ) {
                         // Exclui todas as geozones salvas no dispositivo!
@@ -647,7 +632,7 @@ public class SmartpushService extends IntentService {
                 }
 
             } catch ( Exception e ) {
-                SmartpushLog.getInstance( getApplicationContext() ).e( TAG, e.getMessage(), e );
+                SmartpushLog.e( TAG, e.getMessage(), e );
             }
 
         }
@@ -665,62 +650,47 @@ public class SmartpushService extends IntentService {
     private SmartpushDeviceInfo sendRegistrationToServer( String token ) {
 
         if ( token == null || "".equals( token ) ) {
-            SmartpushLog.getInstance( getApplicationContext() ).d( TAG, "GCM Registration Token: Fail!" );
+            SmartpushLog.d( TAG, "GCM Registration Token: Fail!" );
             return null;
         }
 
         SmartpushDeviceInfo deviceInfo = new SmartpushDeviceInfo( token );
 
-//        if ( token.equals( SmartpushUtils.readFromPreferences( this, SmartpushUtils.SMARTP_REGID ) ) ) {
-//            // Já registrado, retorna com dados locais...
-//            deviceInfo.alias = SmartpushUtils.readFromPreferences( this, SmartpushUtils.SMARTP_ALIAS );
-//            deviceInfo.hwId  = SmartpushUtils.readFromPreferences( this, SmartpushUtils.SMARTP_HWID );
-//            return deviceInfo;
-//        } else {
-//            // Novo registro, ou atualizacao...
-//            SmartpushUtils.deleteFromPreferences( this, SmartpushUtils.SMARTP_REGID );
-//            SmartpushUtils.deleteFromPreferences( this, SmartpushUtils.SMARTP_ALIAS );
-//            SmartpushUtils.deleteFromPreferences( this, SmartpushUtils.SMARTP_HWID );
-//        }
-
         HashMap<String, String> params = new HashMap<>();
 
-        params.put( "uuid",  SmartpushUtils.readFromPreferences ( this, SmartpushUtils.SMARTP_HWID ) );
-        params.put( "appid", SmartpushUtils.getSmartPushMetadata( this, SmartpushUtils.SMARTP_APP_ID ) );
-        params.put( "devid", SmartpushUtils.getSmartPushMetadata( this, SmartpushUtils.SMARTP_API_KEY ) );
+        params.put( "uuid",  Utils.PreferenceUtils.readFromPreferences ( this, Utils.Constants.SMARTP_HWID ) );
+        params.put( "appid", Utils.Smartpush.getMetadata( this, Utils.Constants.SMARTP_APP_ID ) );
+        params.put( "devid", Utils.Smartpush.getMetadata( this, Utils.Constants.SMARTP_API_KEY ) );
         params.put( "regid", token );
 
         // device info
-        params.put( "device", SmartpushUtils.getDeviceName());
-        params.put( "manufacturer", SmartpushUtils.getDeviceManufacturer());
+        params.put( "device", Utils.DeviceUtils.getDeviceName());
+        params.put( "manufacturer", Utils.DeviceUtils.getDeviceManufacturer());
 //        params.put( "latlong", "0,0");
         params.put( "framework", Build.VERSION.RELEASE);
         params.put( "platformId", "ANDROID" );
 
         try {
             JSONObject device = new JSONObject( SmartpushHttpClient.post( "device", params, this, false ) );
-            SmartpushLog.getInstance( getApplicationContext() ).d( SmartpushUtils.TAG, device.toString( 4 ) );
+            SmartpushLog.d( TAG, device.toString( 4 ) );
 
             if ( device.has( "alias" ) ) {
                 deviceInfo.alias = device.getString( "alias" );
-                SmartpushUtils
-                        .saveOnPreferences(
-                                this, SmartpushUtils.SMARTP_ALIAS, deviceInfo.alias );
+                Utils.PreferenceUtils.saveOnPreferences(
+                                this, Utils.Constants.SMARTP_ALIAS, deviceInfo.alias );
             }
 
             if ( device.has( "hwid" ) ) {
                 deviceInfo.hwId = device.getString( "hwid" );
-                SmartpushUtils
-                        .saveOnPreferences(
-                                this, SmartpushUtils.SMARTP_HWID, deviceInfo.hwId );
+                Utils.PreferenceUtils.saveOnPreferences(
+                                this, Utils.Constants.SMARTP_HWID, deviceInfo.hwId );
             }
 
-            SmartpushUtils
-                    .saveOnPreferences(
-                            this, SmartpushUtils.SMARTP_REGID, deviceInfo.regId );
+            Utils.PreferenceUtils.saveOnPreferences(
+                            this, Utils.Constants.SMARTP_REGID, deviceInfo.regId );
 
         } catch( JSONException e ) {
-            SmartpushLog.getInstance( getApplicationContext() ).e( SmartpushUtils.TAG, e.getMessage(), e );
+            SmartpushLog.e( TAG, e.getMessage(), e );
         }
 
         return deviceInfo;
@@ -729,11 +699,11 @@ public class SmartpushService extends IntentService {
     private void handleActionTrackAction( Intent data ) {
         // TODO implements
         HashMap<String,String> fields = new HashMap<>();
-        fields.put( "uuid", SmartpushUtils.readFromPreferences( this, SmartpushUtils.SMARTP_HWID ) );
+        fields.put( "uuid", Utils.PreferenceUtils.readFromPreferences( this, Utils.Constants.SMARTP_HWID ) );
 //        fields.put( "latlong", "0,0" );
-        fields.put( "appid", SmartpushUtils.getSmartPushMetadata(this, SmartpushUtils.SMARTP_APP_ID) );
-        fields.put( "devid", SmartpushUtils.getSmartPushMetadata( this, SmartpushUtils.SMARTP_API_KEY ) );
-        fields.put( "regid", SmartpushUtils.readFromPreferences( this, SmartpushUtils.SMARTP_REGID ) );
+        fields.put( "appid", Utils.Smartpush.getMetadata(this, Utils.Constants.SMARTP_APP_ID) );
+        fields.put( "devid", Utils.Smartpush.getMetadata( this, Utils.Constants.SMARTP_API_KEY ) );
+        fields.put( "regid", Utils.PreferenceUtils.readFromPreferences( this, Utils.Constants.SMARTP_REGID ) );
         fields.put( "framework", Build.VERSION.RELEASE );
         fields.put( "sdk_v", getString(R.string.smartp_version) );
         fields.put( "plataformId", "ANDROID" );

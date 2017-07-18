@@ -6,10 +6,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 
-import br.com.smartpush.f.VideoPlayerFragment;
-import br.com.smartpush.f.WebViewFragment;
-import br.com.smartpush.u.SmartpushHitUtils;
-import br.com.smartpush.u.SmartpushUtils;
 
 public final class SmartpushActivity extends AppCompatActivity {
 
@@ -23,7 +19,7 @@ public final class SmartpushActivity extends AppCompatActivity {
         super.onCreate( savedInstanceState );
 
         // (un)lock screen orientation!
-        if ( !getIntent().hasExtra( SmartpushUtils.ONLY_PORTRAIT ) ) {
+        if ( !getIntent().hasExtra( Utils.Constants.ONLY_PORTRAIT ) ) {
             setRequestedOrientation( ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED );
         } else {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -45,7 +41,7 @@ public final class SmartpushActivity extends AppCompatActivity {
             // Create a new Fragment to be placed in the activity layout
             current =
                     getIntent().hasExtra( SmartpushListenerService.VIDEO_URI )
-                            ? new VideoPlayerFragment() : new WebViewFragment();
+                            ? new SmartpushFragmentVideoPlayer() : new SmartpushFragmentWebView();
 
             // In case this activity was started with special instructions from an
             // Intent, pass the Intent's extras to the fragment as arguments
@@ -59,7 +55,7 @@ public final class SmartpushActivity extends AppCompatActivity {
             if ( extras != null && !"".equals( pushId ) ) {
 
                 SmartpushHitUtils.Action action =
-                        ( extras.containsKey( SmartpushUtils.REDIRECTED ) )
+                        ( extras.containsKey( Utils.Constants.REDIRECTED ) )
                                 ? SmartpushHitUtils.Action.REDIRECTED : SmartpushHitUtils.Action.CLICKED;
 
                 Smartpush.hit(this, pushId, null, null, action, null);
@@ -80,7 +76,7 @@ public final class SmartpushActivity extends AppCompatActivity {
         setIntent( intent );
 
         // (un)lock screen orientation!
-        if ( !intent.hasExtra( SmartpushUtils.ONLY_PORTRAIT ) ) {
+        if ( !intent.hasExtra( Utils.Constants.ONLY_PORTRAIT ) ) {
             setRequestedOrientation( ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED );
         } else {
             setRequestedOrientation( ActivityInfo.SCREEN_ORIENTATION_PORTRAIT );
@@ -89,7 +85,7 @@ public final class SmartpushActivity extends AppCompatActivity {
         // Create a new Fragment to be placed in the activity layout
         current =
                 intent.hasExtra( SmartpushListenerService.VIDEO_URI )
-                        ? new VideoPlayerFragment() : new WebViewFragment();
+                        ? new SmartpushFragmentVideoPlayer() : new SmartpushFragmentWebView();
 
         // In case this activity was started with special instructions from an
         // Intent, pass the Intent's extras to the fragment as arguments
@@ -102,7 +98,7 @@ public final class SmartpushActivity extends AppCompatActivity {
 
         if ( extras != null && !"".equals( pushId ) ) {
             SmartpushHitUtils.Action action =
-                    ( extras.containsKey( SmartpushUtils.REDIRECTED ) )
+                    ( extras.containsKey( Utils.Constants.REDIRECTED ) )
                             ? SmartpushHitUtils.Action.REDIRECTED : SmartpushHitUtils.Action.CLICKED;
 
             Smartpush.hit( this, pushId, null, null, action, null );
@@ -117,7 +113,7 @@ public final class SmartpushActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
 
-        if ( current instanceof VideoPlayerFragment ) {
+        if ( current instanceof SmartpushFragmentVideoPlayer) {
             // Tracking
             String pushId =
                     SmartpushHitUtils.getValueFromPayload(

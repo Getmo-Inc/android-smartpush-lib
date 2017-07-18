@@ -1,4 +1,4 @@
-package br.com.smartpush.u;
+package br.com.smartpush;
 
 import android.annotation.TargetApi;
 import android.os.AsyncTask;

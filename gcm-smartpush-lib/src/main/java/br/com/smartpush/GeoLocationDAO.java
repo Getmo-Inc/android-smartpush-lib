@@ -1,4 +1,4 @@
-package br.com.smartpush.g.model;
+package br.com.smartpush;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -7,17 +7,19 @@ import android.database.sqlite.SQLiteDatabase;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.com.smartpush.GeoLocation;
+
 /**
  * Created by fabio.licks on 09/02/16.
  */
-public class LocationDAO {
+final class GeoLocationDAO {
     public static final String TABLENAME = "LOCATION";
 
     public static int deleteAll( SQLiteDatabase db ) {
         return db.delete( TABLENAME, null, null );
     }
 
-    public static int save( SQLiteDatabase db, Location data ) {
+    public static int save( SQLiteDatabase db, GeoLocation data ) {
         if ( data != null ) {
             db.insert( TABLENAME, null, getContentValue( data ) );
             return 1;
@@ -25,23 +27,23 @@ public class LocationDAO {
         return 0;
     }
 
-    public static List<Location> listAll( SQLiteDatabase db ) {
-        ArrayList<Location> list = new ArrayList<>();
+    public static List<GeoLocation> listAll(SQLiteDatabase db ) {
+        ArrayList<GeoLocation> list = new ArrayList<>();
         Cursor cursor = db.query(
-                TABLENAME, new String[]{ Location.LAT, Location.LNG, Location.TIME }, null, null, null, null, null );
+                TABLENAME, new String[]{ GeoLocation.LAT, GeoLocation.LNG, GeoLocation.TIME }, null, null, null, null, null );
 
         while ( cursor != null && cursor.moveToNext() ) {
-            list.add( new Location( cursor ) );
+            list.add( new GeoLocation( cursor ) );
         }
 
         return list;
     }
 
-    private static ContentValues getContentValue( Location location ) {
+    private static ContentValues getContentValue( GeoLocation location ) {
         ContentValues row = new ContentValues();
-        row.put( Location.LAT, location.getLat() );
-        row.put( Location.LNG, location.getLng() );
-        row.put( Location.TIME, location.getTime() );
+        row.put( GeoLocation.LAT, location.getLat() );
+        row.put( GeoLocation.LNG, location.getLng() );
+        row.put( GeoLocation.TIME, location.getTime() );
 
         return row;
     }

@@ -1,12 +1,10 @@
-package br.com.smartpush.g.model;
+package br.com.smartpush;
 
-import br.com.smartpush.u.SmartpushLog;
-import br.com.smartpush.u.SmartpushUtils;
 
 /**
  * Created by fabio.licks on 09/02/16.
  */
-public class Address {
+final class GeoAddress {
 
     public String countryCode;
     public String country;
@@ -14,16 +12,16 @@ public class Address {
     public String city;
     public String neighborhood;
 
-    public Address() { }
+    public GeoAddress() { }
 
-    public Address( String countryCode, String country, String state, String city, String neighborhood ) {
+    public GeoAddress(String countryCode, String country, String state, String city, String neighborhood ) {
         this.countryCode = countryCode;
         this.country = country;
         this.state = state;
         this.city = city;
         this.neighborhood = neighborhood;
 
-        SmartpushLog.getInstance( null ).d( SmartpushUtils.TAG, toString() );
+        SmartpushLog.d( Utils.TAG, toString() );
     }
 
     @Override

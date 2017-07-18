@@ -1,4 +1,4 @@
-package br.com.smartpush.g.model;
+package br.com.smartpush;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 /**
  * Created by fabio.licks on 09/02/16.
  */
-public class OpenDBHelper  extends SQLiteOpenHelper {
+final class DBOpenerHelper extends SQLiteOpenHelper {
 
     private static final int VERSION = 1;
     private static final String DATABASE_NAME = "SMARTPUSH";
@@ -32,7 +32,7 @@ public class OpenDBHelper  extends SQLiteOpenHelper {
             "DROP TABLE IF EXISTS LOCATION;"
     };
 
-    public OpenDBHelper( Context context ) {
+    public DBOpenerHelper(Context context ) {
         super(context, DATABASE_NAME, null, VERSION );
     }
 
