@@ -1,14 +1,15 @@
 package br.com.smartpush;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
@@ -20,6 +21,8 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import static android.content.ContentValues.TAG;
+
 
 /**
  * Created by fabio.licks on 09/02/16.
@@ -29,8 +32,8 @@ final class SmartpushHttpClient {
 
     public static final String HOST = "http://api.getmo.com.br/";
 
-    private static final int MAX_ATTEMPTS = 5;
-    private static final int BACKOFF_MILLI_SECONDS = 2000;
+//    private static final int MAX_ATTEMPTS = 5;
+//    private static final int BACKOFF_MILLI_SECONDS = 2000;
 
     private static String genURL( Context _c, String op, boolean silent ) {
         // Hack for Buscape Inc. - Adjust proxy for all request
@@ -237,16 +240,45 @@ final class SmartpushHttpClient {
         }
     }
 
-    public static Bitmap loadBitmap( String urlpath ) throws MalformedURLException, IOException {
-//		BitmapDrawable bitmapDrawable =
-//          new BitmapDrawable( BitmapFactory.decodeStream( new URL( url ).openStream() ) );
-//		return bitmapDrawable.getBitmap();
-        if ( urlpath == null ) return null;
+    public static void downloadFile( Context context, String fileURL, String key ) throws IOException {
+        final int BUFFER_SIZE = 4096;
 
-        URL url = new URL( urlpath );
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setDoInput( true );
-        connection.connect();
-        return BitmapFactory.decodeStream(connection.getInputStream());
+        URL url = new URL( fileURL );
+        HttpURLConnection httpConn = ( HttpURLConnection ) url.openConnection();
+        int responseCode = httpConn.getResponseCode();
+
+        // always check HTTP response code first
+        if ( responseCode == HttpURLConnection.HTTP_OK ) {
+            // opens input stream from the HTTP connection
+            InputStream inputStream = httpConn.getInputStream();
+
+            File fOut = CacheManager.getInstance( context ).getFile( key );//
+
+            // opens an output stream to save into file
+            FileOutputStream outputStream = new FileOutputStream( fOut );
+
+            try {
+                int bytesRead = -1;
+                byte[] buffer = new byte[BUFFER_SIZE];
+                while ((bytesRead = inputStream.read(buffer)) != -1) {
+                    outputStream.write(buffer, 0, bytesRead);
+                }
+            } catch( IOException e ) {
+                SmartpushLog.e( TAG, e.getMessage(), e );
+                SmartpushLog.d( TAG, "Removing file :: " + fOut.getName() );
+                fOut.delete();
+                SmartpushLog.d( TAG, "File removed :: " + fOut.getName() );
+                throw e;
+            }
+
+            outputStream.close();
+            inputStream.close();
+
+            SmartpushLog.d( TAG,"File downloaded :: " + fOut.length() );
+        } else {
+            SmartpushLog.d( TAG, "No file to download. Server replied HTTP code: " + responseCode );
+        }
+
+        httpConn.disconnect();
     }
 }

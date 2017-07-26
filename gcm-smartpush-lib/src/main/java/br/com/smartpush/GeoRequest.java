@@ -34,25 +34,25 @@ final class GeoRequest {
         }
     }
 
-    public String getDevid() {
-        return devid;
-    }
-
-    public String getAppid() {
-        return appid;
-    }
-
-    public String getHwid() {
-        return hwid;
-    }
-
-    public String getHash() {
-        return hash;
-    }
-
-    public void setHash( String hash ) {
-        this.hash = hash;
-    }
+//    public String getDevid() {
+//        return devid;
+//    }
+//
+//    public String getAppid() {
+//        return appid;
+//    }
+//
+//    public String getHwid() {
+//        return hwid;
+//    }
+//
+//    public String getHash() {
+//        return hash;
+//    }
+//
+//    public void setHash( String hash ) {
+//        this.hash = hash;
+//    }
 
     public GeoAddress getInfo() {
         return info;
@@ -62,17 +62,17 @@ final class GeoRequest {
         this.info = info;
     }
 
-    public ArrayList<GeoLocation> getLocations() {
-        return locations;
-    }
+//    public ArrayList<GeoLocation> getLocations() {
+//        return locations;
+//    }
 
     public void setLocations( ArrayList<GeoLocation> locations ) {
         this.locations = locations;
     }
 
-    public GeoOverpass getOverpass() {
-        return overpass;
-    }
+//    public GeoOverpass getOverpass() {
+//        return overpass;
+//    }
 
     public void setOverpass( GeoOverpass overpass ) {
         this.overpass = overpass;

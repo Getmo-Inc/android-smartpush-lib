@@ -5,7 +5,6 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -96,7 +95,7 @@ public final class Smartpush {
     public static void hitClick( final Context context, Bundle bundle ) {
         if ( isRegistered( context ) ) {
             if ( bundle != null && bundle.containsKey( SmartpushHitUtils.Fields.PUSH_ID.getParamName() ) ) {
-                Log.d( Utils.TAG, "App opened from push sent by SMARTPUSH" );
+                SmartpushLog.d( Utils.TAG, "App opened from push sent by SMARTPUSH" );
                 SmartpushService.startActionTrackAction( context,
                         SmartpushHitUtils.getValueFromPayload( SmartpushHitUtils.Fields.PUSH_ID, bundle ),
                         "MAIN", null, SmartpushHitUtils.Action.CLICKED.name(), null );
@@ -214,8 +213,8 @@ public final class Smartpush {
     }
 
     private static boolean isRegistered( Context context ) {
-        return ( Utils.PreferenceUtils.readFromPreferences( context, Utils.Constants.SMARTP_REGID ) != null &&
-                Utils.PreferenceUtils.readFromPreferences( context, Utils.Constants.SMARTP_ALIAS ) != null &&
-                Utils.PreferenceUtils.readFromPreferences( context, Utils.Constants.SMARTP_HWID  ) != null ) ;
+        return  (  Utils.PreferenceUtils.readFromPreferences( context, Utils.Constants.SMARTP_REGID ) != null
+                && Utils.PreferenceUtils.readFromPreferences( context, Utils.Constants.SMARTP_ALIAS ) != null
+                && Utils.PreferenceUtils.readFromPreferences( context, Utils.Constants.SMARTP_HWID  ) != null );
     }
 }

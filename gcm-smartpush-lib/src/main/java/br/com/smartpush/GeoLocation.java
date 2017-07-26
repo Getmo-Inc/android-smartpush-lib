@@ -31,7 +31,7 @@ class GeoLocation {
         this.lng = lng;
     }
 
-    public GeoLocation(JSONObject o ) {
+    public GeoLocation( JSONObject o ) {
         try {
             if (o != null) {
                 lat = o.getDouble( LAT.toLowerCase() );
@@ -60,23 +60,23 @@ class GeoLocation {
         return lat;
     }
 
-    public void setLat( double lat ) {
-        this.lat = lat;
-    }
+//    public void setLat( double lat ) {
+//        this.lat = lat;
+//    }
 
     public double getLng() {
         return lng;
     }
 
-    public void setLng( double lng ) {
-        this.lng = lng;
-    }
+//    public void setLng( double lng ) {
+//        this.lng = lng;
+//    }
 
     public long getTime() {
         return time;
     }
 
-    public void setTime( long time ) {
-        this.time = time;
-    }
+//    public void setTime( long time ) {
+//        this.time = time;
+//    }
 }

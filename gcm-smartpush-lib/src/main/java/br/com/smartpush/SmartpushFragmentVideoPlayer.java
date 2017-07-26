@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -23,9 +22,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.util.concurrent.TimeUnit;
 
@@ -120,10 +116,12 @@ public final class SmartpushFragmentVideoPlayer extends Fragment implements
                     isControlsVisible = !isControlsVisible;
                 }
             } else {
-                new FetchVideoDeepLink()
-                        .execute(
-                                getActivity().getIntent().getStringExtra(
-                                        SmartpushListenerService.VIDEO_URI ) );
+// TODO trabalhando aqui !!!!! <------------------------------------
+//                createMediaPlayer(Uri.parse(deepLink));
+//                new FetchVideoDeepLink()
+//                        .execute(
+//                                getActivity().getIntent().getStringExtra(
+//                                        SmartpushListenerService.VIDEO_URI ) );
             }
         }
     }
@@ -181,6 +179,7 @@ public final class SmartpushFragmentVideoPlayer extends Fragment implements
 
     @Override
     public void surfaceChanged( SurfaceHolder holder, int format, int width, int height ) {
+        SmartpushLog.d( Utils.TAG, "surfaceChanged" );
 
     }
 
@@ -267,12 +266,14 @@ public final class SmartpushFragmentVideoPlayer extends Fragment implements
         try {
             mediaPlayer = new MediaPlayer();
             mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+//
+//            mediaPlayer.setAu
             mediaPlayer.setOnCompletionListener(this);
             mediaPlayer.setOnPreparedListener(this);
             mediaPlayer.setOnBufferingUpdateListener(this);
-            mediaPlayer.setDataSource(getActivity(), video);
-            //player will be started after completion of preparing...
+            mediaPlayer.setDataSource( getActivity(), video );
             mediaPlayer.prepareAsync();
+
         } catch (Exception e) {
             SmartpushLog.e( Utils.TAG, e.getMessage(), e );
         }
@@ -372,65 +373,65 @@ public final class SmartpushFragmentVideoPlayer extends Fragment implements
         }
     };
 
-    private class FetchVideoDeepLink extends AsyncTask<String, Void, String> {
-        @Override
-        protected String doInBackground( String... params ) {
-            String resp  = SmartpushHttpClient.get( "play/" + params[0] + "/info", null, getActivity() );
-
-            try {
-                JSONObject json = new JSONObject( resp );
-                boolean status = json.has( "status" ) ? json.getBoolean( "status" ) : false;
-
-                if ( status ) {
-                    JSONArray videos = json.getJSONArray( "videos" );
-
-                    int idSelected = -1;
-                    String extension = ( SmartpushConnectivityUtil.isConnectedWifi( getActivity() ) ) ? "mp4" : "3gp";
-
-                    int bestSize = ( "mp4".equals( extension ) ) ? Integer.MAX_VALUE : Integer.MIN_VALUE;
-
-                    for ( int i = 0; i < videos.length(); i++ ) {
-                        JSONObject o = videos.getJSONObject( i );
-
-                        if ( o.getString( "extension" ).equals( extension ) ) {
-                            int currentSize = o.getInt( "filesize" );
-
-                            if ( "3gp".equals( extension ) ) {
-                                if (bestSize < currentSize) {
-                                    bestSize = currentSize;
-                                    idSelected = i;
-                                }
-                            } else {
-                                if (bestSize > currentSize) {
-                                    bestSize = currentSize;
-                                    idSelected = i;
-                                }
-                            }
-                        }
-                    }
-
-                    String linkVideo = ( idSelected != -1 ) ? videos.getJSONObject( idSelected ).getString( "url" ) : null;
-                    SmartpushLog.d( Utils.TAG, "---> " + linkVideo );
-
-                    return linkVideo;
-                }
-
-            } catch ( Exception e ) {
-                SmartpushLog.e( Utils.TAG, e.getMessage(), e );
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute( String deepLink ) {
-            if ( deepLink != null ) {
-                createMediaPlayer(Uri.parse(deepLink));
-            } else {
-                goForward();
-            }
-        }
-    }
+//    private class FetchVideoDeepLink extends AsyncTask<String, Void, String> {
+//        @Override
+//        protected String doInBackground( String... params ) {
+//            String resp  = SmartpushHttpClient.get( "play/" + params[0] + "/info", null, getActivity() );
+//
+//            try {
+//                JSONObject json = new JSONObject( resp );
+//                boolean status = json.has( "status" ) ? json.getBoolean( "status" ) : false;
+//
+//                if ( status ) {
+//                    JSONArray videos = json.getJSONArray( "videos" );
+//
+//                    int idSelected = -1;
+//                    String extension = ( SmartpushConnectivityUtil.isConnectedWifi( getActivity() ) ) ? "mp4" : "3gp";
+//
+//                    int bestSize = ( "mp4".equals( extension ) ) ? Integer.MAX_VALUE : Integer.MIN_VALUE;
+//
+//                    for ( int i = 0; i < videos.length(); i++ ) {
+//                        JSONObject o = videos.getJSONObject( i );
+//
+//                        if ( o.getString( "extension" ).equals( extension ) ) {
+//                            int currentSize = o.getInt( "filesize" );
+//
+//                            if ( "3gp".equals( extension ) ) {
+//                                if (bestSize < currentSize) {
+//                                    bestSize = currentSize;
+//                                    idSelected = i;
+//                                }
+//                            } else {
+//                                if (bestSize > currentSize) {
+//                                    bestSize = currentSize;
+//                                    idSelected = i;
+//                                }
+//                            }
+//                        }
+//                    }
+//
+//                    String linkVideo = ( idSelected != -1 ) ? videos.getJSONObject( idSelected ).getString( "url" ) : null;
+//                    SmartpushLog.d( Utils.TAG, "---> " + linkVideo );
+//
+//                    return linkVideo;
+//                }
+//
+//            } catch ( Exception e ) {
+//                SmartpushLog.e( Utils.TAG, e.getMessage(), e );
+//            }
+//
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute( String deepLink ) {
+//            if ( deepLink != null ) {
+//                createMediaPlayer(Uri.parse(deepLink));
+//            } else {
+//                goForward();
+//            }
+//        }
+//    }
 
     private void hit ( String action ) {
         // Tracking

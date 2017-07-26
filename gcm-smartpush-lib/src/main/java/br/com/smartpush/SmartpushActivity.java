@@ -112,12 +112,12 @@ public final class SmartpushActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-
         if ( current instanceof SmartpushFragmentVideoPlayer) {
             // Tracking
             String pushId =
                     SmartpushHitUtils.getValueFromPayload(
                             SmartpushHitUtils.Fields.PUSH_ID, getIntent().getExtras());
+
             if ( !"".equals( pushId ) ) {
                 Smartpush.hit( this, pushId, "PLAYER", null, "CANCEL", null );
             }

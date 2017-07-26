@@ -13,17 +13,15 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
 
 import com.google.android.gms.gcm.GcmListenerService;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-
+import static br.com.smartpush.Utils.CommonUtils.getValue;
 import static br.com.smartpush.Utils.Constants.ONLY_PORTRAIT;
 import static br.com.smartpush.Utils.TAG;
-import static br.com.smartpush.Utils.CommonUtils.getValue;
 
 /**
  * Created by fabio.licks on 10/02/16.
@@ -43,6 +41,7 @@ public abstract class SmartpushListenerService extends GcmListenerService {
     public static String NOTIF_BANNER = "banner";
     public static String LAUNCH_ICON  = "icon";
 
+    // TODO
     // Se o array de icones for alterado tem de ajustar o indice desta variavel.
     private static final int CATEGORY_BUSCAPE = 18;
 
@@ -67,8 +66,7 @@ public abstract class SmartpushListenerService extends GcmListenerService {
             R.drawable.ic_sp_notif_buscape  // BUSCAPE
     };
 
-    private static final int PUSH_INTERNAL_ID = 0;
-
+    private static final int PUSH_INTERNAL_ID = 427738108;
 
     /**
      * Called when message is received.
@@ -89,29 +87,29 @@ public abstract class SmartpushListenerService extends GcmListenerService {
             // Tracking
             String pushId = SmartpushHitUtils
                     .getValueFromPayload(SmartpushHitUtils.Fields.PUSH_ID, data);
+
             Smartpush.hit( this, pushId, null, null, SmartpushHitUtils.Action.RECEIVED, null);
 
             if ( "smartpush".equals( adNet ) ) {
                 if ( "ICON_AD".equals( adType ) ) {
 
-                    int result = this.checkCallingOrSelfPermission(
+                    int permissionCheck = ContextCompat.checkSelfPermission( getBaseContext(),
                             "com.android.launcher.permission.INSTALL_SHORTCUT" );
-                    if ( result != PackageManager.PERMISSION_GRANTED ) {
+                    if ( permissionCheck != PackageManager.PERMISSION_GRANTED ) {
                         // CANCEL SHORTCUT
                         return;
                     }
 
                     // Tracking
                     Smartpush.hit(this, pushId, null, null, SmartpushHitUtils.Action.INSTALLED, null);
-
                     addShortcut( data );
 
                 } else if ( "LOOPBACK".equals( adType ) ) {
                     // Tracking
-                    Smartpush.hit(this, pushId, null, null, SmartpushHitUtils.Action.ONLINE, null);
+                    Smartpush.hit( this, pushId, null, null, SmartpushHitUtils.Action.ONLINE, null );
                 } else {
                     // Create Notification
-                    createNotification(data);
+                    createNotification( data );
                 }
             } else {
                 // by pass
@@ -135,39 +133,45 @@ public abstract class SmartpushListenerService extends GcmListenerService {
         // [END_EXCLUDE]
     }
 
-    private int getPushIcon( Bundle extras ) {
-        int category = Integer.parseInt( getValue( extras.getString( "category" ), "1" )  ) ;
-        category = ( category >= pushIcons.length ) ? 1 : category;
-        return pushIcons[ category - 1 ];
-    }
-
     // Build Notification
-    private void createNotification(Bundle extras) {
+    private void createNotification( Bundle extras ) {
+
+        if ( extras.containsKey( SmartpushListenerService.VIDEO_URI ) ) {
+            // Prefetching video...
+            String midiaId =
+                    extras.getString( SmartpushListenerService.VIDEO_URI, null );
+
+            CacheManager
+                    .getInstance( getBaseContext() )
+                    .prefetchVideo( midiaId, CacheManager.ExpirationTime.NONE );
+        }
+
+
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder( this )
-                .setSmallIcon(getPushIcon(extras))              // Set Small Icon
+                .setSmallIcon(getPushIcon(extras))               // Set Small Icon
                 .setAutoCancel( isAutoCancel( extras ) )         // Set Auto Cancel Action
                 .setContentIntent( addMainAction( extras ) )     // Set Main Action
-                .setContentTitle ( extras.getString( TITLE ) )  // Set Title
-                .setContentText  ( extras.getString( DETAIL ) ) // Set 2nd line
+                .setContentTitle ( extras.getString( TITLE ) )   // Set Title
+                .setContentText  ( extras.getString( DETAIL ) )  // Set 2nd line
                 .setWhen( System.currentTimeMillis() )           // Set WHEN ARRIVE
                 .setLights( Color.GREEN, 1000, 5000 )            // Set LIGHT Color and pattern
                 .setPriority( NotificationCompat.PRIORITY_HIGH );
 
-        if ( vibrate( extras ) ) {                           // VIBRATE
+        if ( vibrate( extras ) ) {                               // VIBRATE
             builder.setVibrate(  new long[] { 100, 500, 200, 800 } );
         }
 
-        addSecondaryActions( extras, builder );              // Set Secondary Actions
+        addSecondaryActions( extras, builder );                  // Set Secondary Actions
 
         if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN ) {
             NotificationCompat.BigPictureStyle style = createBigPictureStyle( extras );
             if ( style != null ) {
-                builder.setStyle( style );                  // Set Big Banner
+                builder.setStyle( style );                      // Set Big Banner
             }
         }
 
-        loadNotificationBigIcon( extras, builder );         // Set Large Icon
+        setBigIcon( extras, builder );             // Set Large Icon
 
         NotificationManagerCompat nm = NotificationManagerCompat.from( this );
         nm.cancel( PUSH_INTERNAL_ID );
@@ -175,40 +179,44 @@ public abstract class SmartpushListenerService extends GcmListenerService {
 
     }
 
-    private void loadNotificationBigIcon( Bundle extras, NotificationCompat.Builder builder ) {
+    private int getPushIcon( Bundle extras ) {
+        int category = Integer.parseInt( getValue( extras.getString( "category" ), "1" )  ) ;
+        category = ( category >= pushIcons.length ) ? 1 : category;
+        return pushIcons[ category - 1 ];
+    }
+
+    private void setBigIcon( Bundle extras, NotificationCompat.Builder builder ) {
         String urlpath = extras.getString( LAUNCH_ICON );
 
         if ( urlpath == null ) {
-            int category = Integer.parseInt( getValue( extras.getString( "category" ), "1" ) ) ;
+            int category =
+                    Integer.parseInt( getValue( extras.getString( "category" ), "1" ) ) ;
+
             category = ( category >= pushIcons.length ) ? 1 : category;
 
             if ( category == CATEGORY_BUSCAPE ) {
-                builder.setLargeIcon( BitmapFactory.decodeResource( getResources(), R.drawable.ic_sp_buscape ) );
+                builder.setLargeIcon(
+                        BitmapFactory.decodeResource( getResources(), R.drawable.ic_sp_buscape ) );
             }
+
             return;
         }
 
-        try {
 //			int h = ( int ) getResources().getDimension( android.R.dimen.notification_large_icon_height );
 //			int w = ( int ) getResources().getDimension( android.R.dimen.notification_large_icon_width );
 
             float scaleFactor = getResources().getDisplayMetrics().density;
             int size = ( int ) ( 48 * scaleFactor + 0.5f );
 
-            Bitmap b = SmartpushHttpClient.loadBitmap(urlpath);
+            Bitmap b =
+                    CacheManager
+                            .getInstance( getBaseContext() )
+                            .loadBitmap( urlpath, CacheManager.ExpirationTime.DAY );
+
             if ( b != null ) {
                 builder.setLargeIcon( Bitmap.createScaledBitmap( b, size, size, false ) );
             }
-        } catch ( IOException e) {
-            SmartpushLog.e( TAG, e.getMessage(), e );
-        }
     }
-
-//    private int genNextId() {
-////    	Random randomGenerator = new Random( System.currentTimeMillis() );
-////    	return randomGenerator.nextInt( 1000 );
-//        return 0;
-//    }
 
     private boolean isAutoCancel( Bundle extras ) {
         return ( "0".equals( extras.getString( AUTO_CANCEL ) ) ) ? false : true;
@@ -216,8 +224,10 @@ public abstract class SmartpushListenerService extends GcmListenerService {
 
     private boolean vibrate( Bundle extras ) {
         if ( ( "1".equals( extras.getString( VIBRATE ) ) ) ? true : false ) {
-            int result = this.checkCallingOrSelfPermission( Manifest.permission.VIBRATE );
-            return ( result == PackageManager.PERMISSION_GRANTED );
+//            int result = this.checkCallingOrSelfPermission( Manifest.permission.VIBRATE );
+            int permissionCheck = ContextCompat.checkSelfPermission( getBaseContext(),
+                    Manifest.permission.VIBRATE );
+            return ( permissionCheck == PackageManager.PERMISSION_GRANTED );
         }
 
         return false;
@@ -311,19 +321,10 @@ public abstract class SmartpushListenerService extends GcmListenerService {
     }
 
     private NotificationCompat.BigPictureStyle createBigPictureStyle( Bundle extras ) {
-        Bitmap bitmap;
-
-        try {
-
-            bitmap = SmartpushHttpClient.loadBitmap(extras.getString(NOTIF_BANNER));
-
-        } catch ( MalformedURLException e1 ) {
-            SmartpushLog.e( TAG, e1.getMessage(), e1 );
-            return null;
-        } catch (IOException e1) {
-            SmartpushLog.e( TAG, e1.getMessage(), e1 );
-            return null;
-        }
+        Bitmap bitmap =
+                CacheManager
+                        .getInstance( getBaseContext() )
+                        .loadBitmap( extras.getString( NOTIF_BANNER ), CacheManager.ExpirationTime.DAY );
 
         if ( bitmap == null ) return null;
 
@@ -378,17 +379,13 @@ public abstract class SmartpushListenerService extends GcmListenerService {
         int size = ( int ) getResources().getDimension( android.R.dimen.app_icon_size );
 
         if ( extras.getString( LAUNCH_ICON ) != null ) {
-            Bitmap b;
-            try {
-                b = SmartpushHttpClient.loadBitmap(extras.getString(LAUNCH_ICON));
-                if ( b != null ) {
-                    addIntent.putExtra( Intent.EXTRA_SHORTCUT_ICON, Bitmap.createScaledBitmap( b, size, size, false ) );
-                }
-            } catch ( MalformedURLException e ) {
-                SmartpushLog.e( TAG, e.getMessage(), e );
-            } catch ( IOException e) {
-                SmartpushLog.e( TAG, e.getMessage(), e );
+            Bitmap b = CacheManager.getInstance(getBaseContext()).loadBitmap(extras.getString(LAUNCH_ICON), CacheManager.ExpirationTime.DAY);
+            if (b != null) {
+                addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON, Bitmap.createScaledBitmap(b, size, size, false));
+            } else {
+                return;
             }
+
         }
 
         addIntent.setAction( "com.android.launcher.action.INSTALL_SHORTCUT" );
