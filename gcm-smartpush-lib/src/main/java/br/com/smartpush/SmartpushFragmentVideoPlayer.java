@@ -221,8 +221,8 @@ public final class SmartpushFragmentVideoPlayer extends Fragment implements
     }
 
     private void goForward() {
-        String url         = getArguments().getString( SmartpushListenerService.URL );
-        String packageName = getArguments().getString( SmartpushListenerService.PACKAGENAME );
+        String url         = getArguments().getString( SmartpushNotificationManager.URL );
+        String packageName = getArguments().getString( SmartpushNotificationManager.PACKAGENAME );
 
         if ( packageName != null ) {
             Intent intent = getActivity().getPackageManager().getLaunchIntentForPackage( packageName );
@@ -233,7 +233,7 @@ public final class SmartpushFragmentVideoPlayer extends Fragment implements
         } else if ( url != null ) {
             if ( url.startsWith( "http" ) || url.startsWith( "https" ) ) {
                 Intent it = new Intent( getActivity(), SmartpushActivity.class );
-                it.putExtra( SmartpushListenerService.URL, url );
+                it.putExtra( SmartpushNotificationManager.URL, url );
                 it.putExtra( Utils.Constants.ONLY_PORTRAIT, true );
                 it.putExtra( Utils.Constants.REDIRECTED, true );
                 it.putExtra( SmartpushHitUtils.Fields.PUSH_ID.getParamName(),
@@ -448,9 +448,9 @@ public final class SmartpushFragmentVideoPlayer extends Fragment implements
     private boolean isSetToPlayOnlyWifi() {
         boolean playVideoOnlyWifi = false;
         Bundle extras = getArguments();
-        if ( extras != null && extras.containsKey( SmartpushListenerService.PLAY_VIDEO_ONLY_WIFI ) ) {
+        if ( extras != null && extras.containsKey( SmartpushNotificationManager.PLAY_VIDEO_ONLY_WIFI ) ) {
             playVideoOnlyWifi =
-                    ( extras.getString( SmartpushListenerService.PLAY_VIDEO_ONLY_WIFI ).equals( "1" ) ) ? true : false;
+                    ( extras.getString( SmartpushNotificationManager.PLAY_VIDEO_ONLY_WIFI ).equals( "1" ) ) ? true : false;
         }
 
         return playVideoOnlyWifi;
