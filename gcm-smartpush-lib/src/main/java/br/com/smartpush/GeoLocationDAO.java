@@ -7,8 +7,6 @@ import android.database.sqlite.SQLiteDatabase;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.com.smartpush.GeoLocation;
-
 /**
  * Created by fabio.licks on 09/02/16.
  */
@@ -30,7 +28,10 @@ final class GeoLocationDAO {
     public static List<GeoLocation> listAll(SQLiteDatabase db ) {
         ArrayList<GeoLocation> list = new ArrayList<>();
         Cursor cursor = db.query(
-                TABLENAME, new String[]{ GeoLocation.LAT, GeoLocation.LNG, GeoLocation.TIME }, null, null, null, null, null );
+                TABLENAME, new String[]{
+                        GeoLocation.LAT,
+                        GeoLocation.LNG,
+                        GeoLocation.TIME }, null, null, null, null, null );
 
         while ( cursor != null && cursor.moveToNext() ) {
             list.add( new GeoLocation( cursor ) );

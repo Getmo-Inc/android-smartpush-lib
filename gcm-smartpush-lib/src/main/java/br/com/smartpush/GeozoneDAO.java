@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import br.com.smartpush.Geozone;
-
 /**
  * Created by fabio.licks on 09/02/16.
  */
@@ -37,7 +35,11 @@ final class GeozoneDAO {
     public static List<Geozone> listAll( SQLiteDatabase db ) {
         ArrayList<Geozone> list = new ArrayList<>();
         Cursor cursor = db.query(
-                TABLENAME, new String[]{ Geozone.ALIAS, Geozone.LAT, Geozone.LNG, Geozone.RADIUS }, null, null, null, null, null );
+                TABLENAME, new String[]{
+                        Geozone.ALIAS,
+                        Geozone.LAT,
+                        Geozone.LNG,
+                        Geozone.RADIUS }, null, null, null, null, null );
 
         while ( cursor != null && cursor.moveToNext() ) {
             list.add( new Geozone( cursor ) );

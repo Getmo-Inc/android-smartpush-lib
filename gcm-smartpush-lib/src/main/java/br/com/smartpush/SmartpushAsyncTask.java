@@ -8,7 +8,7 @@ import android.os.Build;
  * Created by fabio.licks on 09/02/16.
  */
 
-public abstract class SmartpushAsyncTask<T, V, Q> extends AsyncTask<T, V, Q>  {
+abstract class SmartpushAsyncTask<T, V, Q> extends AsyncTask<T, V, Q>  {
 
     @SuppressWarnings("unchecked")
 	@TargetApi( Build.VERSION_CODES.HONEYCOMB )

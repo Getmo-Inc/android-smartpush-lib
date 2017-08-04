@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 
+import static br.com.smartpush.SmartpushNotificationManager.VIDEO_URI;
+
 
 public final class SmartpushActivity extends AppCompatActivity {
 
@@ -40,7 +42,7 @@ public final class SmartpushActivity extends AppCompatActivity {
 
             // Create a new Fragment to be placed in the activity layout
             current =
-                    getIntent().hasExtra( SmartpushListenerService.VIDEO_URI )
+                    getIntent().hasExtra( VIDEO_URI )
                             ? new SmartpushFragmentVideoPlayer() : new SmartpushFragmentWebView();
 
             // In case this activity was started with special instructions from an
@@ -84,7 +86,7 @@ public final class SmartpushActivity extends AppCompatActivity {
 
         // Create a new Fragment to be placed in the activity layout
         current =
-                intent.hasExtra( SmartpushListenerService.VIDEO_URI )
+                intent.hasExtra( VIDEO_URI )
                         ? new SmartpushFragmentVideoPlayer() : new SmartpushFragmentWebView();
 
         // In case this activity was started with special instructions from an

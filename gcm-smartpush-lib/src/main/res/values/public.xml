@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Tthis file manage the visibility of all resources in this library.
+         Only resources listed here will be visible out of this library -->
+    <public name="ic_getmo" type="string"/>
+</resources>
