@@ -22,7 +22,7 @@ import android.widget.Toast;
 /**
  * Created by fabio.licks on 02/09/15.
  */
-class SmartpushFragmentWebView extends Fragment {
+public class SmartpushFragmentWebView extends Fragment {
 
     private ProgressBar progress;
     private WebView      webview;
@@ -140,7 +140,7 @@ class SmartpushFragmentWebView extends Fragment {
         resetScreen();
         final Bundle extras = getArguments();
         if ( extras != null ) {
-            webview.loadUrl( extras.getString( SmartpushListenerService.URL ) );
+            webview.loadUrl( extras.getString( SmartpushNotificationManager.URL ) );
         } else {
             getActivity().finish();
         }
