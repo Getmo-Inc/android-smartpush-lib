@@ -37,6 +37,8 @@ public class SmartpushService extends IntentService {
     // Smartpush PROJECT ID
     private static final String PLAY_SERVICE_INTERNAL_PROJECT_ID = "520757792663";
 
+    public static final int SMARTPUSH_SERVICE_ID = 456123;
+
     // IntentService can perform, e.g. ACTION_FETCH_NEW_ITEMS
     private static final String ACTION_SMARTP_REGISTRATION = "br.com.smartpush.action.REGISTRATION";
     private static final String ACTION_SMARTP_SET_TAG = "br.com.smartpush.action.SET_TAG";
@@ -45,6 +47,7 @@ public class SmartpushService extends IntentService {
     private static final String ACTION_SMARTP_TRACK_ACTION = "br.com.smartpush.action.TRACK_ACTION";
     private static final String ACTION_SMARTP_CHECK_MSISDN = "br.com.smartpush.action.CHECK_MSISDN";
     private static final String ACTION_SMARTP_GET_CARRIER_NAME = "br.com.smartpush.action.GET_CARRIER_NAME";
+    public  static final String ACTION_SMARTP_UPDATABLE = "br.com.smartpush.action.UPDATABLE";
 
     public static final String ACTION_SMARTP_REGISTRATION_RESULT = "br.com.smartpush.action.REGISTRATION_RESULT";
     public static final String ACTION_SMARTP_GET_DEVICE_USER_INFO = "br.com.smartpush.action.GET_DEVICE_USER_INFO";
@@ -93,21 +96,22 @@ public class SmartpushService extends IntentService {
      */
     public static void checkCarriersName( Context context ) {
         TelephonyManager telephonyManager =
-                (TelephonyManager) context.getSystemService( Context.TELEPHONY_SERVICE );
+                ( TelephonyManager ) context.getSystemService( Context.TELEPHONY_SERVICE );
 
         // Carriers normalization
         ArrayList<String> values = new ArrayList<>();
         if ( telephonyManager != null ) {
             String carrier = telephonyManager.getSimOperatorName();
 
-            if ( !"NULL".equals( carrier.toUpperCase() ) ) {
+            if ( carrier != null
+                    && !"".equals( carrier.trim() )
+                    && !"NULL".equals( carrier.trim().toUpperCase() ) ) {
+
                 values.add( carrier.toUpperCase() );
             }
         }
 
-        if ( values.size() > 0 ) {
-            startActionSetTag(context, "__CARRIER__", values);
-        }
+        startActionSetTag( context, "__CARRIER__", values );
     }
 
     /**
@@ -117,6 +121,10 @@ public class SmartpushService extends IntentService {
      * @see IntentService
      */
     public static void startActionSetTag( Context context, String key, Boolean value ) {
+        // TODO Test
+        // It does not send empty boolean...
+        if ( value == null ) return;
+
         Intent intent = new Intent( context, SmartpushService.class ) ;
         intent.setAction( ACTION_SMARTP_SET_TAG ) ;
         intent.putExtra( EXTRA_KEY, key );
@@ -132,6 +140,10 @@ public class SmartpushService extends IntentService {
      * @see IntentService
      */
     public static void startActionSetTag( Context context, String key, Double value ) {
+        // TODO Test
+        // It does not send empty double...
+        if ( value == null ) return;
+
         Intent intent = new Intent( context, SmartpushService.class ) ;
         intent.setAction( ACTION_SMARTP_SET_TAG ) ;
         intent.putExtra( EXTRA_KEY, key );
@@ -147,7 +159,13 @@ public class SmartpushService extends IntentService {
      * @see IntentService
      */
     public static void startActionSetTag( Context context, String key, ArrayList<String> values ) {
-        String temp = (values == null || values.size() == 0) ? null : (new JSONArray(values)).toString();
+        String temp =
+                ( values == null || values.size() == 0 )
+                        ? null : ( new JSONArray( values ) ).toString();
+
+        // TODO Test
+        // It does not send empty list...
+        if ( temp == null ) return;
 
         Intent intent = new Intent( context, SmartpushService.class ) ;
         intent.setAction( ACTION_SMARTP_SET_TAG ) ;
@@ -164,6 +182,10 @@ public class SmartpushService extends IntentService {
      * @see IntentService
      */
     public static void startActionSetTag( Context context, String key, String value ) {
+        // TODO Test
+        // It does not send empty String...
+        if ( value == null || "".equals( value.trim() ) ) return;
+
         Intent intent = new Intent( context, SmartpushService.class ) ;
         intent.setAction( ACTION_SMARTP_SET_TAG ) ;
         intent.putExtra( EXTRA_KEY, key );
@@ -180,6 +202,11 @@ public class SmartpushService extends IntentService {
      */
     public static void startActionSetTag( Context context, String key, Date value ) {
         String temp = (value != null) ? String.valueOf( value.getTime() / 1000 ) : null;
+
+        // TODO Test
+        // It does not send empty timestamp...
+        if ( temp == null ) return;
+
         Intent intent = new Intent( context, SmartpushService.class ) ;
         intent.setAction( ACTION_SMARTP_SET_TAG ) ;
         intent.putExtra( EXTRA_KEY, key );
@@ -359,6 +386,9 @@ public class SmartpushService extends IntentService {
                 handleActionTrackAction(intent);
             } else if ( ACTION_SMARTP_CHECK_MSISDN.equals( action ) ) {
                 handleActionCheckMsisdn( );
+            } else if ( ACTION_SMARTP_UPDATABLE.equals( action ) ) {
+                // TODO Updatable push notification...
+                SmartpushLog.d( TAG, "-------------------> RUNNING UPDATE TASK" );
             }
         }
     }

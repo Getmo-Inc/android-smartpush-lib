@@ -7,10 +7,8 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.TextView;
 
-import br.com.smartpush.Smartpush;
 import br.com.smartpush.SmartpushDeviceInfo;
 import br.com.smartpush.SmartpushService;
 
@@ -18,23 +16,25 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
+        super.onCreate( savedInstanceState );
+        setContentView( R.layout.main );
 
         // Register at Smartpush!
-        Smartpush.subscribe( this );
+//        Smartpush.subscribe( this );
 
         // optional - Tracking :: Call this method always! if app was opened by push one event will
         // be saved, if no nothing will happen.
-        Smartpush.hitClick( this, getIntent().getExtras() );
+//        Smartpush.hitClick( this, getIntent().getExtras() );
 
 //        //Tracking
 //        Smartpush.hit( this, null, "MAIN", null, "OPENED", null );
 
 //        // Nearestzone
 //        Smartpush.nearestZone( this, -30.13265805301679, -51.229606855819725 );
-        Smartpush.nearestZone( this, -30.132658053017, -51.22960685582 );
-        Smartpush.setTag( this, "CARRIER", "CRAZY_CARRIER" );
+//        Smartpush.nearestZone( this, -30.132658053017, -51.22960685582 );
+//        Smartpush.setTag( this, "CARRIER", "CRAZY_CARRIER" );
+
+//        new SmartpushNotificationManager( this ).scheduleNotificationRefreshTime();
 
     }
 

@@ -1,6 +1,5 @@
 package br.com.smartpush;
 
-import android.content.Context;
 import android.util.Log;
 
 
@@ -16,8 +15,8 @@ final class SmartpushLog {
     }
 
     public static void d( String tag, String message ) {
-        if ( BuildConfig.DEBUG ) {
+//        if ( BuildConfig.DEBUG ) {
             Log.d( tag, message );
-        }
+//        }
     }
 }

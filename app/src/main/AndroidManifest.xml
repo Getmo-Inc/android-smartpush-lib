@@ -57,7 +57,7 @@
 
         <service
             android:name="br.com.smartpush.SmartpushService"
-            android:exported="false"/>
+            android:exported="true"/>
 
         <activity
             android:name="br.com.smartpush.SmartpushActivity"

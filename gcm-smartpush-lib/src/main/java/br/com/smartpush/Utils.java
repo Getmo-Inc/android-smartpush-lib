@@ -77,8 +77,8 @@ final class Utils {
     static class ArrayUtils<T> {
         public String toString( List<T> list ) {
 
-//            if (list == null) return "[]";
-//
+            if ( list == null ) return "[]";
+
 //            StringBuilder sb = new StringBuilder();
 //            Iterator<T> iterator = list.iterator();
 //

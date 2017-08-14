@@ -1,6 +1,7 @@
 package br.com.smartpush;
 
 import android.Manifest;
+import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -18,7 +19,10 @@ import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
 
+import java.util.Calendar;
+
 import static android.content.ContentValues.TAG;
+import static br.com.smartpush.SmartpushService.ACTION_SMARTP_UPDATABLE;
 import static br.com.smartpush.Utils.CommonUtils.getValue;
 import static br.com.smartpush.Utils.Constants.ONLY_PORTRAIT;
 
@@ -72,7 +76,7 @@ import static br.com.smartpush.Utils.Constants.ONLY_PORTRAIT;
  }
  */
 
-class SmartpushNotificationManager {
+public class SmartpushNotificationManager {
 
     private Context mContext;
 
@@ -415,10 +419,10 @@ class SmartpushNotificationManager {
             Bitmap b =
                     CacheManager
                             .getInstance( mContext )
-                            .loadBitmap(extras.getString(LAUNCH_ICON), CacheManager.ExpirationTime.DAY );
+                            .loadBitmap( extras.getString( LAUNCH_ICON ), CacheManager.ExpirationTime.DAY );
 
             if ( b != null ) {
-                addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON, Bitmap.createScaledBitmap(b, size, size, false));
+                addIntent.putExtra( Intent.EXTRA_SHORTCUT_ICON, Bitmap.createScaledBitmap( b, size, size, false ) );
             } else {
                 return;
             }
@@ -427,5 +431,33 @@ class SmartpushNotificationManager {
 
         addIntent.setAction( "com.android.launcher.action.INSTALL_SHORTCUT" );
         mContext.sendBroadcast( addIntent );
+    }
+
+    public void scheduleNotificationRefreshTime() {
+        SmartpushLog.d( TAG, "-------------------> SETTING REFRESH TIME" );
+        Intent serviceIntent =
+                new Intent( mContext, SmartpushService.class)
+                        .setAction( ACTION_SMARTP_UPDATABLE );
+
+        // make sure you **don't** use *PendingIntent.getBroadcast*, it wouldn't work
+        PendingIntent servicePendingIntent =
+                PendingIntent.getService( mContext,
+                        // integer constant used to identify the service
+                        SmartpushService.SMARTPUSH_SERVICE_ID,
+                        serviceIntent,
+                        // FLAG to avoid creating a second service if there's already one running
+                        PendingIntent.FLAG_CANCEL_CURRENT );
+
+        Calendar cal = Calendar.getInstance();
+        cal.add( Calendar.MINUTE, 1 );
+
+        /** this gives us the time for the first trigger.  */
+        AlarmManager am =
+                ( AlarmManager ) mContext.getSystemService( Context.ALARM_SERVICE );
+
+        // there are other options like setInexactRepeating, check the docs
+        am.set( AlarmManager.RTC_WAKEUP, //type of alarm. This one will wake up the device when it goes off, but there are others, check the docs
+                cal.getTimeInMillis(),
+                servicePendingIntent );
     }
 }
