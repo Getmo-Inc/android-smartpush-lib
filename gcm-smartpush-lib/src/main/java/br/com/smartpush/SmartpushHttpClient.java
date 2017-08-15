@@ -4,6 +4,10 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
+import android.os.Bundle;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -28,7 +32,7 @@ import static android.content.ContentValues.TAG;
  * Created by fabio.licks on 09/02/16.
  */
 
-final class SmartpushHttpClient {
+public final class SmartpushHttpClient {
 
     public static final String HOST = "http://api.getmo.com.br/";
 
@@ -280,5 +284,59 @@ final class SmartpushHttpClient {
         }
 
         httpConn.disconnect();
+    }
+
+    public static Bundle getPushPayload( Context context, String pushId, Bundle data ) {
+
+        Bundle newData =
+                ( data != null ) ? new Bundle( data ) : new Bundle();
+
+        if ( pushId != null && !"".equals( pushId.trim() ) ) {
+
+            // TODO working here -- push updatable
+            // https://api.getmo.com.br/push/CN6Z8Eka3FSQ9IA/1abe52127db8439e86991d6dca09c181
+            pushId = "ef4e20ef87de359008f0a7528a17f74e";
+            String devId = "CN6Z8Eka3FSQ9IA";
+            String appId = "000000000000001";
+
+            try {
+                String op = "push/" + devId + "/" + pushId;
+                String response = get( op, null, context );
+
+                JSONObject json = new JSONObject( response );
+
+                SmartpushLog.d( Utils.TAG, json.toString( 4 ) );
+
+                if ( json.has( "notifications" ) ) {
+                    JSONArray notifications = json.getJSONArray( "notifications" );
+                    for ( int i = 0; i < notifications.length(); i++ ) {
+                        JSONObject item = notifications.getJSONObject( i );
+                        if ( item.has( "appid" )
+                                && item.getString( "appid" ).equals( appId )  ) {
+
+                            if ( item.has( "payload" ) ) {
+                                JSONObject payload = item.getJSONObject( "payload" );
+                                SmartpushLog.d( Utils.TAG, payload.toString() );
+                            }
+
+                            if ( item.has( "extra" ) ) {
+                                JSONObject extra = item.getJSONObject( "extra" );
+                                SmartpushLog.d( Utils.TAG, extra.toString() );
+                            }
+
+                            if ( item.has( "status" ) ) {
+                                String status = item.getString( "status" );
+                                SmartpushLog.d( Utils.TAG, status );
+                            }
+                        }
+                    }
+                }
+
+            } catch ( Exception e ) {
+                SmartpushLog.e( Utils.TAG, e.getMessage(), e );
+            }
+        }
+
+        return newData;
     }
 }

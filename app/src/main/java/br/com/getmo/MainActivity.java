@@ -4,12 +4,14 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
 import br.com.smartpush.SmartpushDeviceInfo;
+import br.com.smartpush.SmartpushHttpClient;
 import br.com.smartpush.SmartpushService;
 
 public class MainActivity extends AppCompatActivity {
@@ -35,7 +37,14 @@ public class MainActivity extends AppCompatActivity {
 //        Smartpush.setTag( this, "CARRIER", "CRAZY_CARRIER" );
 
 //        new SmartpushNotificationManager( this ).scheduleNotificationRefreshTime();
+            new AsyncTask<Void, Void, Void>() {
 
+                @Override
+                protected Void doInBackground(Void... voids) {
+                    SmartpushHttpClient.getPushPayload( MainActivity.this, "TESTE" );
+                    return null;
+                }
+            }.execute();
     }
 
     @Override

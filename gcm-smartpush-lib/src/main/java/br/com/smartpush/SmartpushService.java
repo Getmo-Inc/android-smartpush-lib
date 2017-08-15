@@ -727,7 +727,6 @@ public class SmartpushService extends IntentService {
     }
 
     private void handleActionTrackAction( Intent data ) {
-        // TODO implements
         HashMap<String,String> fields = new HashMap<>();
         fields.put( "uuid", Utils.PreferenceUtils.readFromPreferences( this, Utils.Constants.SMARTP_HWID ) );
 //        fields.put( "latlong", "0,0" );

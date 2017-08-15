@@ -80,6 +80,9 @@ public class SmartpushNotificationManager {
 
     private Context mContext;
 
+    // TODO revisar...
+//    String[] types = { "BANNER", "SLIDER", "CARROUSSEL", "SUBSCRIBE_EMAIL", "SUBSCRIBE_PHONE" };
+
     // Push metadata
     public static String TITLE        = "title";
     public static String DETAIL       = "detail";
@@ -94,9 +97,9 @@ public class SmartpushNotificationManager {
     public static String NOTIF_BANNER = "banner";
     public static String LAUNCH_ICON  = "icon";
 
-    // TODO
     // Se o array de icones for alterado tem de ajustar o indice desta variavel.
     private static final int CATEGORY_BUSCAPE = 18;
+    private static final int PUSH_INTERNAL_ID = 427738108;
 
     private int[] pushIcons = {
             R.drawable.ic_esporte,
@@ -119,67 +122,42 @@ public class SmartpushNotificationManager {
             R.drawable.ic_sp_notif_buscape  // BUSCAPE
     };
 
-    private static final int PUSH_INTERNAL_ID = 427738108;
-
     public SmartpushNotificationManager( Context context ) {
         mContext = context;
     }
 
     public void onMessageReceived( String from, Bundle data ) {
+
         if ( data != null && !data.isEmpty() ) {  // has effect of unparcelling Bundle
+            String pushId =
+                    SmartpushHitUtils.getValueFromPayload(
+                            SmartpushHitUtils.Fields.PUSH_ID, data );
 
-            String adType = data.getString( "adtype" );
-            String adNet  = data.getString( "adnetwork" );
+            String provider  =
+                    ( data.containsKey( "provider" ) )
+                            ? data.getString( "provider" )
+                            : data.getString( "adnetwork" );
 
-            // Tracking
-            String pushId = SmartpushHitUtils
-                    .getValueFromPayload(SmartpushHitUtils.Fields.PUSH_ID, data);
+            // Retrieve updated payload
+            data = SmartpushHttpClient.getPushPayload( mContext, pushId, data );
 
-            Smartpush.hit( mContext, pushId, null, null, SmartpushHitUtils.Action.RECEIVED, null);
+            // TODO prefetch video! .... It is not ok!
+            if ( data.containsKey( VIDEO_URI ) ) {
+                // Prefetching video...
+                String midiaId =
+                        data.getString( VIDEO_URI, null );
 
-            if ( "smartpush".equals( adNet ) ) {
-                if ( "ICON_AD".equals( adType ) ) {
-
-                    int permissionCheck = ContextCompat.checkSelfPermission( mContext,
-                            "com.android.launcher.permission.INSTALL_SHORTCUT" );
-                    if ( permissionCheck != PackageManager.PERMISSION_GRANTED ) {
-                        // CANCEL SHORTCUT
-                        return;
-                    }
-
-                    // Tracking
-                    Smartpush.hit( mContext, pushId, null, null, SmartpushHitUtils.Action.INSTALLED, null);
-                    addShortcut( data );
-
-                } else if ( "LOOPBACK".equals( adType ) ) {
-                    // Tracking
-                    Smartpush.hit( mContext, pushId, null, null, SmartpushHitUtils.Action.ONLINE, null );
-                } else {
-                    // Create Notification
-                    createNotification( data );
-                }
-            } else {
-                // by pass
-                if ( mContext instanceof SmartpushListenerService ) {
-                    ( ( SmartpushListenerService )mContext ).handleMessage( data );
-                }
+                CacheManager
+                        .getInstance( mContext )
+                        .prefetchVideo( midiaId, CacheManager.ExpirationTime.NONE );
             }
 
+            createNotification( data );
         }
     }
 
     // Build Notification
     private void createNotification( Bundle extras ) {
-
-        if ( extras.containsKey( VIDEO_URI ) ) {
-            // Prefetching video...
-            String midiaId =
-                    extras.getString( VIDEO_URI, null );
-
-            CacheManager
-                    .getInstance( mContext )
-                    .prefetchVideo( midiaId, CacheManager.ExpirationTime.NONE );
-        }
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder( mContext )
                 .setSmallIcon(getPushIcon(extras))               // Set Small Icon
@@ -389,48 +367,6 @@ public class SmartpushNotificationManager {
                 .bigPicture( resizedBitmap );
 
         return notiStyle;
-    }
-
-    private void addShortcut( Bundle extras ) {
-        //Adding shortcut for MainActivity
-        //on Home screen
-        Intent shortcutIntent;
-        if ( extras.getString( URL ).startsWith( "market://details?id=" ) ) {
-            shortcutIntent = new Intent( Intent.ACTION_VIEW );
-            shortcutIntent.setData( Uri.parse(extras.getString(URL)) );
-        } else {
-            shortcutIntent = new Intent( mContext, SmartpushActivity.class );
-            shortcutIntent
-                    .putExtras( extras )
-                    .addFlags( Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP );
-            shortcutIntent.setAction( Intent.ACTION_MAIN );
-        }
-
-        Intent addIntent = new Intent();
-        addIntent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent );
-        addIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, extras.getString( TITLE ) );
-
-//        addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE,
-//                Intent.ShortcutIconResource.fromContext( getApplicationContext(), R.drawable.ic_launcher ) );
-
-        int size = ( int ) mContext.getResources().getDimension( android.R.dimen.app_icon_size );
-
-        if ( extras.getString( LAUNCH_ICON ) != null ) {
-            Bitmap b =
-                    CacheManager
-                            .getInstance( mContext )
-                            .loadBitmap( extras.getString( LAUNCH_ICON ), CacheManager.ExpirationTime.DAY );
-
-            if ( b != null ) {
-                addIntent.putExtra( Intent.EXTRA_SHORTCUT_ICON, Bitmap.createScaledBitmap( b, size, size, false ) );
-            } else {
-                return;
-            }
-
-        }
-
-        addIntent.setAction( "com.android.launcher.action.INSTALL_SHORTCUT" );
-        mContext.sendBroadcast( addIntent );
     }
 
     public void scheduleNotificationRefreshTime() {

@@ -1,11 +1,15 @@
 package br.com.smartpush;
 
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 
 import com.google.android.gms.gcm.GcmListenerService;
 
-import java.util.Arrays;
-import java.util.HashMap;
+import static br.com.smartpush.SmartpushNotificationManager.LAUNCH_ICON;
 
 /**
  * Created by fabio.licks on 10/02/16.
@@ -23,39 +27,50 @@ public abstract class SmartpushListenerService extends GcmListenerService {
     // [START receive_message]
     @Override
     public void onMessageReceived( String from, Bundle data ) {
-        String[] types = { "BANNER", "SLIDER", "CARROUSSEL", "SUBSCRIBE_EMAIL", "SUBSCRIBE_PHONE" };
 
-        // Do something cool here...
-        if ( data != null ) {
-            if ( data.containsKey( "type" ) ) {
-                String pushType = data.getString( "type" );
-                if ( Arrays.asList( types ).contains( pushType ) ) {
-                    // fetch payload extra & put it on bundle...
-//                    POST /notifications/extra
+        if ( data != null && !data.isEmpty() ) {
+            // Tracking
+            String pushId =
+                    SmartpushHitUtils.getValueFromPayload(
+                            SmartpushHitUtils.Fields.PUSH_ID, data );
 
-//                  Params
-                    HashMap<String, String> params = new HashMap<>();
+            Smartpush.hit( this, pushId, null, null, SmartpushHitUtils.Action.RECEIVED, null );
 
-//                  devid: (required) string | "000000000000000"
-                    String devId =
-                            Utils.Smartpush.getMetadata( this, Utils.Constants.SMARTP_API_KEY );
-                    params.put( "devid", devId );
+            String pushType  =
+                    ( data.containsKey( "type" ) )
+                            ? data.getString( "type" )
+                            : data.getString( "adtype" );
 
-//                  appid: (required) string | "000000000000000"
-                    String appId =
-                            Utils.Smartpush.getMetadata( this, Utils.Constants.SMARTP_APP_ID );
-                    params.put( "appid", appId );
+            String provider  =
+                    ( data.containsKey( "provider" ) )
+                            ? data.getString( "provider" )
+                            : data.getString( "adnetwork" );
 
-//                  pushid: (required) string | "00000000000000000000000000000000"
-                    String pushId = SmartpushHitUtils
-                            .getValueFromPayload( SmartpushHitUtils.Fields.PUSH_ID, data );
-                    params.put( SmartpushHitUtils.Fields.PUSH_ID.getParamName(), pushId );
+            if ( "smartpush".equals( provider ) ) {
+                if ( "ICON_AD".equals( pushType ) ) {
+                    int permissionCheck = ContextCompat.checkSelfPermission( this,
+                            "com.android.launcher.permission.INSTALL_SHORTCUT" );
+                    if ( permissionCheck != PackageManager.PERMISSION_GRANTED ) {
+                        // CANCEL SHORTCUT
+                        return;
+                    }
 
+                    // Tracking
+                    Smartpush.hit( this, pushId, null, null, SmartpushHitUtils.Action.INSTALLED, null);
+                    addShortcut( data );
+                } else if ( "LOOPBACK".equals( pushType ) ) {
+                    // Tracking
+                    Smartpush.hit( this, pushId, null, null, SmartpushHitUtils.Action.ONLINE, null );
+                } else {
+                    new SmartpushNotificationManager( this ).onMessageReceived( from, data );
+                }
+            } else {
+                // by pass
+                if ( this instanceof SmartpushListenerService ) {
+                    ( ( SmartpushListenerService )this ).handleMessage( data );
                 }
             }
         }
-
-        new SmartpushNotificationManager( this ).onMessageReceived( from, data );
 
         // [START_EXCLUDE]
         /**
@@ -74,6 +89,48 @@ public abstract class SmartpushListenerService extends GcmListenerService {
     }
 
     protected abstract void handleMessage( Bundle data );
+
+    private void addShortcut( Bundle extras ) {
+        //Adding shortcut for MainActivity
+        //on Home screen
+        Intent shortcutIntent;
+        if ( extras.getString( SmartpushNotificationManager.URL ).startsWith( "market://details?id=" ) ) {
+            shortcutIntent = new Intent( Intent.ACTION_VIEW );
+            shortcutIntent.setData( Uri.parse(extras.getString( SmartpushNotificationManager.URL ) ) );
+        } else {
+            shortcutIntent = new Intent( this, SmartpushActivity.class );
+            shortcutIntent
+                    .putExtras( extras )
+                    .addFlags( Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP );
+            shortcutIntent.setAction( Intent.ACTION_MAIN );
+        }
+
+        Intent addIntent = new Intent();
+        addIntent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent );
+        addIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, extras.getString( SmartpushNotificationManager.TITLE ) );
+
+//        addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE,
+//                Intent.ShortcutIconResource.fromContext( getApplicationContext(), R.drawable.ic_launcher ) );
+
+        int size = ( int ) getResources().getDimension( android.R.dimen.app_icon_size );
+
+        if ( extras.getString( LAUNCH_ICON ) != null ) {
+            Bitmap b =
+                    CacheManager
+                            .getInstance( this )
+                            .loadBitmap( extras.getString( LAUNCH_ICON ), CacheManager.ExpirationTime.DAY );
+
+            if ( b != null ) {
+                addIntent.putExtra( Intent.EXTRA_SHORTCUT_ICON, Bitmap.createScaledBitmap( b, size, size, false ) );
+            } else {
+                return;
+            }
+
+        }
+
+        addIntent.setAction( "com.android.launcher.action.INSTALL_SHORTCUT" );
+        sendBroadcast( addIntent );
+    }
 
 }
 
