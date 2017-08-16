@@ -45,6 +45,6 @@ final class GeoResponse {
         return "{ \"status\":" + status +
                 ", \"message\":\"" + message + "\"" +
                 ", \"hash\":\"" + hash + "\"" +
-                ( ( geozones != null ) ? ", \"geozones\":[" + new Utils.ArrayUtils<Geozone>().toString( geozones ) + "]" : "" ) + "}";
+                ( ( geozones != null ) ? ", \"geozones\":" + new Utils.ArrayUtils<Geozone>().toJsonArrayString( geozones ) : "" ) + "}";
     }
 }

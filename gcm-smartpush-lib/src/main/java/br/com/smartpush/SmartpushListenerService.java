@@ -48,8 +48,10 @@ public abstract class SmartpushListenerService extends GcmListenerService {
 
             if ( "smartpush".equals( provider ) ) {
                 if ( "ICON_AD".equals( pushType ) ) {
-                    int permissionCheck = ContextCompat.checkSelfPermission( this,
-                            "com.android.launcher.permission.INSTALL_SHORTCUT" );
+
+                    int permissionCheck =
+                            ContextCompat.checkSelfPermission( this, "com.android.launcher.permission.INSTALL_SHORTCUT" );
+
                     if ( permissionCheck != PackageManager.PERMISSION_GRANTED ) {
                         // CANCEL SHORTCUT
                         return;
@@ -57,10 +59,14 @@ public abstract class SmartpushListenerService extends GcmListenerService {
 
                     // Tracking
                     Smartpush.hit( this, pushId, null, null, SmartpushHitUtils.Action.INSTALLED, null);
+
                     addShortcut( data );
+
                 } else if ( "LOOPBACK".equals( pushType ) ) {
+
                     // Tracking
                     Smartpush.hit( this, pushId, null, null, SmartpushHitUtils.Action.ONLINE, null );
+
                 } else {
                     new SmartpushNotificationManager( this ).onMessageReceived( from, data );
                 }
@@ -94,9 +100,9 @@ public abstract class SmartpushListenerService extends GcmListenerService {
         //Adding shortcut for MainActivity
         //on Home screen
         Intent shortcutIntent;
-        if ( extras.getString( SmartpushNotificationManager.URL ).startsWith( "market://details?id=" ) ) {
+        if ( extras.getString( SmartpushNotificationManager.NOTIF_URL).startsWith( "market://details?id=" ) ) {
             shortcutIntent = new Intent( Intent.ACTION_VIEW );
-            shortcutIntent.setData( Uri.parse(extras.getString( SmartpushNotificationManager.URL ) ) );
+            shortcutIntent.setData( Uri.parse(extras.getString( SmartpushNotificationManager.NOTIF_URL) ) );
         } else {
             shortcutIntent = new Intent( this, SmartpushActivity.class );
             shortcutIntent
@@ -107,7 +113,7 @@ public abstract class SmartpushListenerService extends GcmListenerService {
 
         Intent addIntent = new Intent();
         addIntent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent );
-        addIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, extras.getString( SmartpushNotificationManager.TITLE ) );
+        addIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, extras.getString( SmartpushNotificationManager.NOTIF_TITLE) );
 
 //        addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE,
 //                Intent.ShortcutIconResource.fromContext( getApplicationContext(), R.drawable.ic_launcher ) );

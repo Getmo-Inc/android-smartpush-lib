@@ -84,7 +84,7 @@ final class GeoRequest {
                 ", \"hwid\":\"" + hwid + "\"" +
                 ", \"hash\":\"" + hash + "\"" +
                 ( ( info != null ) ? ", \"info\":" + info.toString() : "" ) +
-                ( ( locations != null ) ? ", \"locations\":" + new Utils.ArrayUtils<GeoLocation>().toString( locations ) : "" ) +
+                ( ( locations != null ) ? ", \"locations\":" + new Utils.ArrayUtils<GeoLocation>().toJsonArrayString( locations ) : "" ) +
                 ( ( overpass != null ) ? ", \"overpass\":" + overpass.toString() : "" ) + '}';
     }
 }

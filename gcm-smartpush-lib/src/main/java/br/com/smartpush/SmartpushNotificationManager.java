@@ -19,12 +19,25 @@ import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
 
+import java.util.Arrays;
 import java.util.Calendar;
 
 import static android.content.ContentValues.TAG;
 import static br.com.smartpush.SmartpushService.ACTION_SMARTP_UPDATABLE;
 import static br.com.smartpush.Utils.CommonUtils.getValue;
+import static br.com.smartpush.Utils.Constants.LAUNCH_ICON;
+import static br.com.smartpush.Utils.Constants.NOTIF_AUTO_CANCEL;
+import static br.com.smartpush.Utils.Constants.NOTIF_BANNER;
+import static br.com.smartpush.Utils.Constants.NOTIF_CATEGORY;
+import static br.com.smartpush.Utils.Constants.NOTIF_CATEGORY_BUSCAPE;
+import static br.com.smartpush.Utils.Constants.NOTIF_DETAIL;
+import static br.com.smartpush.Utils.Constants.NOTIF_TITLE;
+import static br.com.smartpush.Utils.Constants.NOTIF_URL;
+import static br.com.smartpush.Utils.Constants.NOTIF_VIBRATE;
+import static br.com.smartpush.Utils.Constants.NOTIF_VIDEO_URI;
 import static br.com.smartpush.Utils.Constants.ONLY_PORTRAIT;
+import static br.com.smartpush.Utils.Constants.PUSH_DEFAULT_ICONS;
+import static br.com.smartpush.Utils.Constants.PUSH_INTERNAL_ID;
 
 /**
  * Created by t.licks on 28/07/17.
@@ -52,100 +65,55 @@ import static br.com.smartpush.Utils.Constants.ONLY_PORTRAIT;
     "extras": {
         "animate": true,
         "animateRate": 3000,
+
         "frame:1:banner": "",
         "frame:1:url": "",
-        "frame:1:video": "",
         "frame:1:package": "",
+
         "frame:2:banner": "",
         "frame:2:url": "",
-        "frame:2:video": "",
         "frame:2:package": "",
+
         "frame:3:banner": "",
         "frame:3:url": "",
-        "frame:3:video": "",
         "frame:3:package": "",
+
         "frame:4:banner": "",
         "frame:4:url": "",
-        "frame:4:video": "",
         "frame:4:package": "",
+
         "frame:5:banner": "",
         "frame:5:url": "",
-        "frame:5:video": "",
         "frame:5:package": ""
     }
  }
+
+ Changes:
+     Atributo "video" foi removido dos frames!
  */
 
 public class SmartpushNotificationManager {
 
     private Context mContext;
 
-    // TODO revisar...
-//    String[] types = { "BANNER", "SLIDER", "CARROUSSEL", "SUBSCRIBE_EMAIL", "SUBSCRIBE_PHONE" };
-
-    // Push metadata
-    public static String TITLE        = "title";
-    public static String DETAIL       = "detail";
-    public static String URL          = "url";
-    public static String VIDEO_URI    = "video";
-    public static String PLAY_VIDEO_ONLY_WIFI = "play_video_only_on_wifi";
-    public static String AUTO_CANCEL  = "ac";
-    public static String VIBRATE      = "vib";
-    public static String PACKAGENAME  = "package";
-    public static String CATEGORY     = "category";
-
-    public static String NOTIF_BANNER = "banner";
-    public static String LAUNCH_ICON  = "icon";
-
-    // Se o array de icones for alterado tem de ajustar o indice desta variavel.
-    private static final int CATEGORY_BUSCAPE = 18;
-    private static final int PUSH_INTERNAL_ID = 427738108;
-
-    private int[] pushIcons = {
-            R.drawable.ic_esporte,
-            R.drawable.ic_cultura,
-            R.drawable.ic_turismo,
-            R.drawable.ic_noticias,
-            R.drawable.ic_imoveis,
-            R.drawable.ic_veiculos,
-            R.drawable.ic_refeicoes,
-            R.drawable.ic_vestuario,         // vestuario
-            R.drawable.stat_notify_weather,  // outros
-            R.drawable.ic_celular_tablets,
-            R.drawable.ic_eletro_info,
-            R.drawable.ic_eventos,
-            R.drawable.ic_empregos_negocios,
-            R.drawable.ic_promocoes,
-            R.drawable.ic_bebes_criancas,
-            R.drawable.ic_casa_jardim,
-            R.drawable.ic_animais,
-            R.drawable.ic_sp_notif_buscape  // BUSCAPE
-    };
-
     public SmartpushNotificationManager( Context context ) {
         mContext = context;
     }
 
     public void onMessageReceived( String from, Bundle data ) {
-
         if ( data != null && !data.isEmpty() ) {  // has effect of unparcelling Bundle
             String pushId =
                     SmartpushHitUtils.getValueFromPayload(
                             SmartpushHitUtils.Fields.PUSH_ID, data );
 
-            String provider  =
-                    ( data.containsKey( "provider" ) )
-                            ? data.getString( "provider" )
-                            : data.getString( "adnetwork" );
-
             // Retrieve updated payload
             data = SmartpushHttpClient.getPushPayload( mContext, pushId, data );
 
-            // TODO prefetch video! .... It is not ok!
-            if ( data.containsKey( VIDEO_URI ) ) {
+            // If has "video" attribute in bundle prefetch
+            if ( data.containsKey( NOTIF_VIDEO_URI ) ) {
                 // Prefetching video...
                 String midiaId =
-                        data.getString( VIDEO_URI, null );
+                        data.getString(NOTIF_VIDEO_URI, null );
 
                 CacheManager
                         .getInstance( mContext )
@@ -160,40 +128,58 @@ public class SmartpushNotificationManager {
     private void createNotification( Bundle extras ) {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder( mContext )
-                .setSmallIcon(getPushIcon(extras))               // Set Small Icon
-                .setAutoCancel( isAutoCancel( extras ) )         // Set Auto Cancel Action
-                .setContentIntent( addMainAction( extras ) )     // Set Main Action
-                .setContentTitle ( extras.getString( TITLE ) )   // Set Title
-                .setContentText  ( extras.getString( DETAIL ) )  // Set 2nd line
-                .setWhen( System.currentTimeMillis() )           // Set WHEN ARRIVE
-                .setLights( Color.GREEN, 1000, 5000 )            // Set LIGHT Color and pattern
+                .setSmallIcon(getPushIcon(extras))                   // Set Small Icon
+                .setAutoCancel( isAutoCancel( extras ) )             // Set Auto Cancel Action
+                .setContentIntent( addMainAction( extras ) )         // Set Main Action
+                .setContentTitle ( extras.getString(NOTIF_TITLE) )   // Set Title
+                .setContentText  ( extras.getString(NOTIF_DETAIL) )  // Set 2nd line
+                .setWhen( System.currentTimeMillis() )               // Set WHEN ARRIVE
+                .setLights( Color.GREEN, 1000, 5000 )                // Set LIGHT Color and pattern
                 .setPriority( NotificationCompat.PRIORITY_HIGH );
 
-        if ( vibrate( extras ) ) {                               // VIBRATE
+        if ( vibrate( extras ) ) {                                   // NOTIF_VIBRATE
             builder.setVibrate(  new long[] { 100, 500, 200, 800 } );
         }
 
-        addSecondaryActions( extras, builder );                  // Set Secondary Actions
+        addSecondaryActions( extras, builder );                      // Set Secondary Actions
+        setBigIcon( extras, builder );                               // Set Large Icon
 
-        if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN ) {
-            NotificationCompat.BigPictureStyle style = createBigPictureStyle( extras );
-            if ( style != null ) {
-                builder.setStyle( style );                      // Set Big Banner
+        String pushType  =
+                ( extras.containsKey( "type" ) )
+                        ? extras.getString( "type" )
+                        : extras.getString( "adtype" );
+
+        if ( pushType != null && !"".equals( pushType.trim() ) ) {
+            int pushTypeOrder =
+                    Arrays.asList(
+                            new String[] { "BANNER", "SLIDER", "CARROUSSEL", "SUBSCRIBE_EMAIL", "SUBSCRIBE_PHONE" } )
+                            .indexOf( pushType );
+
+            // TODO working here ..
+
+
+        } else {
+            if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN ) {
+                NotificationCompat.BigPictureStyle style = createBigPictureStyle( extras );
+                if ( style != null ) {
+                    builder.setStyle( style );                      // Set Big Banner
+                }
             }
         }
 
-        setBigIcon( extras, builder );             // Set Large Icon
 
         NotificationManagerCompat nm = NotificationManagerCompat.from( mContext );
-        nm.cancel( PUSH_INTERNAL_ID );
+//        nm.cancel( PUSH_INTERNAL_ID );
         nm.notify( PUSH_INTERNAL_ID, builder.build() );
-
     }
 
     private int getPushIcon( Bundle extras ) {
-        int category = Integer.parseInt( getValue( extras.getString( CATEGORY ), "1" )  ) ;
-        category = ( category >= pushIcons.length ) ? 1 : category;
-        return pushIcons[ category - 1 ];
+        int category =
+                Integer.parseInt( getValue( extras.getString( NOTIF_CATEGORY ), "1" )  ) ;
+
+        category = ( category >= PUSH_DEFAULT_ICONS.length ) ? 1 : category;
+
+        return PUSH_DEFAULT_ICONS[ category - 1 ];
     }
 
     private void setBigIcon( Bundle extras, NotificationCompat.Builder builder ) {
@@ -203,13 +189,12 @@ public class SmartpushNotificationManager {
 
         if ( urlpath == null ) {
             int category =
-                    Integer.parseInt( getValue( extras.getString( CATEGORY ), "1" ) ) ;
+                    Integer.parseInt( getValue( extras.getString( NOTIF_CATEGORY ), "1" ) ) ;
 
-            category = ( category >= pushIcons.length ) ? 1 : category;
+            category = ( category >= PUSH_DEFAULT_ICONS.length ) ? 1 : category;
 
-            if ( category == CATEGORY_BUSCAPE ) {
-                builder.setLargeIcon(
-                        BitmapFactory.decodeResource( resources, R.drawable.ic_sp_buscape ) );
+            if ( category == NOTIF_CATEGORY_BUSCAPE ) {
+                builder.setLargeIcon( BitmapFactory.decodeResource( resources, R.drawable.ic_sp_buscape ) );
             }
 
             return;
@@ -232,22 +217,23 @@ public class SmartpushNotificationManager {
     }
 
     private boolean isAutoCancel( Bundle extras ) {
-        return ( "0".equals( extras.getString( AUTO_CANCEL ) ) ) ? false : true;
+        return ( "0".equals( extras.getString( NOTIF_AUTO_CANCEL ) ) ) ? false : true;
     }
 
     private boolean vibrate( Bundle extras ) {
-        if ( ( "1".equals( extras.getString( VIBRATE ) ) ) ? true : false ) {
-//            int result = this.checkCallingOrSelfPermission( Manifest.permission.VIBRATE );
-            int permissionCheck = ContextCompat.checkSelfPermission( mContext,
-                    Manifest.permission.VIBRATE );
+        if ( ( "1".equals( extras.getString( NOTIF_VIBRATE ) ) ) ? true : false ) {
+
+            int permissionCheck =
+                    ContextCompat.checkSelfPermission( mContext, Manifest.permission.VIBRATE );
+
             return ( permissionCheck == PackageManager.PERMISSION_GRANTED );
         }
 
         return false;
     }
 
-    private PendingIntent addMainAction(Bundle extras ) {
-        String action = extras.getString( URL );
+    private PendingIntent addMainAction( Bundle extras ) {
+        String action = extras.getString( NOTIF_URL );
 
         // No main action defined!
         if ( action == null ) {
@@ -261,9 +247,10 @@ public class SmartpushNotificationManager {
             it.setData( Uri.parse( action ) );
         } else {
             it = new Intent( mContext, SmartpushActivity.class );
-            if ( !extras.containsKey( VIDEO_URI ) ) {
+            if ( !extras.containsKey(NOTIF_VIDEO_URI) ) {
                 extras.putBoolean( ONLY_PORTRAIT, true );  // Lock screen orientation
             }
+
             it.putExtras( extras ).addFlags( Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP );
         }
 
@@ -272,6 +259,7 @@ public class SmartpushNotificationManager {
     }
 
     private void addSecondaryActions( Bundle extras, NotificationCompat.Builder builder ) {
+
         if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN ) {
             int count = 0;
 
@@ -329,7 +317,6 @@ public class SmartpushNotificationManager {
                     builder.addAction( R.drawable.ic_compartilhar, mContext.getString( R.string.share ),
                             PendingIntent.getActivity( mContext, 0,
                                     SmartpushIntentUtils.shareText( params[ 0 ], params[ 1 ] ), 0 ) );
-//                    count++;
                 }
             }
         }
@@ -341,32 +328,34 @@ public class SmartpushNotificationManager {
                         .getInstance( mContext )
                         .loadBitmap( extras.getString( NOTIF_BANNER ), CacheManager.ExpirationTime.DAY );
 
-        if ( bitmap == null ) return null;
+        if ( bitmap != null ) {
+            // Resize picture
+            WindowManager wm = ( WindowManager) mContext.getSystemService( Context.WINDOW_SERVICE );
+            DisplayMetrics metrics = new DisplayMetrics();
+            wm.getDefaultDisplay().getMetrics( metrics );
 
-        // Resize picture
-        WindowManager wm = ( WindowManager) mContext.getSystemService( Context.WINDOW_SERVICE );
-        DisplayMetrics metrics = new DisplayMetrics();
-        wm.getDefaultDisplay().getMetrics( metrics );
+            int imageWidth  = bitmap.getWidth();
+            int imageHeight = bitmap.getHeight();
+            int newWidth    = 400; //metrics.widthPixels;
 
-        int imageWidth  = bitmap.getWidth();
-        int imageHeight = bitmap.getHeight();
-        int newWidth    = 400; //metrics.widthPixels;
+            float scaleFactor = ( float ) newWidth / ( float ) imageWidth;
 
-        float scaleFactor = ( float ) newWidth / ( float ) imageWidth;
+            int newHeight = ( int )( imageHeight * scaleFactor );
 
-        int newHeight = ( int )( imageHeight * scaleFactor );
+            SmartpushLog.d( TAG, "Picture size: " + newWidth + "," + newHeight );
 
-        SmartpushLog.d( TAG, "Picture size: " + newWidth + "," + newHeight );
+            Bitmap resizedBitmap = Bitmap.createScaledBitmap( bitmap, newWidth, newHeight, true );
 
-        Bitmap resizedBitmap = Bitmap.createScaledBitmap( bitmap, newWidth, newHeight, true );
+            // Big Picture Style config
+            NotificationCompat.BigPictureStyle notiStyle = new NotificationCompat.BigPictureStyle()
+                    .setBigContentTitle(extras.getString( NOTIF_TITLE ) )
+                    .setSummaryText( extras.getString( NOTIF_DETAIL ) )
+                    .bigPicture( resizedBitmap );
 
-        // Big Picture Style config
-        NotificationCompat.BigPictureStyle notiStyle = new NotificationCompat.BigPictureStyle()
-                .setBigContentTitle(extras.getString(TITLE))
-                .setSummaryText( extras.getString( DETAIL ) )
-                .bigPicture( resizedBitmap );
+            return notiStyle;
+        }
 
-        return notiStyle;
+        return null;
     }
 
     public void scheduleNotificationRefreshTime() {

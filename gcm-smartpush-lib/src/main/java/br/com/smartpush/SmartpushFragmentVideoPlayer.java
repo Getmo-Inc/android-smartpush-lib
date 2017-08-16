@@ -25,6 +25,10 @@ import android.widget.TextView;
 
 import java.util.concurrent.TimeUnit;
 
+import static br.com.smartpush.Utils.Constants.NOTIF_PLAY_VIDEO_ONLY_WIFI;
+import static br.com.smartpush.Utils.Constants.NOTIF_URL;
+import static br.com.smartpush.Utils.Constants.NOTIF_PACKAGENAME;
+
 
 /**
  * Created by fabio.licks on 20/08/15.
@@ -121,7 +125,7 @@ public final class SmartpushFragmentVideoPlayer extends Fragment implements
 //                new FetchVideoDeepLink()
 //                        .execute(
 //                                getActivity().getIntent().getStringExtra(
-//                                        SmartpushListenerService.VIDEO_URI ) );
+//                                        SmartpushListenerService.NOTIF_VIDEO_URI ) );
             }
         }
     }
@@ -221,8 +225,8 @@ public final class SmartpushFragmentVideoPlayer extends Fragment implements
     }
 
     private void goForward() {
-        String url         = getArguments().getString( SmartpushNotificationManager.URL );
-        String packageName = getArguments().getString( SmartpushNotificationManager.PACKAGENAME );
+        String url         = getArguments().getString( NOTIF_URL );
+        String packageName = getArguments().getString( NOTIF_PACKAGENAME );
 
         if ( packageName != null ) {
             Intent intent = getActivity().getPackageManager().getLaunchIntentForPackage( packageName );
@@ -233,7 +237,7 @@ public final class SmartpushFragmentVideoPlayer extends Fragment implements
         } else if ( url != null ) {
             if ( url.startsWith( "http" ) || url.startsWith( "https" ) ) {
                 Intent it = new Intent( getActivity(), SmartpushActivity.class );
-                it.putExtra( SmartpushNotificationManager.URL, url );
+                it.putExtra( NOTIF_URL, url );
                 it.putExtra( Utils.Constants.ONLY_PORTRAIT, true );
                 it.putExtra( Utils.Constants.REDIRECTED, true );
                 it.putExtra( SmartpushHitUtils.Fields.PUSH_ID.getParamName(),
@@ -448,9 +452,9 @@ public final class SmartpushFragmentVideoPlayer extends Fragment implements
     private boolean isSetToPlayOnlyWifi() {
         boolean playVideoOnlyWifi = false;
         Bundle extras = getArguments();
-        if ( extras != null && extras.containsKey( SmartpushNotificationManager.PLAY_VIDEO_ONLY_WIFI ) ) {
+        if ( extras != null && extras.containsKey( NOTIF_PLAY_VIDEO_ONLY_WIFI) ) {
             playVideoOnlyWifi =
-                    ( extras.getString( SmartpushNotificationManager.PLAY_VIDEO_ONLY_WIFI ).equals( "1" ) ) ? true : false;
+                    ( extras.getString( NOTIF_PLAY_VIDEO_ONLY_WIFI ).equals( "1" ) ) ? true : false;
         }
 
         return playVideoOnlyWifi;

@@ -206,7 +206,7 @@ class SmartpushIntentUtils {
     }
 
     /**
-     * Open a browser window to the URL specified.
+     * Open a browser window to the NOTIF_URL specified.
      *
      * @param url Target url
      */

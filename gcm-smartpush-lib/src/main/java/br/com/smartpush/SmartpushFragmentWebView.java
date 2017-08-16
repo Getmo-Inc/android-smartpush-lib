@@ -19,6 +19,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import static br.com.smartpush.Utils.Constants.NOTIF_URL;
+
 /**
  * Created by fabio.licks on 02/09/15.
  */
@@ -140,7 +142,7 @@ public class SmartpushFragmentWebView extends Fragment {
         resetScreen();
         final Bundle extras = getArguments();
         if ( extras != null ) {
-            webview.loadUrl( extras.getString( SmartpushNotificationManager.URL ) );
+            webview.loadUrl( extras.getString( NOTIF_URL) );
         } else {
             getActivity().finish();
         }

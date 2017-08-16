@@ -84,6 +84,7 @@ public class CacheManager {
 
                 } catch( IOException e ) {
                     Log.e( CacheManager.class.getSimpleName(), e.getMessage(), e );
+                    deleteFile( key );
                 }
             }
         }
@@ -164,6 +165,11 @@ public class CacheManager {
         return file;
     }
 
+    private boolean deleteFile( String key ) {
+        File file = getFile( key );
+        return ( file.exists() ) ? file.delete() : false;
+    }
+
     private boolean isInCache( String key, ExpirationTime cacheTime ) {
         File file = getFile( key );
         long expirationTime = cacheTime.getExpirationTime();
@@ -173,8 +179,7 @@ public class CacheManager {
     private void bitmapToFile( Bitmap bitmap, String filename ) throws IOException {
         int quality = 100;
 
-        File dir  = mContext.getCacheDir();
-        File file = new File( dir, filename );
+        File file = getFile( filename );
         FileOutputStream fileOutputStream = new FileOutputStream( file );
         bitmap.compress( Bitmap.CompressFormat.PNG, quality, fileOutputStream );
         fileOutputStream.flush();

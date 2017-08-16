@@ -6,10 +6,9 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 
-import org.json.JSONArray;
-
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -34,6 +33,46 @@ final class Utils {
 
         String ONLY_PORTRAIT = "br.com.getmo.orientation.policy.PORTRAIT";
         String REDIRECTED = "br.com.getmo.orientation.policy.REDIRECTED";
+
+
+        // Push/Notification metadata
+        String NOTIF_TITLE       = "title";
+        String NOTIF_DETAIL      = "detail";
+        String NOTIF_URL         = "url";
+        String NOTIF_VIDEO_URI   = "video";
+        String NOTIF_PLAY_VIDEO_ONLY_WIFI = "play_video_only_on_wifi";
+        String NOTIF_AUTO_CANCEL = "ac";
+        String NOTIF_VIBRATE     = "vib";
+        String NOTIF_PACKAGENAME = "package";
+        String NOTIF_CATEGORY    = "category";
+        String NOTIF_BANNER      = "banner";
+        String LAUNCH_ICON       = "icon";
+
+        // Se o array de icones for alterado tem de ajustar o indice desta variavel.
+        int NOTIF_CATEGORY_BUSCAPE = 18;
+        int PUSH_INTERNAL_ID = 427738108;
+
+        int[] PUSH_DEFAULT_ICONS = {
+                R.drawable.ic_esporte,
+                R.drawable.ic_cultura,
+                R.drawable.ic_turismo,
+                R.drawable.ic_noticias,
+                R.drawable.ic_imoveis,
+                R.drawable.ic_veiculos,
+                R.drawable.ic_refeicoes,
+                R.drawable.ic_vestuario,         // vestuario
+                R.drawable.stat_notify_weather,  // outros
+                R.drawable.ic_celular_tablets,
+                R.drawable.ic_eletro_info,
+                R.drawable.ic_eventos,
+                R.drawable.ic_empregos_negocios,
+                R.drawable.ic_promocoes,
+                R.drawable.ic_bebes_criancas,
+                R.drawable.ic_casa_jardim,
+                R.drawable.ic_animais,
+                R.drawable.ic_sp_notif_buscape  // BUSCAPE
+        };
+
     }
 
     //=============================================================================================
@@ -75,23 +114,21 @@ final class Utils {
 
     //=============================================================================================
     static class ArrayUtils<T> {
-        public String toString( List<T> list ) {
+        public String toJsonArrayString(List<T> list ) {
 
             if ( list == null ) return "[]";
 
-//            StringBuilder sb = new StringBuilder();
-//            Iterator<T> iterator = list.iterator();
-//
-//            sb.append("[");
-//            while ( iterator.hasNext() ) {
-//                T item = iterator.next();
-//                sb.append(item.toString());
-//            }
-//            sb.append("]");
-//
-//            return sb.toString();
+            StringBuilder sb = new StringBuilder();
+            Iterator<T> iterator = list.iterator();
 
-            return new JSONArray( list ).toString();
+            sb.append("[");
+            while ( iterator.hasNext() ) {
+                T item = iterator.next();
+                sb.append(item.toString());
+            }
+            sb.append("]");
+
+            return sb.toString();
         }
     }
 
@@ -150,7 +187,7 @@ final class Utils {
                         _c.getPackageManager()
                                 .getApplicationInfo(_c.getPackageName(), PackageManager.GET_META_DATA);
 //                return ( SMARTP_DEBUG.equals( key ) )
-//                        ? Boolean.toString(ai.metaData.getBoolean(key))
+//                        ? Boolean.toJsonArrayString(ai.metaData.getBoolean(key))
 //                        : ai.metaData.getString(key);
                 return ai.metaData.getString(key);
             } catch ( PackageManager.NameNotFoundException e ) {
