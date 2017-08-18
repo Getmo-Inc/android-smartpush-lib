@@ -4,14 +4,16 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.Date;
+
+import br.com.smartpush.Smartpush;
 import br.com.smartpush.SmartpushDeviceInfo;
-import br.com.smartpush.SmartpushHttpClient;
 import br.com.smartpush.SmartpushService;
 
 public class MainActivity extends AppCompatActivity {
@@ -22,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView( R.layout.main );
 
         // Register at Smartpush!
-//        Smartpush.subscribe( this );
+        Smartpush.subscribe( this );
 
         // optional - Tracking :: Call this method always! if app was opened by push one event will
         // be saved, if no nothing will happen.
@@ -37,14 +39,7 @@ public class MainActivity extends AppCompatActivity {
 //        Smartpush.setTag( this, "CARRIER", "CRAZY_CARRIER" );
 
 //        new SmartpushNotificationManager( this ).scheduleNotificationRefreshTime();
-            new AsyncTask<Void, Void, Void>() {
 
-                @Override
-                protected Void doInBackground(Void... voids) {
-                    SmartpushHttpClient.getPushPayload( MainActivity.this, "TESTE" );
-                    return null;
-                }
-            }.execute();
     }
 
     @Override
@@ -83,45 +78,53 @@ public class MainActivity extends AppCompatActivity {
 
                 TextView alias = (TextView) findViewById(R.id.alias);
                 String message = (device != null) ? device.alias : "Fail :(";
-                alias.setText(message);
+                alias.setText( message );
 
                 // set your custom TAG here!
 
-//                // E.G:
-//                // TAG type of STRING
-//                Smartpush.setTag(MainActivity.this, "CARRIER", "SMARTPUSH");
-//
-//                // TAG type of BOOLEAN
-//                Smartpush.setTag(MainActivity.this, "SHOW_ALERT_STATUS", true);
-//
-//                // TAG type of NUMERIC
-//                Smartpush.setTag(MainActivity.this, "LAST_ORDER_VALUE", 159.88);
-//
-//                // TAG type of TIMESTAMP
-//                Smartpush.setTag(MainActivity.this, "LAST_ORDER_DATE", new Date(0));
-//
-//                // TAG type of LIST
-//                ArrayList<String> list = new ArrayList<>();
-//                list.add("POLITICA");
-//                list.add("ESPORTE");
-//                list.add("ECONOMIA");
-//                Smartpush.setTag(MainActivity.this, "NEWS_FEED", list);
-//
-//                // DELETE TAG type of STRING
-//                Smartpush.delTagOrValue(MainActivity.this, "CARRIER", (String) null);
-//
-//                // DELETE TAG type of BOOLEAN
-//                Smartpush.delTagOrValue(MainActivity.this, "SHOW_ALERT_STATUS", (Boolean) null);
-//
-//                // DELETE TAG type of NUMERIC
-//                Smartpush.delTagOrValue(MainActivity.this, "LAST_ORDER_VALUE", (Double) null);
-//
-//                // DELETE TAG type of TIMESTAMP
-//                Smartpush.delTagOrValue(MainActivity.this, "LAST_ORDER_DATE", (Date) null);
-//
-//                // DELETE TAG type of LIST
-//                list.remove(0);
-//                Smartpush.delTagOrValue(MainActivity.this, "NEWS_FEED", list);
+                // E.G:
+                // TAG type of STRING
+                Smartpush.setTag(MainActivity.this, "CARRIER", "SMARTPUSH");
+
+                // TAG type of BOOLEAN
+                Smartpush.setTag(MainActivity.this, "SHOW_ALERT_STATUS", true );
+
+                // TAG type of NUMERIC
+                Smartpush.setTag(MainActivity.this, "LAST_ORDER_VALUE", 159.88 );
+
+                // TAG type of TIMESTAMP
+                Smartpush.setTag(MainActivity.this, "LAST_ORDER_DATE", new Date( 0 ) );
+
+                // TAG type of LIST
+                ArrayList<String> list = new ArrayList<>();
+                list.add("POLITICA");
+                list.add("ESPORTE");
+                list.add("ECONOMIA");
+                Smartpush.setTag( MainActivity.this, "NEWS_FEED", list );
+
+                // Testing insertion of a empty list
+                Smartpush.setTag( MainActivity.this, "APPS_LIST", new ArrayList<String>() );
+
+                // Testing insertion of a null list
+                Smartpush.setTag( MainActivity.this, "tagList", (ArrayList<String>) null );
+
+                // DELETE TAG type of STRING
+                Smartpush.delTagOrValue(MainActivity.this, "CARRIER", (String) null);
+
+                // DELETE TAG type of BOOLEAN
+                Smartpush.delTagOrValue(MainActivity.this, "SHOW_ALERT_STATUS", (Boolean) null);
+
+                // DELETE TAG type of NUMERIC
+                Smartpush.delTagOrValue(MainActivity.this, "LAST_ORDER_VALUE", (Double) null);
+
+                // DELETE TAG type of TIMESTAMP
+                Smartpush.delTagOrValue(MainActivity.this, "LAST_ORDER_DATE", (Date) null);
+
+                // DELETE TAG type of LIST
+                list.remove(0);
+                Smartpush.delTagOrValue(MainActivity.this, "NEWS_FEED", list);
+
+                
 
             }
         }

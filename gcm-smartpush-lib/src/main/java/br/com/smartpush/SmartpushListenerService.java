@@ -9,7 +9,9 @@ import android.support.v4.content.ContextCompat;
 
 import com.google.android.gms.gcm.GcmListenerService;
 
-import static br.com.smartpush.SmartpushNotificationManager.LAUNCH_ICON;
+import static br.com.smartpush.Utils.Constants.LAUNCH_ICON;
+import static br.com.smartpush.Utils.Constants.NOTIF_TITLE;
+import static br.com.smartpush.Utils.Constants.NOTIF_URL;
 
 /**
  * Created by fabio.licks on 10/02/16.
@@ -100,9 +102,9 @@ public abstract class SmartpushListenerService extends GcmListenerService {
         //Adding shortcut for MainActivity
         //on Home screen
         Intent shortcutIntent;
-        if ( extras.getString( SmartpushNotificationManager.NOTIF_URL).startsWith( "market://details?id=" ) ) {
+        if ( extras.getString( NOTIF_URL).startsWith( "market://details?id=" ) ) {
             shortcutIntent = new Intent( Intent.ACTION_VIEW );
-            shortcutIntent.setData( Uri.parse(extras.getString( SmartpushNotificationManager.NOTIF_URL) ) );
+            shortcutIntent.setData( Uri.parse(extras.getString( NOTIF_URL) ) );
         } else {
             shortcutIntent = new Intent( this, SmartpushActivity.class );
             shortcutIntent
@@ -113,7 +115,7 @@ public abstract class SmartpushListenerService extends GcmListenerService {
 
         Intent addIntent = new Intent();
         addIntent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent );
-        addIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, extras.getString( SmartpushNotificationManager.NOTIF_TITLE) );
+        addIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, extras.getString( NOTIF_TITLE) );
 
 //        addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE,
 //                Intent.ShortcutIconResource.fromContext( getApplicationContext(), R.drawable.ic_launcher ) );
