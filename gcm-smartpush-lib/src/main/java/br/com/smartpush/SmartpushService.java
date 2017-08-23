@@ -3,6 +3,8 @@ package br.com.smartpush;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Address;
 import android.location.Geocoder;
@@ -760,5 +762,30 @@ public class SmartpushService extends IntentService {
                     b.getString( SmartpushHitUtils.Fields.LABEL.getParamName() ) );
 
         SmartpushHttpClient.post( "hit", fields, this, false );
+    }
+
+    private void handleActionGetAppsList() {
+        List<String> list = Utils.DeviceUtils.getInstalledApps( this );
+
+        // Obtem acesso ao banco de dados
+        SQLiteDatabase db = new DBOpenerHelper( this ).getWritableDatabase();
+
+        for ( String packageName : list ) {
+            AppInfo appInfo = AppInfoDAO.findByPackageName( db, packageName );
+            if ( appInfo != null ) {
+                if ( appInfo.getState() == AppInfo.UNINSTALLED ) {
+                    appInfo.setState( AppInfo.INSTALLED );
+                    appInfo.setSinc( false );
+                }
+            } else {
+                AppInfo newReg = new AppInfo();
+                newReg.setPackageName( packageName );
+                newReg.setState( AppInfo.INSTALLED );
+                newReg.setSinc( false );
+            }
+        }
+
+        // Release
+        db.close();
     }
 }

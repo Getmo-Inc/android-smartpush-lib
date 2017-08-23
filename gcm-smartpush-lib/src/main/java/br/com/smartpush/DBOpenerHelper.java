@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 final class DBOpenerHelper extends SQLiteOpenHelper {
 
-    private static final int VERSION = 1;
+    private static final int VERSION = 2;
     private static final String DATABASE_NAME = "SMARTPUSH";
 
     private static final String[] CREATE_SCRIPTS = new String[] {
@@ -24,12 +24,19 @@ final class DBOpenerHelper extends SQLiteOpenHelper {
                     " ID INTEGER PRIMARY KEY NOT NULL," +
                     " LAT REAL NOT NULL," +
                     " LNG REAL NOT NULL," +
-                    " TIME INTEGER NOT NULL );"
+                    " TIME INTEGER NOT NULL );",
+
+            "CREATE TABLE IF NOT EXISTS APPSLIST ( " +
+                    " ID INTEGER PRIMARY KEY NOT NULL," +
+                    " APP_PACKAGE_NAME_NAME TEXT NOT NULL," +
+                    " SINC_STATE INTEGER NOT NULL," +
+                    " APP_STATE INTEGER NOT NULL );"
     };
 
     private static final String[] DROP_SCRIPTS = new String[] {
             "DROP TABLE IF EXISTS GEOZONE;",
-            "DROP TABLE IF EXISTS LOCATION;"
+            "DROP TABLE IF EXISTS LOCATION;",
+            "DROP TABLE IF EXISTS APPSLIST;"
     };
 
     public DBOpenerHelper(Context context ) {
