@@ -764,8 +764,11 @@ public class SmartpushService extends IntentService {
         SmartpushHttpClient.post( "hit", fields, this, false );
     }
 
-    private void handleActionGetAppsList() {
+    private void handleActionSaveAppsListState() {
         List<String> list = Utils.DeviceUtils.getInstalledApps( this );
+
+        List<String> uninstalledAppsIn = new ArrayList<>();
+        List<String> uninstalledAppsOut = new ArrayList<>();
 
         // Obtem acesso ao banco de dados
         SQLiteDatabase db = new DBOpenerHelper( this ).getWritableDatabase();
@@ -776,12 +779,16 @@ public class SmartpushService extends IntentService {
                 if ( appInfo.getState() == AppInfo.UNINSTALLED ) {
                     appInfo.setState( AppInfo.INSTALLED );
                     appInfo.setSinc( false );
+
+                    uninstalledAppsOut.add( appInfo.getPackageName() );
                 }
             } else {
                 AppInfo newReg = new AppInfo();
                 newReg.setPackageName( packageName );
                 newReg.setState( AppInfo.INSTALLED );
                 newReg.setSinc( false );
+
+                uninstalledAppsOut.add( appInfo.getPackageName() );
             }
         }
 

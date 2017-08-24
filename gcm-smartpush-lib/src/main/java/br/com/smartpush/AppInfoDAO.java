@@ -45,6 +45,20 @@ class AppInfoDAO {
         return appInfo;
     }
 
+    public static AppInfo findById( SQLiteDatabase db, int id ) {
+        AppInfo appInfo = null;
+
+        String query = AppInfo.ID + " = ?";
+        Cursor cursor =
+                db.query( TABLENAME, null, query, new String[] { String.valueOf( id ) }, null, null, null );
+
+        if ( cursor != null && cursor.moveToFirst() ) {
+            appInfo = bindAppInfo( cursor );
+        }
+
+        return appInfo;
+    }
+
     private static ContentValues getContentValue( AppInfo appInfo ) {
         ContentValues row = new ContentValues();
         row.put( AppInfo.PACKAGE_NAME, appInfo.getPackageName() );
@@ -60,7 +74,7 @@ class AppInfoDAO {
         boolean sincState =
                 ( ( cursor.getInt( cursor.getColumnIndex( AppInfo.SINC_STATE ) ) ) == 1 ) ? true : false;
 
-        item.setId( cursor.getInt( cursor.getColumnIndex( "ID" ) ) );
+        item.setId( cursor.getInt( cursor.getColumnIndex( AppInfo.ID ) ) );
         item.setPackageName( cursor.getString( cursor.getColumnIndex( AppInfo.PACKAGE_NAME ) ) );
         item.setSinc( sincState );
         item.setState( cursor.getInt( cursor.getColumnIndex( AppInfo.STATE ) ) );

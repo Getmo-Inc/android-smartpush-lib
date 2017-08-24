@@ -8,6 +8,7 @@ class AppInfo {
     public static final int INSTALLED   = 1;
     public static final int UNINSTALLED = 0;
 
+    public static final String ID = "ID";
     public static final String PACKAGE_NAME = "APP_PACKAGE_NAME";
     public static final String SINC_STATE = "SINC_STATE";
     public static final String STATE = "APP_STATE";
@@ -47,5 +48,12 @@ class AppInfo {
 
     public void setState( int state ) {
         this.state = state;
+    }
+
+    @Override
+    public String toString() {
+        return "{ \"packagename\":\"" + packageName + "\"" +
+                ", \"state\":\"" + ( ( state == INSTALLED ) ? "INSTALLED" : "UNINSTALLED" ) + "\"" +
+                ", \"sinc\":" + sinc + "" + "}";
     }
 }
