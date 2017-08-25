@@ -28,7 +28,7 @@ final class DBOpenerHelper extends SQLiteOpenHelper {
 
             "CREATE TABLE IF NOT EXISTS APPSLIST ( " +
                     " ID INTEGER PRIMARY KEY NOT NULL," +
-                    " APP_PACKAGE_NAME_NAME TEXT NOT NULL," +
+                    " APP_PACKAGE_NAME TEXT NOT NULL," +
                     " SINC_STATE INTEGER NOT NULL," +
                     " APP_STATE INTEGER NOT NULL );"
     };

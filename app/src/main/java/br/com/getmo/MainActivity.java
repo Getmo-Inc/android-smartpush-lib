@@ -23,8 +23,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.main );
 
-        // Register at Smartpush!
-        Smartpush.subscribe( this );
+//        // Register at Smartpush!
+//        Smartpush.subscribe( this );
 
         // optional - Tracking :: Call this method always! if app was opened by push one event will
         // be saved, if no nothing will happen.
@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
 //        new SmartpushNotificationManager( this ).scheduleNotificationRefreshTime();
 
+        SmartpushService.getAppList( this );
     }
 
     @Override

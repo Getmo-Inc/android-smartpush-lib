@@ -4,6 +4,9 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by t.licks on 23/08/17.
  */
@@ -57,6 +60,42 @@ class AppInfoDAO {
         }
 
         return appInfo;
+    }
+
+    public static List<AppInfo> listAll(SQLiteDatabase db ) {
+        List<AppInfo> list = null;
+
+        Cursor cursor = db.query( TABLENAME, null, null, null, null, null, null );
+
+        if ( cursor != null ) {
+            list = new ArrayList<>( cursor.getCount() );
+            while( cursor.moveToNext() ) {
+                AppInfo appInfo = bindAppInfo( cursor );
+                SmartpushLog.d( TABLENAME, appInfo.toString() );
+                list.add( appInfo );
+            }
+        }
+
+        return list;
+    }
+
+    public static List<String> listAllPackageNameByStatus( SQLiteDatabase db, int state, boolean sincState ) {
+        List<String> list = null;
+
+        String query = AppInfo.STATE + " = ? AND " + AppInfo.SINC_STATE + " = ?";
+        Cursor cursor =
+                db.query( TABLENAME, null, query, new String[]{ String.valueOf( state ), ( ( sincState ) ? "1" : "0" ) }, null, null, null );
+
+        if ( cursor != null ) {
+            list = new ArrayList<>( cursor.getCount() );
+            while( cursor.moveToNext() ) {
+                String packageName = cursor.getString( cursor.getColumnIndex( AppInfo.PACKAGE_NAME ) );
+                SmartpushLog.d( TABLENAME, packageName );
+                list.add( packageName );
+            }
+        }
+
+        return list;
     }
 
     private static ContentValues getContentValue( AppInfo appInfo ) {

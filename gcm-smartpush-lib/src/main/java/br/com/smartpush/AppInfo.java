@@ -51,6 +51,21 @@ class AppInfo {
     }
 
     @Override
+    public boolean equals( Object o ) {
+        if ( this == o ) return true;
+        if ( o == null || getClass() != o.getClass() ) return false;
+
+        AppInfo appInfo = ( AppInfo ) o;
+
+        return packageName.equals( appInfo.packageName );
+    }
+
+    @Override
+    public int hashCode() {
+        return packageName.hashCode();
+    }
+
+    @Override
     public String toString() {
         return "{ \"packagename\":\"" + packageName + "\"" +
                 ", \"state\":\"" + ( ( state == INSTALLED ) ? "INSTALLED" : "UNINSTALLED" ) + "\"" +
