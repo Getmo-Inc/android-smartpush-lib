@@ -63,12 +63,11 @@ class AppInfoDAO {
     }
 
     public static List<AppInfo> listAll(SQLiteDatabase db ) {
-        List<AppInfo> list = null;
+        List<AppInfo> list = new ArrayList<>( );
 
         Cursor cursor = db.query( TABLENAME, null, null, null, null, null, null );
 
         if ( cursor != null ) {
-            list = new ArrayList<>( cursor.getCount() );
             while( cursor.moveToNext() ) {
                 AppInfo appInfo = bindAppInfo( cursor );
                 SmartpushLog.d( TABLENAME, appInfo.toString() );
@@ -80,14 +79,13 @@ class AppInfoDAO {
     }
 
     public static List<String> listAllPackageNameByStatus( SQLiteDatabase db, int state, boolean sincState ) {
-        List<String> list = null;
+        List<String> list = new ArrayList<>( );
 
         String query = AppInfo.STATE + " = ? AND " + AppInfo.SINC_STATE + " = ?";
         Cursor cursor =
                 db.query( TABLENAME, null, query, new String[]{ String.valueOf( state ), ( ( sincState ) ? "1" : "0" ) }, null, null, null );
 
         if ( cursor != null ) {
-            list = new ArrayList<>( cursor.getCount() );
             while( cursor.moveToNext() ) {
                 String packageName = cursor.getString( cursor.getColumnIndex( AppInfo.PACKAGE_NAME ) );
                 SmartpushLog.d( TABLENAME, packageName );
