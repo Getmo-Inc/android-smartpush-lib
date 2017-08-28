@@ -18,6 +18,9 @@ class AppInfo {
     private boolean sinc;
     private int state;
 
+    // Control evaluating
+    private boolean match;
+
     public int getId() {
         return _id;
     }
@@ -48,6 +51,14 @@ class AppInfo {
 
     public void setState( int state ) {
         this.state = state;
+    }
+
+    public boolean isMatch() {
+        return match;
+    }
+
+    public void setMatch(boolean match) {
+        this.match = match;
     }
 
     @Override

@@ -781,96 +781,85 @@ public class SmartpushService extends IntentService {
     private void handleActionSaveAppsListState() {
         SQLiteDatabase db = new DBOpenerHelper( this ).getWritableDatabase();
 
-        // List with last state sinc to SMARTPUSH
-        List<AppInfo> savedList = AppInfoDAO.listAll( db );
-
         // Active apps list
         List<String> currentInstalledApps = Utils.DeviceUtils.getInstalledApps( this );
 
-        if ( savedList != null && currentInstalledApps != null ) {
-            Log.d( "APPS", "savedList: " + savedList.size() );
-            Log.d( "APPS", "currentInstalledApps: " + currentInstalledApps.size() );
+        // List with last state sinc to SMARTPUSH
+        List<AppInfo> savedList = AppInfoDAO.listAll( db );
 
-            // Compare saved list with current installed list and remove matches from current installed list!
-            for ( AppInfo item: savedList ) {
-                for ( int i = 0; i < currentInstalledApps.size(); i++ ) {
-                    if ( currentInstalledApps.get( i ).equals( item.getPackageName() ) ) {
-                        Log.d( "APPS", "[1]: " + item.toString() );
-                        if ( item.getState() == AppInfo.UNINSTALLED ) {
-                            item.setState( AppInfo.INSTALLED );
-                            item.setSinc( false );
+        Log.d( "APPS", "savedList: " + savedList.size() );
+        Log.d( "APPS", "currentInstalledApps: " + currentInstalledApps.size() );
 
-                            AppInfoDAO.save( db, item );
-                            currentInstalledApps.remove( i );
-                            break;
+        // insert/update packages installed state
+        if ( currentInstalledApps != null ) {
+            for ( String packageName : currentInstalledApps ) {
+                boolean found = false;
+                for( AppInfo saved : savedList ) {
+                    if ( packageName.equals( saved.getPackageName() ) ) {
+                        Log.d( "APPS", "savedList.contains: " + packageName );
+                        if ( saved != null && saved.getState() == AppInfo.UNINSTALLED ) {
+                            saved.setState( AppInfo.INSTALLED );
+                            saved.setSinc( false );
+                            AppInfoDAO.save( db, saved );
                         }
+
+                        found = true;
+                        saved.setMatch( found );
+                        break;
                     }
                 }
-            }
 
-            Log.d( "APPS", "savedList: " + savedList.size() );
-            Log.d( "APPS", "currentInstalledApps: " + currentInstalledApps.size() );
+                if ( !found ) {
+                    Log.d( "APPS", "savedList.not.contains: " + packageName );
+                    AppInfo newApp = new AppInfo();
+                    newApp.setPackageName( packageName );
+                    newApp.setState( AppInfo.INSTALLED );
+                    newApp.setSinc( false );
+                    newApp.setMatch( true );
 
-            // Compare current installed list with saved list and remove matches from saved list!
-            for ( String packageName: currentInstalledApps ) {
-                for ( int i = 0; i < savedList.size(); i++ ) {
-                    AppInfo appInfo = savedList.get( i );
-                    Log.d( "APPS", "[2]: " + appInfo.toString() );
-                    if ( appInfo.getPackageName().equals( packageName ) ) {
-                        if ( appInfo.getState() == AppInfo.UNINSTALLED ) {
-                            appInfo.setState(AppInfo.INSTALLED);
-                            appInfo.setSinc(false);
-
-                            AppInfoDAO.save(db, appInfo);
-                            savedList.remove( i );
-                            break;
-                        }
-                    }
+                    AppInfoDAO.save( db, newApp );
                 }
             }
+        }
 
-            Log.d( "APPS", "savedList: " + savedList.size() );
-            Log.d( "APPS", "currentInstalledApps: " + currentInstalledApps.size() );
+        // mark packages were uninstalled
+        if ( savedList != null ) {
+            for ( AppInfo item : savedList ) {
+                if ( !item.isMatch() ) {
+                    item.setState( AppInfo.UNINSTALLED );
+                    item.setSinc( false );
+
+                    AppInfoDAO.save( db, item );
+                }
+            }
+        }
+
+        // renew list with last state
+        savedList = AppInfoDAO.listAll( db );
+
+        if ( savedList != null ) {
+            List<String> uninstalled = new ArrayList<>();
+            List<String> installed = new ArrayList<>();
 
             for ( AppInfo item : savedList ) {
-                if ( item.getState() == AppInfo.INSTALLED ) {
-                    item.setState(AppInfo.UNINSTALLED);
-                    item.setSinc(false);
+                if ( !item.isSinc() ) {
+
+                    if ( item.getState() == AppInfo.INSTALLED ) {
+                        Log.d( "APPS", "INSTALLED: " + item.toString() );
+                        installed.add( item.getPackageName() );
+                    }
+
+                    if ( item.getState() == AppInfo.UNINSTALLED ) {
+                        Log.d( "APPS", "UNINSTALLED: " + item.toString() );
+                        uninstalled.add( item.getPackageName() );
+                    }
+
+                    item.setSinc( SmartpushConnectivityUtil.isConnected( this ) );
                     AppInfoDAO.save( db, item );
                 }
             }
 
-            for ( String packageName : currentInstalledApps ) {
-                AppInfo appInfo = new AppInfo();
-                appInfo.setPackageName( packageName );
-                appInfo.setState( AppInfo.INSTALLED );
-                appInfo.setSinc( false );
 
-                AppInfoDAO.save( db, appInfo );
-            }
-
-            List<String> removedList =
-                    AppInfoDAO.listAllPackageNameByStatus( db, AppInfo.UNINSTALLED, false );
-
-            Log.d( "APPS", "UNINSTALLED: "+ ( new JSONArray( removedList ) ).toString( ) );
-
-            List<String> installedList =
-                    AppInfoDAO.listAllPackageNameByStatus( db, AppInfo.INSTALLED, false );
-
-            Log.d( "APPS", "INSTALLED: "+ ( new JSONArray( installedList ) ).toString( ) );
-
-        } else {
-            // First load to db
-            for ( String packageName: currentInstalledApps ) {
-                // new
-                AppInfo appInfo = new AppInfo();
-                appInfo.setPackageName( packageName );
-                appInfo.setState( AppInfo.INSTALLED );
-                appInfo.setSinc( false );
-
-                Log.d( "APPS", "ADDED: "+ appInfo.toString( ) );
-                AppInfoDAO.save( db, appInfo );
-            }
         }
 
         // Release
