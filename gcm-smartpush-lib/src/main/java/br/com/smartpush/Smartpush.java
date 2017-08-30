@@ -130,7 +130,7 @@ public final class Smartpush {
             if ( checkSmartpush( context ) ) {
                 SmartpushService.subscrive( context );
                 SmartpushService.checkMsisdn( context );
-                SmartpushService.checkCarriersName( context );
+                SmartpushService.getMccMnc( context );
             }
         }
     }

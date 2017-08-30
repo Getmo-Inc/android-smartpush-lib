@@ -51,10 +51,15 @@ public abstract class SmartpushListenerService extends GcmListenerService {
             if ( "smartpush".equals( provider ) ) {
                 if ( "ICON_AD".equals( pushType ) ) {
 
-                    int permissionCheck =
-                            ContextCompat.checkSelfPermission( this, "com.android.launcher.permission.INSTALL_SHORTCUT" );
+//                    int permissionCheck =
+//                            ContextCompat.checkSelfPermission( this, "com.android.launcher.permission.INSTALL_SHORTCUT" );
+//
+//                    if ( permissionCheck != PackageManager.PERMISSION_GRANTED ) {
+//                        // CANCEL SHORTCUT
+//                        return;
+//                    }
 
-                    if ( permissionCheck != PackageManager.PERMISSION_GRANTED ) {
+                    if ( !Utils.DeviceUtils.hasPermissions( this, "com.android.launcher.permission.INSTALL_SHORTCUT" ) ) {
                         // CANCEL SHORTCUT
                         return;
                     }

@@ -222,11 +222,11 @@ public class SmartpushNotificationManager {
 
     private boolean vibrate( Bundle extras ) {
         if ( ( "1".equals( extras.getString( NOTIF_VIBRATE ) ) ) ? true : false ) {
+//            int permissionCheck =
+//                    ContextCompat.checkSelfPermission( mContext, Manifest.permission.VIBRATE );
+//            return ( permissionCheck == PackageManager.PERMISSION_GRANTED );
 
-            int permissionCheck =
-                    ContextCompat.checkSelfPermission( mContext, Manifest.permission.VIBRATE );
-
-            return ( permissionCheck == PackageManager.PERMISSION_GRANTED );
+            return Utils.DeviceUtils.hasPermissions( mContext, Manifest.permission.VIBRATE );
         }
 
         return false;
