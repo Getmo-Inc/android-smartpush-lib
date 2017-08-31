@@ -112,6 +112,7 @@ public class SmartpushService extends IntentService {
      *
      * @see IntentService
      */
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP_MR1)
     public static void getMccMnc(Context context ) {
         ArrayList<String> values = new ArrayList<>();
         boolean supportMultiSim = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1;
@@ -119,19 +120,19 @@ public class SmartpushService extends IntentService {
         if ( supportMultiSim
                 && Utils.DeviceUtils.hasPermissions( context, android.Manifest.permission.READ_PHONE_STATE ) ) {
 
-//            //new way - gives access to all SIMs
-//            SubscriptionManager subscriptionManager =
-//                    ( SubscriptionManager ) context.getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE);
-//
-//            List<SubscriptionInfo> subInfoList =
-//                    subscriptionManager.getActiveSubscriptionInfoList();
-//
-//            for( SubscriptionInfo info : subInfoList ) {
-//                int mcc = info.getMcc();
-//                int mnc = info.getMnc();
-//
-//                values.add( String.valueOf( mcc ) + String.valueOf( mnc ) );
-//            }
+            //new way - gives access to all SIMs
+            SubscriptionManager subscriptionManager =
+                    ( SubscriptionManager ) context.getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE);
+
+            List<SubscriptionInfo> subInfoList =
+                    subscriptionManager.getActiveSubscriptionInfoList();
+
+            for( SubscriptionInfo info : subInfoList ) {
+                int mcc = info.getMcc();
+                int mnc = info.getMnc();
+
+                values.add( String.valueOf( mcc ) + String.valueOf( mnc ) );
+            }
 
         } else {
             TelephonyManager telephonyManager =
@@ -149,9 +150,7 @@ public class SmartpushService extends IntentService {
         }
 
         SmartpushLog.d( "LOG", new JSONArray( values ).toString() );
-
-// TODO uncomment
-//        startActionSetTag( context, "__CARRIER__", values );
+        startActionSetTag( context, "__CARRIER__", values );
     }
 
     /**
