@@ -28,6 +28,7 @@ import java.util.concurrent.TimeUnit;
 import static br.com.smartpush.Utils.Constants.NOTIF_PLAY_VIDEO_ONLY_WIFI;
 import static br.com.smartpush.Utils.Constants.NOTIF_URL;
 import static br.com.smartpush.Utils.Constants.NOTIF_PACKAGENAME;
+import static br.com.smartpush.Utils.TAG;
 
 
 /**
@@ -62,7 +63,7 @@ public final class SmartpushFragmentVideoPlayer extends Fragment implements
 
     @Override
     public void onCreate( Bundle savedInstanceState) {
-        SmartpushLog.d( Utils.TAG, "onCreate" );
+        SmartpushLog.d( TAG, "onCreate" );
         super.onCreate(savedInstanceState);
 
         setRetainInstance(true);
@@ -80,13 +81,13 @@ public final class SmartpushFragmentVideoPlayer extends Fragment implements
 
     @Override
     public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
-        SmartpushLog.d( Utils.TAG, "onCreateView" );
+        SmartpushLog.d( TAG, "onCreateView" );
         return inflater.inflate( R.layout.player, null );
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        SmartpushLog.d( Utils.TAG, "onViewCreated" );
+        SmartpushLog.d( TAG, "onViewCreated" );
         loading       = ( ProgressBar )view.findViewById( R.id.loading );
         surfaceView   = ( SurfaceView ) view.findViewById( R.id.surface );
         surfaceHolder = surfaceView.getHolder();
@@ -105,7 +106,7 @@ public final class SmartpushFragmentVideoPlayer extends Fragment implements
 
     @Override
     public void onStart() {
-        SmartpushLog.d( Utils.TAG, "onStart" );
+        SmartpushLog.d( TAG, "onStart" );
         super.onStart();
 
         if ( isSetToPlayOnlyWifi() && !SmartpushConnectivityUtil.isConnectedWifi( getActivity() ) ) {
@@ -132,10 +133,10 @@ public final class SmartpushFragmentVideoPlayer extends Fragment implements
 
     @Override
     public void onStop() {
-        SmartpushLog.d( Utils.TAG, "onStop" );
+        SmartpushLog.d( TAG, "onStop" );
         super.onStop();
         if( getActivity().isChangingConfigurations() ) {
-            SmartpushLog.d( Utils.TAG, "configuration is changing: keep playing" );
+            SmartpushLog.d( TAG, "configuration is changing: keep playing" );
         } else {
             destroyMediaPlayer();
         }
@@ -144,7 +145,7 @@ public final class SmartpushFragmentVideoPlayer extends Fragment implements
 
     @Override
     public void onCompletion( MediaPlayer mp ) {
-        SmartpushLog.d( Utils.TAG, "onCompletion" );
+        SmartpushLog.d( TAG, "onCompletion" );
 
         // Tracking
         hit( STATE.FINISHED.name() );
@@ -155,7 +156,7 @@ public final class SmartpushFragmentVideoPlayer extends Fragment implements
 
     @Override
     public void onPrepared( MediaPlayer mp ) {
-        SmartpushLog.d( Utils.TAG, "onPrepared" );
+        SmartpushLog.d( TAG, "onPrepared" );
 //        handler.post( resizeSurfaceTask );
         handler.post( showSurface );
         finalTime = mediaPlayer.getDuration();
@@ -169,13 +170,13 @@ public final class SmartpushFragmentVideoPlayer extends Fragment implements
 
     @Override
     public boolean onError( MediaPlayer mp, int what, int extra ) {
-        SmartpushLog.d( Utils.TAG, "onError" );
+        SmartpushLog.d( TAG, "onError" );
         return false;
     }
 
     @Override
     public void surfaceCreated( SurfaceHolder holder ) {
-        SmartpushLog.d( Utils.TAG, "surfaceCreated" );
+        SmartpushLog.d( TAG, "surfaceCreated" );
 
         mediaPlayer.setDisplay( holder );
         handler.post( resizeSurfaceTask );
@@ -183,13 +184,13 @@ public final class SmartpushFragmentVideoPlayer extends Fragment implements
 
     @Override
     public void surfaceChanged( SurfaceHolder holder, int format, int width, int height ) {
-        SmartpushLog.d( Utils.TAG, "surfaceChanged" );
+        SmartpushLog.d( TAG, "surfaceChanged" );
 
     }
 
     @Override
     public void surfaceDestroyed( SurfaceHolder holder) {
-        SmartpushLog.d( Utils.TAG, "surfaceDestroyed");
+        SmartpushLog.d( TAG, "surfaceDestroyed");
         if ( mediaPlayer != null )
             mediaPlayer.setDisplay( null );
     }
@@ -202,7 +203,7 @@ public final class SmartpushFragmentVideoPlayer extends Fragment implements
     }
 
     private void setSurfaceSize() {
-        SmartpushLog.d( Utils.TAG, "setSurfaceSize");
+        SmartpushLog.d( TAG, "setSurfaceSize");
         // get the dimensions of the video (only valid when surfaceView is set)
         float videoWidth = mediaPlayer.getVideoWidth();
         float videoHeight = mediaPlayer.getVideoHeight();
@@ -266,7 +267,7 @@ public final class SmartpushFragmentVideoPlayer extends Fragment implements
     }
 
     private void createMediaPlayer( Uri video ) {
-        SmartpushLog.d( Utils.TAG, "createMediaPlayer");
+        SmartpushLog.d( TAG, "createMediaPlayer");
         try {
             mediaPlayer = new MediaPlayer();
             mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -279,12 +280,12 @@ public final class SmartpushFragmentVideoPlayer extends Fragment implements
             mediaPlayer.prepareAsync();
 
         } catch (Exception e) {
-            SmartpushLog.e( Utils.TAG, e.getMessage(), e );
+            SmartpushLog.e( TAG, e.getMessage(), e );
         }
     }
 
     private void destroyMediaPlayer() {
-        SmartpushLog.d( Utils.TAG, "destroyMediaPlayer" );
+        SmartpushLog.d( TAG, "destroyMediaPlayer" );
         if ( mediaPlayer != null ) {
             mediaPlayer.stop();
             mediaPlayer.reset();

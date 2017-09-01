@@ -25,7 +25,7 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import static android.content.ContentValues.TAG;
+import static br.com.smartpush.Utils.TAG;
 
 
 /**
@@ -48,7 +48,7 @@ public final class SmartpushHttpClient {
         urlStr += op;
 
         if ( !silent )
-            SmartpushLog.d( Utils.TAG, "url : " + urlStr );
+            SmartpushLog.d( TAG, "url : " + urlStr );
 
         return urlStr;
     }
@@ -57,7 +57,7 @@ public final class SmartpushHttpClient {
         try {
             return post( op, getQueryString( params ), "application/x-www-form-urlencoded", _c, silent );
         } catch ( UnsupportedEncodingException e ) {
-            SmartpushLog.e( Utils.TAG, e.getMessage(), e);
+            SmartpushLog.e( TAG, e.getMessage(), e);
         }
         return null;
     }
@@ -80,8 +80,8 @@ public final class SmartpushHttpClient {
             conn.setDoOutput(true);
 
             if ( !silent ) {
-                SmartpushLog.d( Utils.TAG, "method: POST");
-                SmartpushLog.d( Utils.TAG, "params : " + params);
+                SmartpushLog.d( TAG, "method: POST");
+                SmartpushLog.d( TAG, "params : " + params);
             }
 
             // set params
@@ -101,7 +101,7 @@ public final class SmartpushHttpClient {
             }
 
             if ( !silent )
-                SmartpushLog.d( Utils.TAG, "rsp : " + response.toString() );
+                SmartpushLog.d( TAG, "rsp : " + response.toString() );
 
             br.close();
             conn.disconnect();
@@ -109,7 +109,7 @@ public final class SmartpushHttpClient {
             return response.toString();
 
         } catch ( Exception e ) {
-            SmartpushLog.e( Utils.TAG, e.getMessage(), e );
+            SmartpushLog.e( TAG, e.getMessage(), e );
         }
 
         return null;
@@ -124,8 +124,8 @@ public final class SmartpushHttpClient {
             String qs = ( params != null ) ? "?" + getQueryString( params ) : "";
             URL url = new URL( genURL( _c, op, false ) + qs );
 
-            SmartpushLog.d( Utils.TAG, "method: GET" );
-            SmartpushLog.d( Utils.TAG, "params : " + qs );
+            SmartpushLog.d( TAG, "method: GET" );
+            SmartpushLog.d( TAG, "params : " + qs );
 
             HttpURLConnection conn = ( HttpURLConnection ) url.openConnection();
             conn.setRequestProperty( "User-Agent", genUserAgent( _c ) );
@@ -139,14 +139,14 @@ public final class SmartpushHttpClient {
                 response.append(line);
             }
 
-            SmartpushLog.d( Utils.TAG, "rsp : " + response.toString());
+            SmartpushLog.d( TAG, "rsp : " + response.toString());
 
             br.close();
             conn.disconnect();
 
             return response.toString();
         } catch ( IOException e ) {
-            SmartpushLog.e( Utils.TAG, e.getMessage(), e );
+            SmartpushLog.e( TAG, e.getMessage(), e );
         }
 
         return null;
@@ -177,7 +177,7 @@ public final class SmartpushHttpClient {
 
             return response.toString();
         } catch ( IOException e ) {
-            SmartpushLog.e( Utils.TAG, e.getMessage(), e );
+            SmartpushLog.e( TAG, e.getMessage(), e );
         }
 
         return null;
@@ -307,7 +307,7 @@ public final class SmartpushHttpClient {
 
                 JSONObject json = new JSONObject( response );
 
-                SmartpushLog.d( Utils.TAG, json.toString( 4 ) );
+                SmartpushLog.d( TAG, json.toString( 4 ) );
 
                 if ( json.has( "notifications" ) ) {
                     JSONArray notifications = json.getJSONArray( "notifications" );
@@ -318,24 +318,24 @@ public final class SmartpushHttpClient {
 
                             if ( item.has( "payload" ) ) {
                                 JSONObject payload = item.getJSONObject( "payload" );
-                                SmartpushLog.d( Utils.TAG, payload.toString() );
+                                SmartpushLog.d( TAG, payload.toString() );
                             }
 
                             if ( item.has( "extra" ) ) {
                                 JSONObject extra = item.getJSONObject( "extra" );
-                                SmartpushLog.d( Utils.TAG, extra.toString() );
+                                SmartpushLog.d( TAG, extra.toString() );
                             }
 
                             if ( item.has( "status" ) ) {
                                 String status = item.getString( "status" );
-                                SmartpushLog.d( Utils.TAG, status );
+                                SmartpushLog.d( TAG, status );
                             }
                         }
                     }
                 }
 
             } catch ( Exception e ) {
-                SmartpushLog.e( Utils.TAG, e.getMessage(), e );
+                SmartpushLog.e( TAG, e.getMessage(), e );
             }
         }
 

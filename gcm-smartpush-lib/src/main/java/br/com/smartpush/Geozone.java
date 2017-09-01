@@ -8,6 +8,8 @@ import org.json.JSONObject;
 import java.util.Iterator;
 import java.util.List;
 
+import static br.com.smartpush.Utils.TAG;
+
 
 /**
  * Created by fabio.licks on 09/02/2016.
@@ -37,7 +39,7 @@ class Geozone {
                 radius = o.getInt( RADIUS.toLowerCase() );
             }
         } catch (JSONException e) {
-            SmartpushLog.e( Utils.TAG, e.getMessage(), e );
+            SmartpushLog.e( TAG, e.getMessage(), e );
         }
 
     }

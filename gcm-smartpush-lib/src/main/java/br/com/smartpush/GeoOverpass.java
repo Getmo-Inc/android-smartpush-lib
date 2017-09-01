@@ -1,6 +1,8 @@
 package br.com.smartpush;
 
 
+import static br.com.smartpush.Utils.TAG;
+
 /**
  * Created by fabio.licks on 09/02/2016.
  */
@@ -17,7 +19,7 @@ final class GeoOverpass {
         lat = geozone.lat;
         lng = geozone.lng;
 
-        SmartpushLog.d( Utils.TAG, toString() );
+        SmartpushLog.d( TAG, toString() );
     }
 
     @Override

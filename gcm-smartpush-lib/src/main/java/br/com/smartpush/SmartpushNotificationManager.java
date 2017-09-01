@@ -20,7 +20,6 @@ import android.view.WindowManager;
 import java.util.Arrays;
 import java.util.Calendar;
 
-import static android.content.ContentValues.TAG;
 import static br.com.smartpush.SmartpushService.ACTION_NOTIF_UPDATABLE;
 import static br.com.smartpush.Utils.CommonUtils.getValue;
 import static br.com.smartpush.Utils.Constants.LAUNCH_ICON;
@@ -36,6 +35,7 @@ import static br.com.smartpush.Utils.Constants.NOTIF_VIDEO_URI;
 import static br.com.smartpush.Utils.Constants.ONLY_PORTRAIT;
 import static br.com.smartpush.Utils.Constants.PUSH_DEFAULT_ICONS;
 import static br.com.smartpush.Utils.Constants.PUSH_INTERNAL_ID;
+import static br.com.smartpush.Utils.TAG;
 
 /**
  * Created by t.licks on 28/07/17.

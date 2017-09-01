@@ -8,6 +8,8 @@ import org.json.JSONObject;
 import java.util.Calendar;
 import java.util.TimeZone;
 
+import static br.com.smartpush.Utils.TAG;
+
 
 /**
  * Created by fabio.licks on 09/02/16.
@@ -39,7 +41,7 @@ class GeoLocation {
                 time = o.getLong( TIME.toLowerCase() );
             }
         } catch (JSONException e) {
-            SmartpushLog.e( Utils.TAG, e.getMessage(), e );
+            SmartpushLog.e( TAG, e.getMessage(), e );
         }
     }
 

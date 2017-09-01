@@ -13,6 +13,8 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import java.util.ArrayList;
 import java.util.Date;
 
+import static br.com.smartpush.Utils.TAG;
+
 
 /**
  * Created by fabio.licks on 12/02/16.
@@ -27,7 +29,7 @@ public final class Smartpush {
                     SmartpushService.startActionBlockPush(context, block);
                     return !block;
                 } else {
-                    SmartpushLog.d( Utils.TAG, "Notifications have been blocked by the S.O." );
+                    SmartpushLog.d( TAG, "Notifications have been blocked by the S.O." );
                     return true;
                 }
             }
@@ -106,7 +108,7 @@ public final class Smartpush {
         // TODO revisar evento de abertura! Adicionar infos sobre tipo do push, e sobre acão ...
         if ( isRegistered( context ) ) {
             if ( bundle != null && bundle.containsKey( SmartpushHitUtils.Fields.PUSH_ID.getParamName() ) ) {
-                SmartpushLog.d( Utils.TAG, "App has been opened by the push sent from SMARTPUSH" );
+                SmartpushLog.d( TAG, "App has been opened by the push sent from SMARTPUSH" );
                 SmartpushService.startActionTrackAction( context,
                         SmartpushHitUtils.getValueFromPayload( SmartpushHitUtils.Fields.PUSH_ID, bundle ),
                         "MAIN", null, SmartpushHitUtils.Action.CLICKED.name(), null );
@@ -157,7 +159,7 @@ public final class Smartpush {
     }
 
     private static boolean checkSmartpush(Context context) {
-        SmartpushLog.d( Utils.TAG, "checkSmartpush() : begin - Configurations tests : " + context.getPackageName() );
+        SmartpushLog.d( TAG, "checkSmartpush() : begin - Configurations tests : " + context.getPackageName() );
 
         if ( Utils.Smartpush.getMetadata( context, Utils.Constants.SMARTP_API_KEY) == null ) {
             throw new SmartpushException(
@@ -169,7 +171,7 @@ public final class Smartpush {
                     "Metadata not found! Add \"" + Utils.Constants.SMARTP_APP_ID + "\" to your manifest file!" );
         }
 
-        SmartpushLog.d( Utils.TAG, "checkSmartpush() : Metadata, pass!" );
+        SmartpushLog.d( TAG, "checkSmartpush() : Metadata, pass!" );
 
         try {
             PackageInfo packageInfo =
@@ -212,14 +214,14 @@ public final class Smartpush {
                         "Activity not found! Add \"br.com.smartpush.SmartpushActivity\" to your manifest file!");
             }
 
-            SmartpushLog.d( Utils.TAG, "checkSmartpush() : Activity, pass!" );
+            SmartpushLog.d( TAG, "checkSmartpush() : Activity, pass!" );
 
         } catch ( PackageManager.NameNotFoundException e ) {
             // should never happen
             throw new RuntimeException( "Could not get package name: " + e );
         }
 
-        SmartpushLog.d( Utils.TAG, "checkSmartpush() : end - Configurations tests : " + context.getPackageName() );
+        SmartpushLog.d( TAG, "checkSmartpush() : end - Configurations tests : " + context.getPackageName() );
 
         return true;
     }

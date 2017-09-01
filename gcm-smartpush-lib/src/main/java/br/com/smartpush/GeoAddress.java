@@ -1,5 +1,6 @@
 package br.com.smartpush;
 
+import static br.com.smartpush.Utils.TAG;
 
 /**
  * Created by fabio.licks on 09/02/16.
@@ -21,7 +22,7 @@ final class GeoAddress {
         this.city = city;
         this.neighborhood = neighborhood;
 
-        SmartpushLog.d( Utils.TAG, toString() );
+        SmartpushLog.d( TAG, toString() );
     }
 
     @Override

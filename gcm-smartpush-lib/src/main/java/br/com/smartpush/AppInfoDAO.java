@@ -7,6 +7,9 @@ import android.database.sqlite.SQLiteDatabase;
 import java.util.ArrayList;
 import java.util.List;
 
+import static br.com.smartpush.Utils.TAG;
+
+
 /**
  * Created by t.licks on 23/08/17.
  */
@@ -70,7 +73,7 @@ class AppInfoDAO {
         if ( cursor != null ) {
             while( cursor.moveToNext() ) {
                 AppInfo appInfo = bindAppInfo( cursor );
-                SmartpushLog.d( TABLENAME, appInfo.toString() );
+                SmartpushLog.d( TAG, appInfo.toString() );
                 list.add( appInfo );
             }
         }
@@ -88,7 +91,7 @@ class AppInfoDAO {
         if ( cursor != null ) {
             while( cursor.moveToNext() ) {
                 String packageName = cursor.getString( cursor.getColumnIndex( AppInfo.PACKAGE_NAME ) );
-                SmartpushLog.d( TABLENAME, packageName );
+                SmartpushLog.d( TAG, packageName );
                 list.add( packageName );
             }
         }

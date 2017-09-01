@@ -153,7 +153,7 @@ public class SmartpushService extends IntentService {
             }
         }
 
-        SmartpushLog.d( "LOG", new JSONArray( values ).toString() );
+        SmartpushLog.d( TAG, new JSONArray( values ).toString() );
         startActionSetTag( context, "__CARRIER__", values );
     }
 
@@ -818,15 +818,15 @@ public class SmartpushService extends IntentService {
         List<AppInfo> savedList =
                 AppInfoDAO.listAll( db );
 
-        Log.d( "APPS", "savedList: " + savedList.size() );
-        Log.d( "APPS", "installedAppsList: " + installedAppsList.size() );
+        Log.d( TAG, "savedList: " + savedList.size() );
+        Log.d( TAG, "installedAppsList: " + installedAppsList.size() );
 
         // insert/update packages installed state
         for ( String packageName : installedAppsList ) {
             boolean found = false;
             for( AppInfo saved : savedList ) {
                 if ( packageName.equals( saved.getPackageName() ) ) {
-                    Log.d( "APPS", "savedList.contains: " + packageName );
+                    Log.d( TAG, "savedList.contains: " + packageName );
                     if ( saved != null && saved.getState() == AppInfo.UNINSTALLED ) {
                         saved.setState( AppInfo.INSTALLED );
                         saved.setSinc( false );
@@ -840,7 +840,7 @@ public class SmartpushService extends IntentService {
             }
 
             if ( !found ) {
-                Log.d( "APPS", "savedList.not.contains: " + packageName );
+                Log.d( TAG, "savedList.not.contains: " + packageName );
                 AppInfo newApp = new AppInfo();
                 newApp.setPackageName( packageName );
                 newApp.setState( AppInfo.INSTALLED );
@@ -854,7 +854,7 @@ public class SmartpushService extends IntentService {
         // mark packages were uninstalled
         for ( AppInfo item : savedList ) {
             if ( !item.isMatch() ) {
-                Log.d( "APPS", "savedList.contains.uninstalled.app: " + item.getPackageName() );
+                Log.d( TAG, "savedList.contains.uninstalled.app: " + item.getPackageName() );
                 item.setState( AppInfo.UNINSTALLED );
                 item.setSinc( false );
 
@@ -871,12 +871,12 @@ public class SmartpushService extends IntentService {
         for ( AppInfo item : savedList ) {
             if ( !item.isSinc() ) {
                 if ( item.getState() == AppInfo.INSTALLED ) {
-                    Log.d( "APPS", "INSTALLED: " + item.toString() );
+                    Log.d( TAG, "INSTALLED: " + item.toString() );
                     installed.add( item.getPackageName() );
                 }
 
                 if ( item.getState() == AppInfo.UNINSTALLED ) {
-                    Log.d( "APPS", "UNINSTALLED: " + item.toString() );
+                    Log.d( TAG, "UNINSTALLED: " + item.toString() );
                     uninstalled.add( item.getPackageName() );
                 }
 

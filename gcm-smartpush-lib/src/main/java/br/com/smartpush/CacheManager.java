@@ -18,6 +18,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import static br.com.smartpush.SmartpushConnectivityUtil.isConnectedWifi;
+import static br.com.smartpush.Utils.TAG;
 
 /**
  * Created by fabio.licks on 24/07/17.
@@ -41,8 +42,6 @@ public class CacheManager {
 
     private Context mContext;
 
-    private static final String TAG = "CACHE";
-
     private static CacheManager mInstance;
 
     private CacheManager( Context context ) {
@@ -61,7 +60,7 @@ public class CacheManager {
         final String key = CacheManager.generateKey( urlpath );
 
         if ( key != null ) {
-            Log.d( CacheManager.class.getSimpleName(), "KEY: " + key );
+            Log.d( TAG, "KEY: " + key );
 
             if ( isInCache( key, expirationTime ) ) {
                 SmartpushLog.d( TAG, "IMAGE IN CACHE..." );
@@ -83,7 +82,7 @@ public class CacheManager {
                     return bitmap;
 
                 } catch( IOException e ) {
-                    Log.e( CacheManager.class.getSimpleName(), e.getMessage(), e );
+                    Log.e( TAG, e.getMessage(), e );
                     deleteFile( key );
                 }
             }
@@ -200,7 +199,7 @@ public class CacheManager {
             }
             return hexStr;
         } catch ( NoSuchAlgorithmException | UnsupportedEncodingException e ) {
-            Log.e( CacheManager.class.getSimpleName(), e.getMessage(), e );
+            Log.e( TAG, e.getMessage(), e );
         }
 
         return null;

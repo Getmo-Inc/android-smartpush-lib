@@ -6,6 +6,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import static br.com.smartpush.Utils.TAG;
+
 /**
  * Created by fabio.licks on 09/02/16.
  */
@@ -36,7 +38,7 @@ final class GeoResponse {
                 }
             }
         } catch( JSONException e ) {
-            SmartpushLog.e( Utils.TAG, e.getMessage(), e );
+            SmartpushLog.e( TAG, e.getMessage(), e );
         }
     }
 
