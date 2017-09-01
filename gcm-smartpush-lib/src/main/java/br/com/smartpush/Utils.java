@@ -6,6 +6,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -189,14 +190,17 @@ final class Utils {
         }
 
         public static boolean hasPermissions( Context context, String... permissions ) {
-            if ( android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && context != null && permissions != null ) {
+//            if ( android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && context != null && permissions != null ) {
+            if ( context != null && permissions != null ) {
                 for ( String permission : permissions ) {
-                    if ( ActivityCompat.checkSelfPermission( context, permission ) != PackageManager.PERMISSION_GRANTED ) {
+                    if ( ContextCompat.checkSelfPermission( context, permission ) != PackageManager.PERMISSION_GRANTED ) {
                         return false;
                     }
                 }
+                return true;
             }
-            return true;
+//
+            return false;
         }
     }
 

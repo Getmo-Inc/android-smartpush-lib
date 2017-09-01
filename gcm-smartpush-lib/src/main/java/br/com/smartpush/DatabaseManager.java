@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 /**
  * Created by fabio.licks on 09/02/16.
  */
-final class DBOpenerHelper extends SQLiteOpenHelper {
+final class DatabaseManager extends SQLiteOpenHelper {
 
     private static final int VERSION = 2;
     private static final String DATABASE_NAME = "SMARTPUSH";
@@ -39,7 +39,7 @@ final class DBOpenerHelper extends SQLiteOpenHelper {
             "DROP TABLE IF EXISTS APPSLIST;"
     };
 
-    public DBOpenerHelper(Context context ) {
+    public DatabaseManager(Context context ) {
         super(context, DATABASE_NAME, null, VERSION );
     }
 

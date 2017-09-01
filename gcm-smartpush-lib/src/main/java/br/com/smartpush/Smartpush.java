@@ -5,6 +5,7 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.v4.app.NotificationManagerCompat;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -20,9 +21,18 @@ public final class Smartpush {
 
     public static boolean blockPush( final Context context, final boolean block ) {
         if ( isRegistered( context ) ) {
-            SmartpushService.startActionBlockPush(context, block);
+            NotificationManagerCompat nmc = NotificationManagerCompat.from( context );
+            if ( nmc != null ) {
+                if ( nmc.areNotificationsEnabled() ) {
+                    SmartpushService.startActionBlockPush(context, block);
+                    return !block;
+                } else {
+                    SmartpushLog.d( Utils.TAG, "Notifications have been blocked by the S.O." );
+                    return true;
+                }
+            }
         }
-        return !block;
+        return block;
     }
 
     public static void getUserInfo( final Context context ) {
@@ -93,9 +103,10 @@ public final class Smartpush {
     }
 
     public static void hitClick( final Context context, Bundle bundle ) {
+        // TODO revisar evento de abertura! Adicionar infos sobre tipo do push, e sobre acão ...
         if ( isRegistered( context ) ) {
             if ( bundle != null && bundle.containsKey( SmartpushHitUtils.Fields.PUSH_ID.getParamName() ) ) {
-                SmartpushLog.d( Utils.TAG, "App opened from push sent by SMARTPUSH" );
+                SmartpushLog.d( Utils.TAG, "App has been opened by the push sent from SMARTPUSH" );
                 SmartpushService.startActionTrackAction( context,
                         SmartpushHitUtils.getValueFromPayload( SmartpushHitUtils.Fields.PUSH_ID, bundle ),
                         "MAIN", null, SmartpushHitUtils.Action.CLICKED.name(), null );
@@ -129,8 +140,9 @@ public final class Smartpush {
         if ( Smartpush.checkPlayServices( context ) ) {
             if ( checkSmartpush( context ) ) {
                 SmartpushService.subscrive( context );
-                SmartpushService.checkMsisdn( context );
+                SmartpushService.getMsisdn( context );
                 SmartpushService.getMccMnc( context );
+                SmartpushService.getAppList( context );
             }
         }
     }

@@ -27,7 +27,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.jar.Manifest;
 
 import static br.com.smartpush.Utils.Constants.SMARTP_LOCATION_HASH;
 import static br.com.smartpush.Utils.TAG;
@@ -42,21 +41,21 @@ public class SmartpushService extends IntentService {
     // Smartpush PROJECT ID
     private static final String PLAY_SERVICE_INTERNAL_PROJECT_ID = "520757792663";
 
-    public static final int SMARTPUSH_SERVICE_ID = 456123;
+    public static final int SERVICE_ID = 456123;
 
     // IntentService can perform, e.g. ACTION_FETCH_NEW_ITEMS
-    private static final String ACTION_SMARTP_REGISTRATION = "br.com.smartpush.action.REGISTRATION";
-    private static final String ACTION_SMARTP_SET_TAG = "br.com.smartpush.action.SET_TAG";
-    private static final String ACTION_SMARTP_BLOCK_PUSH = "br.com.smartpush.action.BLOCK_PUSH";
-    private static final String ACTION_SMARTP_NEARESTZONE = "br.com.smartpush.action.NEARESTZONE";
-    private static final String ACTION_SMARTP_TRACK_ACTION = "br.com.smartpush.action.TRACK_ACTION";
-    private static final String ACTION_SMARTP_CHECK_MSISDN = "br.com.smartpush.action.CHECK_MSISDN";
-    private static final String ACTION_SMARTP_GET_CARRIER_NAME = "br.com.smartpush.action.GET_CARRIER_NAME";
-    public  static final String ACTION_SMARTP_GET_APP_LIST = "br.com.smartpush.action.GET_APP_LIST";
-    public  static final String ACTION_SMARTP_UPDATABLE = "br.com.smartpush.action.UPDATABLE";
+    private static final String ACTION_REGISTRATION = "br.com.smartpush.action.REGISTRATION";
+    private static final String ACTION_SET_TAG = "br.com.smartpush.action.SET_TAG";
+    private static final String ACTION_BLOCK_PUSH = "br.com.smartpush.action.BLOCK_PUSH";
+    private static final String ACTION_NEARESTZONE = "br.com.smartpush.action.NEARESTZONE";
+    private static final String ACTION_TRACK_ACTION = "br.com.smartpush.action.TRACK_ACTION";
+    private static final String ACTION_GET_MSISDN = "br.com.smartpush.action.GET_MSISDN";
+//    private static final String ACTION_GET_CARRIER = "br.com.smartpush.action.GET_CARRIER";
+    public  static final String ACTION_GET_APP_LIST = "br.com.smartpush.action.GET_APP_LIST";
+    public  static final String ACTION_NOTIF_UPDATABLE = "br.com.smartpush.action.UPDATABLE";
 
-    public static final String ACTION_SMARTP_REGISTRATION_RESULT = "br.com.smartpush.action.REGISTRATION_RESULT";
-    public static final String ACTION_SMARTP_GET_DEVICE_USER_INFO = "br.com.smartpush.action.GET_DEVICE_USER_INFO";
+    public static final String ACTION_REGISTRATION_RESULT = "br.com.smartpush.action.REGISTRATION_RESULT";
+    public static final String ACTION_GET_DEVICE_USER_INFO = "br.com.smartpush.action.GET_DEVICE_USER_INFO";
 
     // TODO: Rename parameters
     private static final String EXTRA_KEY    = "br.com.smartpush.extra.KEY";
@@ -78,7 +77,7 @@ public class SmartpushService extends IntentService {
      */
     public static void subscrive( Context context ) {
         Intent intent = new Intent( context, SmartpushService.class ) ;
-        intent.setAction(ACTION_SMARTP_REGISTRATION);
+        intent.setAction(ACTION_REGISTRATION);
         context.startService(intent);
     }
 
@@ -88,9 +87,9 @@ public class SmartpushService extends IntentService {
      *
      * @see IntentService
      */
-    public static void checkMsisdn( Context context ) {
+    static void getMsisdn( Context context ) {
         Intent intent = new Intent( context, SmartpushService.class ) ;
-        intent.setAction(ACTION_SMARTP_CHECK_MSISDN);
+        intent.setAction(ACTION_GET_MSISDN);
         context.startService(intent);
     }
 
@@ -100,9 +99,9 @@ public class SmartpushService extends IntentService {
      *
      * @see IntentService
      */
-    public static void getAppList( Context context ) {
+    static void getAppList( Context context ) {
         Intent intent = new Intent( context, SmartpushService.class ) ;
-        intent.setAction(ACTION_SMARTP_GET_APP_LIST);
+        intent.setAction(ACTION_GET_APP_LIST);
         context.startService(intent);
     }
 
@@ -113,16 +112,21 @@ public class SmartpushService extends IntentService {
      * @see IntentService
      */
     @TargetApi(Build.VERSION_CODES.LOLLIPOP_MR1)
-    public static void getMccMnc(Context context ) {
+    static void getMccMnc(Context context ) {
         ArrayList<String> values = new ArrayList<>();
-        boolean supportMultiSim = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1;
+        boolean supportMultiSim =
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1;
 
-        if ( supportMultiSim
-                && Utils.DeviceUtils.hasPermissions( context, android.Manifest.permission.READ_PHONE_STATE ) ) {
+        boolean hasPermissions  =
+                Utils.DeviceUtils.hasPermissions(
+                        context, android.Manifest.permission.READ_PHONE_STATE );
+
+        if ( supportMultiSim && hasPermissions ) {
 
             //new way - gives access to all SIMs
             SubscriptionManager subscriptionManager =
-                    ( SubscriptionManager ) context.getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE);
+                    ( SubscriptionManager ) context.getSystemService(
+                            Context.TELEPHONY_SUBSCRIPTION_SERVICE );
 
             List<SubscriptionInfo> subInfoList =
                     subscriptionManager.getActiveSubscriptionInfoList();
@@ -165,7 +169,7 @@ public class SmartpushService extends IntentService {
         if ( value == null ) return;
 
         Intent intent = new Intent( context, SmartpushService.class ) ;
-        intent.setAction( ACTION_SMARTP_SET_TAG ) ;
+        intent.setAction(ACTION_SET_TAG) ;
         intent.putExtra( EXTRA_KEY, key );
         intent.putExtra( EXTRA_TYPE, "BOOLEAN" );
         intent.putExtra(EXTRA_VALUE, value.toString());
@@ -184,7 +188,7 @@ public class SmartpushService extends IntentService {
         if ( value == null ) return;
 
         Intent intent = new Intent( context, SmartpushService.class ) ;
-        intent.setAction( ACTION_SMARTP_SET_TAG ) ;
+        intent.setAction(ACTION_SET_TAG) ;
         intent.putExtra( EXTRA_KEY, key );
         intent.putExtra( EXTRA_TYPE, "NUMERIC" );
         intent.putExtra( EXTRA_VALUE, value.toString() );
@@ -207,7 +211,7 @@ public class SmartpushService extends IntentService {
         if ( temp == null ) return;
 
         Intent intent = new Intent( context, SmartpushService.class ) ;
-        intent.setAction( ACTION_SMARTP_SET_TAG ) ;
+        intent.setAction(ACTION_SET_TAG) ;
         intent.putExtra( EXTRA_KEY, key );
         intent.putExtra( EXTRA_TYPE, "LIST" );
         intent.putExtra( EXTRA_VALUE, temp ) ;
@@ -226,7 +230,7 @@ public class SmartpushService extends IntentService {
         if ( value == null || "".equals( value.trim() ) ) return;
 
         Intent intent = new Intent( context, SmartpushService.class ) ;
-        intent.setAction( ACTION_SMARTP_SET_TAG ) ;
+        intent.setAction(ACTION_SET_TAG) ;
         intent.putExtra( EXTRA_KEY, key );
         intent.putExtra( EXTRA_TYPE, "STRING" );
         intent.putExtra( EXTRA_VALUE, value );
@@ -247,7 +251,7 @@ public class SmartpushService extends IntentService {
         if ( temp == null ) return;
 
         Intent intent = new Intent( context, SmartpushService.class ) ;
-        intent.setAction( ACTION_SMARTP_SET_TAG ) ;
+        intent.setAction(ACTION_SET_TAG) ;
         intent.putExtra( EXTRA_KEY, key );
         intent.putExtra( EXTRA_TYPE, "TIMESTAMP" );
         intent.putExtra(EXTRA_VALUE, temp);
@@ -262,7 +266,7 @@ public class SmartpushService extends IntentService {
      */
     public static void startActionDelTagOrValue( Context context, String key, Boolean value ) {
         Intent intent = new Intent( context, SmartpushService.class ) ;
-        intent.setAction( ACTION_SMARTP_SET_TAG ) ;
+        intent.setAction(ACTION_SET_TAG) ;
         intent.putExtra( EXTRA_KEY, key );
         intent.putExtra( EXTRA_TYPE, "BOOLEAN" );
         intent.putExtra( EXTRA_METHOD_DEL, true );
@@ -280,7 +284,7 @@ public class SmartpushService extends IntentService {
      */
     public static void startActionDelTagOrValue( Context context, String key, Double value ) {
         Intent intent = new Intent( context, SmartpushService.class ) ;
-        intent.setAction( ACTION_SMARTP_SET_TAG ) ;
+        intent.setAction(ACTION_SET_TAG) ;
         intent.putExtra( EXTRA_KEY, key );
         intent.putExtra( EXTRA_TYPE, "NUMERIC" );
         intent.putExtra( EXTRA_METHOD_DEL, true );
@@ -300,7 +304,7 @@ public class SmartpushService extends IntentService {
         String temp = (values == null || values.size() == 0) ? null : (new JSONArray(values)).toString();
 
         Intent intent = new Intent( context, SmartpushService.class ) ;
-        intent.setAction( ACTION_SMARTP_SET_TAG ) ;
+        intent.setAction(ACTION_SET_TAG) ;
         intent.putExtra( EXTRA_KEY, key );
         intent.putExtra( EXTRA_TYPE, "LIST" );
         intent.putExtra( EXTRA_METHOD_DEL, true );
@@ -318,7 +322,7 @@ public class SmartpushService extends IntentService {
      */
     public static void startActionDelTagOrValue( Context context, String key, String value ) {
         Intent intent = new Intent( context, SmartpushService.class ) ;
-        intent.setAction( ACTION_SMARTP_SET_TAG ) ;
+        intent.setAction(ACTION_SET_TAG) ;
         intent.putExtra( EXTRA_KEY, key );
         intent.putExtra( EXTRA_TYPE, "STRING" );
         intent.putExtra( EXTRA_METHOD_DEL, true );
@@ -337,7 +341,7 @@ public class SmartpushService extends IntentService {
     public static void startActionDelTagOrValue( Context context, String key, Date value ) {
         String temp = (value != null) ? String.valueOf( value.getTime() / 1000 ) : null;
         Intent intent = new Intent( context, SmartpushService.class ) ;
-        intent.setAction( ACTION_SMARTP_SET_TAG ) ;
+        intent.setAction(ACTION_SET_TAG) ;
         intent.putExtra( EXTRA_KEY, key );
         intent.putExtra(EXTRA_TYPE, "TIMESTAMP");
         intent.putExtra( EXTRA_METHOD_DEL, true );
@@ -355,7 +359,7 @@ public class SmartpushService extends IntentService {
      */
     public static void startActionBlockPush( Context context, Boolean status ) {
         Intent intent = new Intent( context, SmartpushService.class ) ;
-        intent.setAction(ACTION_SMARTP_BLOCK_PUSH) ;
+        intent.setAction(ACTION_BLOCK_PUSH) ;
         intent.putExtra(EXTRA_VALUE, status);
         context.startService( intent );
     }
@@ -363,13 +367,13 @@ public class SmartpushService extends IntentService {
 
     public static void startActionGetDeviceUserInfo( Context context ) {
         Intent intent = new Intent( context, SmartpushService.class ) ;
-        intent.setAction(ACTION_SMARTP_GET_DEVICE_USER_INFO) ;
+        intent.setAction(ACTION_GET_DEVICE_USER_INFO) ;
         context.startService( intent );
     }
 
     public static void startActionNearestZone( Context context, double lat, double lng ) {
         Intent intent = new Intent( context, SmartpushService.class ) ;
-        intent.setAction( ACTION_SMARTP_NEARESTZONE ) ;
+        intent.setAction(ACTION_NEARESTZONE) ;
         intent.putExtra(EXTRA_LAT, lat);
         intent.putExtra(EXTRA_LNG, lng);
         context.startService( intent );
@@ -382,7 +386,7 @@ public class SmartpushService extends IntentService {
         }
 
         Intent intent = new Intent( context, SmartpushService.class ) ;
-        intent.setAction( ACTION_SMARTP_TRACK_ACTION ) ;
+        intent.setAction(ACTION_TRACK_ACTION) ;
 
         if ( pushId != null )
             intent.putExtra(
@@ -411,24 +415,24 @@ public class SmartpushService extends IntentService {
     protected void onHandleIntent( Intent intent ) {
         if ( intent != null ) {
             final String action = intent.getAction();
-            if ( ACTION_SMARTP_REGISTRATION.equals( action ) ) {
+            if ( ACTION_REGISTRATION.equals( action ) ) {
                 handleActionSubscribe( );
-            } else if ( ACTION_SMARTP_SET_TAG.equals( action ) ) {
+            } else if ( ACTION_SET_TAG.equals( action ) ) {
                 handleActionSetOrDeleteTag( intent );
-            } else if ( ACTION_SMARTP_BLOCK_PUSH.equals( action ) ) {
+            } else if ( ACTION_BLOCK_PUSH.equals( action ) ) {
                 handleActionBlockPush( intent );
-            } else if ( ACTION_SMARTP_GET_DEVICE_USER_INFO.equals( action ) ) {
+            } else if ( ACTION_GET_DEVICE_USER_INFO.equals( action ) ) {
                 handleActionGetDeviceUserInfo( intent );
-            } else if ( ACTION_SMARTP_NEARESTZONE.equals( action ) ) {
+            } else if ( ACTION_NEARESTZONE.equals( action ) ) {
                 handleActionNearestZone(intent);
-            } else if ( ACTION_SMARTP_TRACK_ACTION.equals( action ) ) {
+            } else if ( ACTION_TRACK_ACTION.equals( action ) ) {
                 handleActionTrackAction(intent);
-            } else if ( ACTION_SMARTP_CHECK_MSISDN.equals( action ) ) {
+            } else if ( ACTION_GET_MSISDN.equals( action ) ) {
                 handleActionCheckMsisdn( );
-            } else if ( ACTION_SMARTP_UPDATABLE.equals( action ) ) {
+            } else if ( ACTION_NOTIF_UPDATABLE.equals( action ) ) {
                 // TODO Updatable push notification...
                 SmartpushLog.d( TAG, "-------------------> RUNNING UPDATE TASK" );
-            } else if ( ACTION_SMARTP_GET_APP_LIST.equals( action ) ) {
+            } else if ( ACTION_GET_APP_LIST.equals( action ) ) {
                 handleActionSaveAppsListState();
             }
         }
@@ -462,7 +466,7 @@ public class SmartpushService extends IntentService {
         }
 
         // Notify UI that registration has completed, so the progress indicator can be hidden.
-        Intent registrationComplete = new Intent( ACTION_SMARTP_REGISTRATION_RESULT );
+        Intent registrationComplete = new Intent(ACTION_REGISTRATION_RESULT);
 
         if ( result != null ) {
             registrationComplete.putExtra(SmartpushDeviceInfo.EXTRA_DEVICE_INFO, result);
@@ -559,7 +563,7 @@ public class SmartpushService extends IntentService {
 
         String resp  = SmartpushHttpClient.get( "device", params, this );
 
-        Intent it = new Intent( ACTION_SMARTP_GET_DEVICE_USER_INFO );
+        Intent it = new Intent(ACTION_GET_DEVICE_USER_INFO);
         try {
             JSONObject json = new JSONObject( resp );
             int code = json.has( "code" ) ? json.getInt( "code" ) : 0;
@@ -594,7 +598,7 @@ public class SmartpushService extends IntentService {
         SmartpushLog.d( TAG, "geo : [current] : " + currentLocation.toString() );
 
         // Obtem acesso ao banco de dados
-        SQLiteDatabase db = new DBOpenerHelper( this ).getWritableDatabase();
+        SQLiteDatabase db = new DatabaseManager( this ).getWritableDatabase();
 
         // Recupera a localização salva no último envio...
         ArrayList<GeoLocation> locations = (ArrayList<GeoLocation>) GeoLocationDAO.listAll( db );
@@ -804,7 +808,7 @@ public class SmartpushService extends IntentService {
     }
 
     private void handleActionSaveAppsListState() {
-        SQLiteDatabase db = new DBOpenerHelper( this ).getWritableDatabase();
+        SQLiteDatabase db = new DatabaseManager( this ).getWritableDatabase();
 
         // Active apps list
         List<String> installedAppsList =
@@ -876,7 +880,7 @@ public class SmartpushService extends IntentService {
                     uninstalled.add( item.getPackageName() );
                 }
 
-                // TODO complete operation ...
+                // TODO complete operation ... ???
                 item.setSinc( SmartpushConnectivityUtil.isConnected( this ) );
                 AppInfoDAO.save( db, item );
             }

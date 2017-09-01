@@ -4,11 +4,16 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.Date;
+
+import br.com.smartpush.Smartpush;
 import br.com.smartpush.SmartpushDeviceInfo;
 import br.com.smartpush.SmartpushService;
 
@@ -20,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView( R.layout.main );
 
 //        // Register at Smartpush!
-//        Smartpush.subscribe( this );
+        Smartpush.subscribe( this );
 
         // optional - Tracking :: Call this method always! if app was opened by push one event will
         // be saved, if no nothing will happen.
@@ -37,7 +42,6 @@ public class MainActivity extends AppCompatActivity {
 //        new SmartpushNotificationManager( this ).scheduleNotificationRefreshTime();
 
 //        SmartpushService.getAppList( this );
-        SmartpushService.getMccMnc( this );
     }
 
     @Override
@@ -47,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
                 .getInstance( this )
                 .registerReceiver(mRegistrationBroadcastReceiver,
                         new IntentFilter(
-                                SmartpushService.ACTION_SMARTP_REGISTRATION_RESULT));
+                                SmartpushService.ACTION_REGISTRATION_RESULT));
     }
 
     @Override
@@ -70,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onReceive( Context context, Intent data ) {
 
-            if ( data.getAction().equals( SmartpushService.ACTION_SMARTP_REGISTRATION_RESULT ) ) {
+            if ( data.getAction().equals( SmartpushService.ACTION_REGISTRATION_RESULT) ) {
                 SmartpushDeviceInfo device =
                         data.getParcelableExtra(SmartpushDeviceInfo.EXTRA_DEVICE_INFO);
 
@@ -80,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
 
                 // set your custom TAG here!
 
-//                // E.G:
+//                // Samples:
 //                // TAG type of STRING
 //                Smartpush.setTag(MainActivity.this, "CARRIER", "SMARTPUSH");
 //

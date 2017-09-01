@@ -293,11 +293,13 @@ public final class SmartpushHttpClient {
 
         if ( pushId != null && !"".equals( pushId.trim() ) ) {
 
-            // TODO working here -- push updatable
+            // Samples
             // https://api.getmo.com.br/push/CN6Z8Eka3FSQ9IA/1abe52127db8439e86991d6dca09c181
-            pushId = "ef4e20ef87de359008f0a7528a17f74e";
-            String devId = "CN6Z8Eka3FSQ9IA";
-            String appId = "000000000000001";
+            // https://api.getmo.com.br/push/CN6Z8Eka3FSQ9IA/ef4e20ef87de359008f0a7528a17f74e
+            // String appId = "000000000000001";
+
+            String devId = Utils.Smartpush.getMetadata( context, Utils.Constants.SMARTP_API_KEY );
+            String appId = Utils.Smartpush.getMetadata( context, Utils.Constants.SMARTP_APP_ID );
 
             try {
                 String op = "push/" + devId + "/" + pushId;

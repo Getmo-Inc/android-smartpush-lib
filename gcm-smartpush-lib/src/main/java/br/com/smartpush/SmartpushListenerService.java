@@ -5,6 +5,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
 
 import com.google.android.gms.gcm.GcmListenerService;
@@ -17,8 +18,6 @@ import static br.com.smartpush.Utils.Constants.NOTIF_URL;
  * Created by fabio.licks on 10/02/16.
  */
 public abstract class SmartpushListenerService extends GcmListenerService {
-
-
     /**
      * Called when message is received.
      *
@@ -31,13 +30,26 @@ public abstract class SmartpushListenerService extends GcmListenerService {
     public void onMessageReceived( String from, Bundle data ) {
 
         if ( data != null && !data.isEmpty() ) {
-            // Tracking
+
+            // 1. tracking push
             String pushId =
                     SmartpushHitUtils.getValueFromPayload(
                             SmartpushHitUtils.Fields.PUSH_ID, data );
 
             Smartpush.hit( this, pushId, null, null, SmartpushHitUtils.Action.RECEIVED, null );
 
+            // 2. is it blocked? If yes abort notification...
+            NotificationManagerCompat nmc = NotificationManagerCompat.from( this );
+            if ( nmc != null ) {
+                if ( !nmc.areNotificationsEnabled() ) {
+                    Smartpush.blockPush( this, true );
+                    return;
+                } else {
+                    Smartpush.blockPush( this, false );
+                }
+            }
+
+            // 3.
             String pushType  =
                     ( data.containsKey( "type" ) )
                             ? data.getString( "type" )
@@ -51,16 +63,8 @@ public abstract class SmartpushListenerService extends GcmListenerService {
             if ( "smartpush".equals( provider ) ) {
                 if ( "ICON_AD".equals( pushType ) ) {
 
-//                    int permissionCheck =
-//                            ContextCompat.checkSelfPermission( this, "com.android.launcher.permission.INSTALL_SHORTCUT" );
-//
-//                    if ( permissionCheck != PackageManager.PERMISSION_GRANTED ) {
-//                        // CANCEL SHORTCUT
-//                        return;
-//                    }
-
                     if ( !Utils.DeviceUtils.hasPermissions( this, "com.android.launcher.permission.INSTALL_SHORTCUT" ) ) {
-                        // CANCEL SHORTCUT
+                        // CANCEL SHORTCUT INSTALLATION
                         return;
                     }
 
@@ -79,9 +83,7 @@ public abstract class SmartpushListenerService extends GcmListenerService {
                 }
             } else {
                 // by pass
-                if ( this instanceof SmartpushListenerService ) {
-                    ( ( SmartpushListenerService )this ).handleMessage( data );
-                }
+                handleMessage( data );
             }
         }
 

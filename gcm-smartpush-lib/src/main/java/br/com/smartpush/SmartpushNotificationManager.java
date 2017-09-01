@@ -5,7 +5,6 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -15,7 +14,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
-import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
 
@@ -23,7 +21,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 
 import static android.content.ContentValues.TAG;
-import static br.com.smartpush.SmartpushService.ACTION_SMARTP_UPDATABLE;
+import static br.com.smartpush.SmartpushService.ACTION_NOTIF_UPDATABLE;
 import static br.com.smartpush.Utils.CommonUtils.getValue;
 import static br.com.smartpush.Utils.Constants.LAUNCH_ICON;
 import static br.com.smartpush.Utils.Constants.NOTIF_AUTO_CANCEL;
@@ -362,13 +360,13 @@ public class SmartpushNotificationManager {
         SmartpushLog.d( TAG, "-------------------> SETTING REFRESH TIME" );
         Intent serviceIntent =
                 new Intent( mContext, SmartpushService.class)
-                        .setAction( ACTION_SMARTP_UPDATABLE );
+                        .setAction(ACTION_NOTIF_UPDATABLE);
 
         // make sure you **don't** use *PendingIntent.getBroadcast*, it wouldn't work
         PendingIntent servicePendingIntent =
                 PendingIntent.getService( mContext,
                         // integer constant used to identify the service
-                        SmartpushService.SMARTPUSH_SERVICE_ID,
+                        SmartpushService.SERVICE_ID,
                         serviceIntent,
                         // FLAG to avoid creating a second service if there's already one running
                         PendingIntent.FLAG_CANCEL_CURRENT );
