@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 
@@ -50,6 +51,10 @@ final class Utils {
         String NOTIF_CATEGORY    = "category";
         String NOTIF_BANNER      = "banner";
         String LAUNCH_ICON       = "icon";
+
+        String PUSH_STATUS       = "push.status";
+        String PUSH_EXTRAS       = "push.extras";
+        String PUSH_UPDATE_COUNT = "push.update.count";
 
         // Se o array de icones for alterado tem de ajustar o indice desta variavel.
         int NOTIF_CATEGORY_BUSCAPE = 18;
@@ -133,6 +138,13 @@ final class Utils {
 
             return sb.toString();
         }
+
+        public static String bundle2string( Bundle bundle) {
+            StringBuffer buf = new StringBuffer( "Bundle{ ");
+            for ( String key : bundle.keySet() )
+                buf.append( " " + key + " => " + bundle.get(key) + ";");
+            buf.append(" }Bundle");
+            return buf.toString(); }
     }
 
     //=============================================================================================

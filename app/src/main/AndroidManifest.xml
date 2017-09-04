@@ -3,6 +3,7 @@
     package="br.com.getmo">
 
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
 
     <!-- copy & adjust & adjust -->
     <permission

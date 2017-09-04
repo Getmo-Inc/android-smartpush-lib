@@ -29,7 +29,7 @@ final class SmartpushHitUtils {
     };
 
     public enum Action {
-        SEND, RECEIVED, CLICKED, REDIRECTED, INSTALLED, ONLINE;
+        SEND, RECEIVED, CLICKED, REDIRECTED, INSTALLED, ONLINE, REJECTED;
     };
 
     public static String getValueFromPayload( Fields field, Bundle payload ) {

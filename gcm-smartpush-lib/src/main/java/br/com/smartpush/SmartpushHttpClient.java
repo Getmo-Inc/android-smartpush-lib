@@ -304,10 +304,7 @@ public final class SmartpushHttpClient {
             try {
                 String op = "push/" + devId + "/" + pushId;
                 String response = get( op, null, context );
-
                 JSONObject json = new JSONObject( response );
-
-                SmartpushLog.d( TAG, json.toString( 4 ) );
 
                 if ( json.has( "notifications" ) ) {
                     JSONArray notifications = json.getJSONArray( "notifications" );
@@ -318,17 +315,23 @@ public final class SmartpushHttpClient {
 
                             if ( item.has( "payload" ) ) {
                                 JSONObject payload = item.getJSONObject( "payload" );
-                                SmartpushLog.d( TAG, payload.toString() );
+
+                                // Update values
+                                Iterator<String> keys = payload.keys();
+                                while( keys.hasNext() ) {
+                                    String key = keys.next();
+                                    newData.putString( key, payload.getString( key ) );
+                                }
                             }
 
                             if ( item.has( "extra" ) ) {
                                 JSONObject extra = item.getJSONObject( "extra" );
-                                SmartpushLog.d( TAG, extra.toString() );
+                                newData.putString( Utils.Constants.PUSH_EXTRAS, extra.toString() );
                             }
 
                             if ( item.has( "status" ) ) {
                                 String status = item.getString( "status" );
-                                SmartpushLog.d( TAG, status );
+                                newData.putString( Utils.Constants.PUSH_STATUS, status );
                             }
                         }
                     }

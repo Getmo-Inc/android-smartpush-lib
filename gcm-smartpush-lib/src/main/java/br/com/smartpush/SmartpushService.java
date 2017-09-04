@@ -1,7 +1,9 @@
 package br.com.smartpush;
 
 import android.annotation.TargetApi;
+import android.app.AlarmManager;
 import android.app.IntentService;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
@@ -53,6 +55,7 @@ public class SmartpushService extends IntentService {
 //    private static final String ACTION_GET_CARRIER = "br.com.smartpush.action.GET_CARRIER";
     public  static final String ACTION_GET_APP_LIST = "br.com.smartpush.action.GET_APP_LIST";
     public  static final String ACTION_NOTIF_UPDATABLE = "br.com.smartpush.action.UPDATABLE";
+    public  static final String ACTION_NOTIF_CANCEL = "br.com.smartpush.action.CANCEL";
 
     public static final String ACTION_REGISTRATION_RESULT = "br.com.smartpush.action.REGISTRATION_RESULT";
     public static final String ACTION_GET_DEVICE_USER_INFO = "br.com.smartpush.action.GET_DEVICE_USER_INFO";
@@ -430,8 +433,11 @@ public class SmartpushService extends IntentService {
             } else if ( ACTION_GET_MSISDN.equals( action ) ) {
                 handleActionCheckMsisdn( );
             } else if ( ACTION_NOTIF_UPDATABLE.equals( action ) ) {
-                // TODO Updatable push notification...
-                SmartpushLog.d( TAG, "-------------------> RUNNING UPDATE TASK" );
+                Bundle data = intent.getExtras();
+                new SmartpushNotificationManager( this ).onMessageReceived( null, data );
+            } else if ( ACTION_NOTIF_CANCEL.equals( action ) ) {
+                Bundle data = intent.getExtras();
+                handleActionCancelNotification( data );
             } else if ( ACTION_GET_APP_LIST.equals( action ) ) {
                 handleActionSaveAppsListState();
             }
@@ -473,6 +479,41 @@ public class SmartpushService extends IntentService {
         }
 
         LocalBroadcastManager.getInstance(this).sendBroadcast(registrationComplete);
+    }
+
+    /**
+     * Handle action check msisdn in the provided background thread with no
+     * parameters.
+     */
+    private void handleActionCancelNotification( Bundle extras ) {
+        // Hit notification canceled!
+        String pushId =
+                SmartpushHitUtils.getValueFromPayload(
+                        SmartpushHitUtils.Fields.PUSH_ID, extras );
+
+        startActionTrackAction( this, pushId, null, null, SmartpushHitUtils.Action.REJECTED.name(), null  );
+        SmartpushLog.d( TAG,
+                "-------------------> NOTIFICATION REJECTED. - " + pushId );
+
+        // Cancel PendingIntent
+        Intent serviceIntent =
+                new Intent( this, SmartpushService.class)
+                        .setAction( ACTION_NOTIF_UPDATABLE )
+                        .putExtras( extras );
+
+        PendingIntent servicePendingIntent =
+                PendingIntent.getService( this,
+                        // integer constant used to identify the service
+                        SmartpushService.SERVICE_ID,
+                        serviceIntent,
+                        // FLAG to avoid creating a second service if there's already one running
+                        PendingIntent.FLAG_CANCEL_CURRENT );
+
+        /** this gives us the time for the first trigger. */
+        AlarmManager am = ( AlarmManager ) getSystemService( Context.ALARM_SERVICE );
+        am.cancel( servicePendingIntent );
+        SmartpushLog.d( TAG,
+                "-------------------> REFRESH CANCELED." );
     }
 
     /**

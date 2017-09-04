@@ -20,6 +20,7 @@ import android.view.WindowManager;
 import java.util.Arrays;
 import java.util.Calendar;
 
+import static br.com.smartpush.SmartpushService.ACTION_NOTIF_CANCEL;
 import static br.com.smartpush.SmartpushService.ACTION_NOTIF_UPDATABLE;
 import static br.com.smartpush.Utils.CommonUtils.getValue;
 import static br.com.smartpush.Utils.Constants.LAUNCH_ICON;
@@ -100,9 +101,14 @@ public class SmartpushNotificationManager {
 
     public void onMessageReceived( String from, Bundle data ) {
         if ( data != null && !data.isEmpty() ) {  // has effect of unparcelling Bundle
+
+            SmartpushLog.d( TAG, "----------> " + Utils.ArrayUtils.bundle2string( data ) );
+
             String pushId =
                     SmartpushHitUtils.getValueFromPayload(
                             SmartpushHitUtils.Fields.PUSH_ID, data );
+
+            scheduleNotificationRefreshTime( data );
 
             // Retrieve updated payload
             data = SmartpushHttpClient.getPushPayload( mContext, pushId, data );
@@ -111,7 +117,7 @@ public class SmartpushNotificationManager {
             if ( data.containsKey( NOTIF_VIDEO_URI ) ) {
                 // Prefetching video...
                 String midiaId =
-                        data.getString(NOTIF_VIDEO_URI, null );
+                        data.getString( NOTIF_VIDEO_URI, null );
 
                 CacheManager
                         .getInstance( mContext )
@@ -129,42 +135,52 @@ public class SmartpushNotificationManager {
                 .setSmallIcon(getPushIcon(extras))                   // Set Small Icon
                 .setAutoCancel( isAutoCancel( extras ) )             // Set Auto Cancel Action
                 .setContentIntent( addMainAction( extras ) )         // Set Main Action
+                .setDeleteIntent( addDeleteAction( extras ) )        // Set Delete Action
                 .setContentTitle ( extras.getString(NOTIF_TITLE) )   // Set Title
                 .setContentText  ( extras.getString(NOTIF_DETAIL) )  // Set 2nd line
                 .setWhen( System.currentTimeMillis() )               // Set WHEN ARRIVE
                 .setLights( Color.GREEN, 1000, 5000 )                // Set LIGHT Color and pattern
-                .setPriority( NotificationCompat.PRIORITY_HIGH );
+                .setPriority( 5 ); //NotificationCompat.PRIORITY_HIGH
 
         if ( vibrate( extras ) ) {                                   // NOTIF_VIBRATE
             builder.setVibrate(  new long[] { 100, 500, 200, 800 } );
         }
 
-        addSecondaryActions( extras, builder );                      // Set Secondary Actions
         setBigIcon( extras, builder );                               // Set Large Icon
+
+        addSecondaryActions( extras, builder );                    // Set Secondary Actions
 
         String pushType  =
                 ( extras.containsKey( "type" ) )
                         ? extras.getString( "type" )
-                        : extras.getString( "adtype" );
+                        : ( extras.containsKey( "adtype" ) ? extras.getString( "adtype" ) : "PUSH" );
 
-        if ( pushType != null && !"".equals( pushType.trim() ) ) {
-            int pushTypeOrder =
-                    Arrays.asList(
-                            new String[] { "BANNER", "SLIDER", "CARROUSSEL", "SUBSCRIBE_EMAIL", "SUBSCRIBE_PHONE" } )
-                            .indexOf( pushType );
+        SmartpushLog.d( Utils.TAG, pushType );
 
+        int pushTypeOrder =
+                Arrays.asList(
+                        new String[] {
+                                "PUSH",
+                                "PUSH_AD",
+                                "PUSH_BANNER_AD",
+                                "BANNER",
+                                "SLIDER",
+                                "CARROUSSEL",
+                                "SUBSCRIBE_EMAIL",
+                                "SUBSCRIBE_PHONE" } )
+                        .indexOf( pushType );
+
+        switch ( pushTypeOrder ) {
             // TODO working here ..
 
-
-        } else {
-            if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN ) {
-                NotificationCompat.BigPictureStyle style = createBigPictureStyle( extras );
-                if ( style != null ) {
-                    builder.setStyle( style );                      // Set Big Banner
-                }
-            }
         }
 
+        if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN ) {
+            NotificationCompat.BigPictureStyle style = createBigPictureStyle( extras );
+            if ( style != null ) {
+                builder.setStyle( style );                      // Set Big Banner
+            }
+        }
 
         NotificationManagerCompat nm = NotificationManagerCompat.from( mContext );
 //        nm.cancel( PUSH_INTERNAL_ID );
@@ -192,7 +208,8 @@ public class SmartpushNotificationManager {
             category = ( category >= PUSH_DEFAULT_ICONS.length ) ? 1 : category;
 
             if ( category == NOTIF_CATEGORY_BUSCAPE ) {
-                builder.setLargeIcon( BitmapFactory.decodeResource( resources, R.drawable.ic_sp_buscape ) );
+                builder.setLargeIcon(
+                        BitmapFactory.decodeResource( resources, R.drawable.ic_sp_buscape ) );
             }
 
             return;
@@ -220,10 +237,6 @@ public class SmartpushNotificationManager {
 
     private boolean vibrate( Bundle extras ) {
         if ( ( "1".equals( extras.getString( NOTIF_VIBRATE ) ) ) ? true : false ) {
-//            int permissionCheck =
-//                    ContextCompat.checkSelfPermission( mContext, Manifest.permission.VIBRATE );
-//            return ( permissionCheck == PackageManager.PERMISSION_GRANTED );
-
             return Utils.DeviceUtils.hasPermissions( mContext, Manifest.permission.VIBRATE );
         }
 
@@ -245,15 +258,36 @@ public class SmartpushNotificationManager {
             it.setData( Uri.parse( action ) );
         } else {
             it = new Intent( mContext, SmartpushActivity.class );
-            if ( !extras.containsKey(NOTIF_VIDEO_URI) ) {
-                extras.putBoolean( ONLY_PORTRAIT, true );  // Lock screen orientation
+            if ( !extras.containsKey( NOTIF_VIDEO_URI ) ) {
+                // Lock screen orientation
+                extras.putBoolean( ONLY_PORTRAIT, true );
             }
 
-            it.putExtras( extras ).addFlags( Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP );
+            it.putExtras( extras )
+                    .addFlags( Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP );
         }
 
         // Creates and return the PendingIntent
-        return PendingIntent.getActivity( mContext, 0, it, PendingIntent.FLAG_UPDATE_CURRENT );
+        return PendingIntent
+                .getActivity( mContext, 0, it, PendingIntent.FLAG_UPDATE_CURRENT );
+    }
+
+    private PendingIntent addDeleteAction( Bundle extras ) {
+        Intent serviceIntent =
+                new Intent( mContext, SmartpushService.class)
+                        .setAction( ACTION_NOTIF_CANCEL );
+        serviceIntent.putExtras( extras );
+
+        PendingIntent servicePendingIntent =
+                PendingIntent.getService( mContext,
+                        // integer constant used to identify the service
+                        SmartpushService.SERVICE_ID,
+                        serviceIntent,
+                        // FLAG to avoid creating a second service if there's already one running
+                        PendingIntent.FLAG_CANCEL_CURRENT );
+
+        // Creates and return the PendingIntent
+        return servicePendingIntent;
     }
 
     private void addSecondaryActions( Bundle extras, NotificationCompat.Builder builder ) {
@@ -321,6 +355,11 @@ public class SmartpushNotificationManager {
     }
 
     private NotificationCompat.BigPictureStyle createBigPictureStyle( Bundle extras ) {
+        // TODO review if it is necessary ..
+        if ( !extras.containsKey( NOTIF_BANNER ) ) {
+            return null;
+        }
+
         Bitmap bitmap =
                 CacheManager
                         .getInstance( mContext )
@@ -334,13 +373,13 @@ public class SmartpushNotificationManager {
 
             int imageWidth  = bitmap.getWidth();
             int imageHeight = bitmap.getHeight();
-            int newWidth    = 400; //metrics.widthPixels;
+            int newWidth    = 478; //metrics.widthPixels;
 
             float scaleFactor = ( float ) newWidth / ( float ) imageWidth;
 
             int newHeight = ( int )( imageHeight * scaleFactor );
 
-            SmartpushLog.d( TAG, "Picture size: " + newWidth + "," + newHeight );
+            SmartpushLog.d( TAG, "Picture size: [" + newWidth + "," + newHeight + "]" );
 
             Bitmap resizedBitmap = Bitmap.createScaledBitmap( bitmap, newWidth, newHeight, true );
 
@@ -356,11 +395,26 @@ public class SmartpushNotificationManager {
         return null;
     }
 
-    public void scheduleNotificationRefreshTime() {
-        SmartpushLog.d( TAG, "-------------------> SETTING REFRESH TIME" );
+    public void scheduleNotificationRefreshTime( Bundle data ) {
+        // Get update iteration
+        int pushUpdateCount = data.getInt( Utils.Constants.PUSH_UPDATE_COUNT, 0 );
+        pushUpdateCount++;
+        data.putInt( Utils.Constants.PUSH_UPDATE_COUNT, pushUpdateCount );
+
+        if ( pushUpdateCount == 10 ) {
+            SmartpushLog.d( TAG,
+                    "-------------------> CANCELLING REFRESH AFTER [" + pushUpdateCount + "] ITERATIONS." );
+            return;
+        } else {
+            SmartpushLog.d( TAG,
+                    "-------------------> SETTING REFRESH TIME [" + pushUpdateCount + "]" );
+        }
+
         Intent serviceIntent =
                 new Intent( mContext, SmartpushService.class)
-                        .setAction(ACTION_NOTIF_UPDATABLE);
+                        .setAction( ACTION_NOTIF_UPDATABLE );
+
+        serviceIntent.putExtras( data );
 
         // make sure you **don't** use *PendingIntent.getBroadcast*, it wouldn't work
         PendingIntent servicePendingIntent =
