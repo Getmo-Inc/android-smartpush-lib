@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
+    android:background="@drawable/elegant_android_background"
     tools:context="br.com.getmo.MainActivity">
 
     <LinearLayout
@@ -16,13 +17,14 @@
             android:id="@+id/switch1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Push Notification ON "/>
+            android:text="Push Notification ON "
+            android:textColor="#FFF"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text=" OFF"
-            android:textColor="#000"/>
+            android:textColor="#FFF"/>
 
     </LinearLayout>
 

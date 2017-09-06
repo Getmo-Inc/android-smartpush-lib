@@ -21,6 +21,15 @@ import static br.com.smartpush.Utils.TAG;
  */
 public final class Smartpush {
 
+    public static boolean areNotificationsEnabled( final Context context ) {
+        NotificationManagerCompat nmc = NotificationManagerCompat.from( context );
+        if ( nmc != null ) {
+            return nmc.areNotificationsEnabled();
+        }
+
+        return true;
+    }
+
     public static boolean blockPush( final Context context, final boolean block ) {
         if ( isRegistered( context ) ) {
             NotificationManagerCompat nmc = NotificationManagerCompat.from( context );
@@ -152,7 +161,7 @@ public final class Smartpush {
     /**
      * Check the device to make sure it has the Google Play Services APK.
      */
-    public static boolean checkPlayServices( Context _c ) {
+    private static boolean checkPlayServices( Context _c ) {
         GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
         int resultCode = apiAvailability.isGooglePlayServicesAvailable( _c );
         return ( resultCode == ConnectionResult.SUCCESS );

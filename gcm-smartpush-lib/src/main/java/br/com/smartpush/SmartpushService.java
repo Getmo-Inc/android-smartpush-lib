@@ -46,27 +46,26 @@ public class SmartpushService extends IntentService {
     public static final int SERVICE_ID = 456123;
 
     // IntentService can perform, e.g. ACTION_FETCH_NEW_ITEMS
-    private static final String ACTION_REGISTRATION = "br.com.smartpush.action.REGISTRATION";
-    private static final String ACTION_SET_TAG = "br.com.smartpush.action.SET_TAG";
-    private static final String ACTION_BLOCK_PUSH = "br.com.smartpush.action.BLOCK_PUSH";
-    private static final String ACTION_NEARESTZONE = "br.com.smartpush.action.NEARESTZONE";
-    private static final String ACTION_TRACK_ACTION = "br.com.smartpush.action.TRACK_ACTION";
-    private static final String ACTION_GET_MSISDN = "br.com.smartpush.action.GET_MSISDN";
-//    private static final String ACTION_GET_CARRIER = "br.com.smartpush.action.GET_CARRIER";
-    public  static final String ACTION_GET_APP_LIST = "br.com.smartpush.action.GET_APP_LIST";
-    public  static final String ACTION_NOTIF_UPDATABLE = "br.com.smartpush.action.UPDATABLE";
-    public  static final String ACTION_NOTIF_CANCEL = "br.com.smartpush.action.CANCEL";
+    private static final String ACTION_REGISTRATION = "action.REGISTRATION";
+    private static final String ACTION_SET_TAG = "action.SET_TAG";
+    private static final String ACTION_BLOCK_PUSH = "action.BLOCK_PUSH";
+    private static final String ACTION_NEARESTZONE = "action.NEARESTZONE";
+    private static final String ACTION_TRACK_ACTION = "action.TRACK_ACTION";
+    private static final String ACTION_GET_MSISDN = "action.GET_MSISDN";
+//    private static final String ACTION_GET_CARRIER = "action.GET_CARRIER";
+    public  static final String ACTION_GET_APP_LIST = "action.GET_APP_LIST";
+    public  static final String ACTION_NOTIF_UPDATABLE = "action.UPDATABLE";
+    public  static final String ACTION_NOTIF_CANCEL = "action.CANCEL";
 
-    public static final String ACTION_REGISTRATION_RESULT = "br.com.smartpush.action.REGISTRATION_RESULT";
-    public static final String ACTION_GET_DEVICE_USER_INFO = "br.com.smartpush.action.GET_DEVICE_USER_INFO";
+    public static final String ACTION_REGISTRATION_RESULT = "action.REGISTRATION_RESULT";
+    public static final String ACTION_GET_DEVICE_USER_INFO = "action.GET_DEVICE_USER_INFO";
 
-    // TODO: Rename parameters
-    private static final String EXTRA_KEY    = "br.com.smartpush.extra.KEY";
-    private static final String EXTRA_TYPE   = "br.com.smartpush.extra.KEY_TYPE";
-    private static final String EXTRA_VALUE  = "br.com.smartpush.extra.VALUE";
-    private static final String EXTRA_LAT    = "br.com.smartpush.extra.LAT";
-    private static final String EXTRA_LNG    = "br.com.smartpush.extra.LNG";
-    private static final String EXTRA_METHOD_DEL = "br.com.smartpush.extra.METHOD_DEL";
+    private static final String EXTRA_KEY    = "extra.KEY";
+    private static final String EXTRA_TYPE   = "extra.KEY_TYPE";
+    private static final String EXTRA_VALUE  = "extra.VALUE";
+    private static final String EXTRA_LAT    = "extra.LAT";
+    private static final String EXTRA_LNG    = "extra.LNG";
+    private static final String EXTRA_METHOD_DEL = "extra.METHOD_DEL";
 
     public SmartpushService() {
         super("SmartpushService");
@@ -167,7 +166,6 @@ public class SmartpushService extends IntentService {
      * @see IntentService
      */
     public static void startActionSetTag( Context context, String key, Boolean value ) {
-        // TODO Test
         // It does not send empty boolean...
         if ( value == null ) return;
 
@@ -186,7 +184,6 @@ public class SmartpushService extends IntentService {
      * @see IntentService
      */
     public static void startActionSetTag( Context context, String key, Double value ) {
-        // TODO Test
         // It does not send empty double...
         if ( value == null ) return;
 
@@ -205,13 +202,9 @@ public class SmartpushService extends IntentService {
      * @see IntentService
      */
     public static void startActionSetTag( Context context, String key, ArrayList<String> values ) {
-        String temp =
-                ( values == null || values.size() == 0 )
-                        ? null : ( new JSONArray( values ) ).toString();
+        if ( values == null || values.size() == 0 ) return;
 
-        // TODO Test
-        // It does not send empty list...
-        if ( temp == null ) return;
+        String temp = ( new JSONArray( values ) ).toString();
 
         Intent intent = new Intent( context, SmartpushService.class ) ;
         intent.setAction(ACTION_SET_TAG) ;
@@ -228,7 +221,6 @@ public class SmartpushService extends IntentService {
      * @see IntentService
      */
     public static void startActionSetTag( Context context, String key, String value ) {
-        // TODO Test
         // It does not send empty String...
         if ( value == null || "".equals( value.trim() ) ) return;
 
@@ -249,7 +241,6 @@ public class SmartpushService extends IntentService {
     public static void startActionSetTag( Context context, String key, Date value ) {
         String temp = (value != null) ? String.valueOf( value.getTime() / 1000 ) : null;
 
-        // TODO Test
         // It does not send empty timestamp...
         if ( temp == null ) return;
 

@@ -140,7 +140,7 @@ public class SmartpushNotificationManager {
                 .setContentText  ( extras.getString(NOTIF_DETAIL) )  // Set 2nd line
                 .setWhen( System.currentTimeMillis() )               // Set WHEN ARRIVE
                 .setLights( Color.GREEN, 1000, 5000 )                // Set LIGHT Color and pattern
-                .setPriority( 5 ); //NotificationCompat.PRIORITY_HIGH
+                .setPriority( 5 );    // NotificationCompat.PRIORITY_HIGH
 
         if ( vibrate( extras ) ) {                                   // NOTIF_VIBRATE
             builder.setVibrate(  new long[] { 100, 500, 200, 800 } );
@@ -155,31 +155,48 @@ public class SmartpushNotificationManager {
                         ? extras.getString( "type" )
                         : ( extras.containsKey( "adtype" ) ? extras.getString( "adtype" ) : "PUSH" );
 
-        SmartpushLog.d( Utils.TAG, pushType );
+        SmartpushLog.d( Utils.TAG, "pushType: " + pushType );
 
         int pushTypeOrder =
                 Arrays.asList(
                         new String[] {
-                                "PUSH",
-                                "PUSH_AD",
-                                "PUSH_BANNER_AD",
-                                "BANNER",
-                                "SLIDER",
-                                "CARROUSSEL",
-                                "SUBSCRIBE_EMAIL",
-                                "SUBSCRIBE_PHONE" } )
+                                "PUSH", "PUSH_AD", "PUSH_BANNER_AD",
+                                "BANNER", "SLIDER", "CARROUSSEL",
+                                "SUBSCRIBE_EMAIL", "SUBSCRIBE_PHONE" } )
                         .indexOf( pushType );
 
+        SmartpushLog.d( Utils.TAG, "pushTypeOrder: " + pushType );
+
+        // https://medium.com/@britt.barak/notifications-part-3-going-custom-31c31609f314
+        // https://medium.com/@britt.barak/notifications-part1-styling-930ec3d7caa5
+
         switch ( pushTypeOrder ) {
-            // TODO working here ..
+            case 0:
+            case 1:
+            case 2:
+                // PUSH, PUSH_AD, PUSH_BANNER_AD
+                if ( !extras.containsKey( NOTIF_BANNER ) ) {
+                    if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN ) {
+                        NotificationCompat.BigPictureStyle style = createBigPictureStyle( extras );
+                        if ( style != null ) {
+                            builder.setStyle( style );                      // Set Big Banner
+                        }
+                    }
+                }
+                break;
+            case 3:
+            case 4:
+            case 5:
+            case 6:
+            case 7:
+                // BANNER, SLIDER, CARROUSSEL, SUBSCRIBE_EMAIL, SUBSCRIBE_PHONE
+                //builder.setCustomContentView( )        // small
+                // builder.setCustomBigContentView( )    // big
+                // TODO working here!!
+                break;
+            default:
+                SmartpushLog.d( Utils.TAG, "Push Type unknow" );
 
-        }
-
-        if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN ) {
-            NotificationCompat.BigPictureStyle style = createBigPictureStyle( extras );
-            if ( style != null ) {
-                builder.setStyle( style );                      // Set Big Banner
-            }
         }
 
         NotificationManagerCompat nm = NotificationManagerCompat.from( mContext );
@@ -355,11 +372,6 @@ public class SmartpushNotificationManager {
     }
 
     private NotificationCompat.BigPictureStyle createBigPictureStyle( Bundle extras ) {
-        // TODO review if it is necessary ..
-        if ( !extras.containsKey( NOTIF_BANNER ) ) {
-            return null;
-        }
-
         Bitmap bitmap =
                 CacheManager
                         .getInstance( mContext )
