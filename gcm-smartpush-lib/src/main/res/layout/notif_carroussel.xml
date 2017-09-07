@@ -1,0 +1,684 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!--android:autoStart="true"-->
+    <ViewFlipper
+        android:id="@+id/carroussel_next"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:measureAllChildren="true"
+        android:flipInterval="500"
+        android:inAnimation="@anim/slide_in_right"
+        android:outAnimation="@anim/slide_out_left"
+        android:animateFirstView="true"
+        android:layout_centerInParent="true"
+        android:background="@android:color/transparent">
+
+        <!-- 1 -->
+        <LinearLayout
+            android:orientation="vertical"
+            android:background="@color/colorGreyLight"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:background="#FFF">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:src="@drawable/thumb_consul_cinza_20litros"
+                        android:layout_width="wrap_content"
+                        android:layout_height="120dp"
+                        android:adjustViewBounds="true"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/colorGrey"
+                        android:text="Máquina de Lavar\nElectrolux 13Kg Branca\nTurbo Economia LTD13"/>
+
+                    <TextView
+                        android:layout_marginTop="10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Ver preços em mais lojas"
+                        android:textSize="12sp"
+                        android:textColor="@color/colorPrimary"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp">
+
+                <TextView
+                    android:id="@+id/lblMelhorPreco"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorGrey"
+                    android:textSize="12sp"
+                    android:text="MELHOR PREÇO"/>
+
+                <TextView
+                    android:id="@+id/lblLojaMelhorPreco"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/lblMelhorPreco"
+                    android:textSize="12sp"
+                    android:textColor="@color/colorPrimary"
+                    android:textStyle="bold"
+                    android:text="Carrefour"/>
+
+                <TextView
+                    android:id="@+id/lblParcelas"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:textSize="12sp"
+                    android:textColor="@color/green4"
+                    android:text="10x R$ 168,32"/>
+
+                <TextView
+                    android:id="@+id/lblPreco"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/lblParcelas"
+                    android:layout_alignLeft="@id/lblParcelas"
+                    android:textSize="10sp"
+                    android:textColor="@color/green4"
+                    android:text="R$ 1.599,00"/>
+
+                <ImageButton
+                    android:layout_alignParentRight="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@color/green4"
+                    android:src="@android:drawable/ic_media_play" />
+
+            </RelativeLayout>
+        </LinearLayout>
+
+        <!-- 2 -->
+        <LinearLayout
+            android:orientation="vertical"
+            android:background="@color/colorGreyLight"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:background="#FFF">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:src="@drawable/thumb_ps4_slim_500gb"
+                        android:layout_width="wrap_content"
+                        android:layout_height="120dp"
+                        android:adjustViewBounds="true"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/colorGrey"
+                        android:text="Console Playstation 4\n500GB 1564477"/>
+
+                    <TextView
+                        android:layout_marginTop="10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Ver preços em mais lojas"
+                        android:textSize="12sp"
+                        android:textColor="@color/colorPrimary"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp">
+
+                <TextView
+                    android:id="@+id/lblMelhorPreco2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorGrey"
+                    android:textSize="12sp"
+                    android:text="MELHOR PREÇO"/>
+
+                <TextView
+                    android:id="@+id/lblLojaMelhorPreco2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/lblMelhorPreco2"
+                    android:textSize="12sp"
+                    android:textColor="@color/colorPrimary"
+                    android:textStyle="bold"
+                    android:text="Wal-Mart"/>
+
+                <TextView
+                    android:id="@+id/lblParcelas2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:textSize="12sp"
+                    android:textColor="@color/green4"
+                    android:text="8x R$ 173,50"/>
+
+                <TextView
+                    android:id="@+id/lblPreco2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/lblParcelas2"
+                    android:layout_alignLeft="@id/lblParcelas2"
+                    android:textSize="10sp"
+                    android:textColor="@color/green4"
+                    android:text="R$ 1.387,99"/>
+
+                <ImageButton
+                    android:layout_alignParentRight="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@color/green4"
+                    android:src="@android:drawable/ic_media_play" />
+            </RelativeLayout>
+        </LinearLayout>
+
+        <!-- 3 -->
+        <LinearLayout
+            android:orientation="vertical"
+            android:background="@color/colorGreyLight"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:background="#FFF">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:src="@drawable/thumb_smarttv_samsung_serie_6"
+                        android:layout_width="wrap_content"
+                        android:layout_height="120dp"
+                        android:adjustViewBounds="true"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/colorGrey"
+                        android:text="Smart TV LED 43 LG\n43LH5700 Full HD com\nConversor Digital"/>
+
+                    <TextView
+                        android:layout_marginTop="10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Ver preços em mais lojas"
+                        android:textSize="12sp"
+                        android:textColor="@color/colorPrimary"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp">
+
+                <TextView
+                    android:id="@+id/lblMelhorPreco3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorGrey"
+                    android:textSize="12sp"
+                    android:text="MELHOR PREÇO"/>
+
+                <TextView
+                    android:id="@+id/lblLojaMelhorPreco3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/lblMelhorPreco3"
+                    android:textSize="12sp"
+                    android:textColor="@color/colorPrimary"
+                    android:textStyle="bold"
+                    android:text="Submarino"/>
+
+                <TextView
+                    android:id="@+id/lblParcelas3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:textSize="12sp"
+                    android:textColor="@color/green4"
+                    android:text="8x R$ 231,24"/>
+
+                <TextView
+                    android:id="@+id/lblPreco3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/lblParcelas3"
+                    android:layout_alignLeft="@id/lblParcelas3"
+                    android:textSize="10sp"
+                    android:textColor="@color/green4"
+                    android:text="R$ 1.849,99"/>
+
+                <ImageButton
+                    android:layout_alignParentRight="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@color/green4"
+                    android:src="@android:drawable/ic_media_play" />
+            </RelativeLayout>
+        </LinearLayout>
+
+    </ViewFlipper>
+
+    <ViewFlipper
+        android:id="@+id/carroussel_previous"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:measureAllChildren="true"
+        android:flipInterval="500"
+        android:inAnimation="@android:anim/slide_in_left"
+        android:outAnimation="@android:anim/slide_out_right"
+        android:animateFirstView="true"
+        android:layout_centerInParent="true"
+        android:visibility="gone"
+        android:background="@android:color/transparent">
+
+        <!-- 1 -->
+        <LinearLayout
+            android:orientation="vertical"
+            android:background="@color/colorGreyLight"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:background="#FFF">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:src="@drawable/thumb_consul_cinza_20litros"
+                        android:layout_width="wrap_content"
+                        android:layout_height="120dp"
+                        android:adjustViewBounds="true"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/colorGrey"
+                        android:text="Máquina de Lavar\nElectrolux 13Kg Branca\nTurbo Economia LTD13"/>
+
+                    <TextView
+                        android:layout_marginTop="10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Ver preços em mais lojas"
+                        android:textSize="12sp"
+                        android:textColor="@color/colorPrimary"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp">
+
+                <TextView
+                    android:id="@+id/lblMelhorPreco4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorGrey"
+                    android:textSize="12sp"
+                    android:text="MELHOR PREÇO"/>
+
+                <TextView
+                    android:id="@+id/lblLojaMelhorPreco4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/lblMelhorPreco4"
+                    android:textSize="12sp"
+                    android:textColor="@color/colorPrimary"
+                    android:textStyle="bold"
+                    android:text="Carrefour"/>
+
+                <TextView
+                    android:id="@+id/lblParcelas4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:textSize="12sp"
+                    android:textColor="@color/green4"
+                    android:text="10x R$ 168,32"/>
+
+                <TextView
+                    android:id="@+id/lblPreco4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/lblParcelas4"
+                    android:layout_alignLeft="@id/lblParcelas4"
+                    android:textSize="10sp"
+                    android:textColor="@color/green4"
+                    android:text="R$ 1.599,00"/>
+
+                <ImageButton
+                    android:layout_alignParentRight="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@color/green4"
+                    android:src="@android:drawable/ic_media_play" />
+
+            </RelativeLayout>
+        </LinearLayout>
+
+        <!-- 2 -->
+        <LinearLayout
+            android:orientation="vertical"
+            android:background="@color/colorGreyLight"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:background="#FFF">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:src="@drawable/thumb_ps4_slim_500gb"
+                        android:layout_width="wrap_content"
+                        android:layout_height="120dp"
+                        android:adjustViewBounds="true"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/colorGrey"
+                        android:text="Console Playstation 4\n500GB 1564477"/>
+
+                    <TextView
+                        android:layout_marginTop="10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Ver preços em mais lojas"
+                        android:textSize="12sp"
+                        android:textColor="@color/colorPrimary"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp">
+
+                <TextView
+                    android:id="@+id/lblMelhorPreco5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorGrey"
+                    android:textSize="12sp"
+                    android:text="MELHOR PREÇO"/>
+
+                <TextView
+                    android:id="@+id/lblLojaMelhorPreco5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/lblMelhorPreco5"
+                    android:textSize="12sp"
+                    android:textColor="@color/colorPrimary"
+                    android:textStyle="bold"
+                    android:text="Wal-Mart"/>
+
+                <TextView
+                    android:id="@+id/lblParcelas5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:textSize="12sp"
+                    android:textColor="@color/green4"
+                    android:text="8x R$ 173,50"/>
+
+                <TextView
+                    android:id="@+id/lblPreco5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/lblParcelas5"
+                    android:layout_alignLeft="@id/lblParcelas5"
+                    android:textSize="10sp"
+                    android:textColor="@color/green4"
+                    android:text="R$ 1.387,99"/>
+
+                <ImageButton
+                    android:layout_alignParentRight="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@color/green4"
+                    android:src="@android:drawable/ic_media_play" />
+            </RelativeLayout>
+        </LinearLayout>
+
+        <!-- 3 -->
+        <LinearLayout
+            android:orientation="vertical"
+            android:background="@color/colorGreyLight"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:background="#FFF">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:src="@drawable/thumb_smarttv_samsung_serie_6"
+                        android:layout_width="wrap_content"
+                        android:layout_height="120dp"
+                        android:adjustViewBounds="true"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/colorGrey"
+                        android:text="Smart TV LED 43 LG\n43LH5700 Full HD com\nConversor Digital"/>
+
+                    <TextView
+                        android:layout_marginTop="10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Ver preços em mais lojas"
+                        android:textSize="12sp"
+                        android:textColor="@color/colorPrimary"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp">
+
+                <TextView
+                    android:id="@+id/lblMelhorPreco6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorGrey"
+                    android:textSize="12sp"
+                    android:text="MELHOR PREÇO"/>
+
+                <TextView
+                    android:id="@+id/lblLojaMelhorPreco6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/lblMelhorPreco6"
+                    android:textSize="12sp"
+                    android:textColor="@color/colorPrimary"
+                    android:textStyle="bold"
+                    android:text="Submarino"/>
+
+                <TextView
+                    android:id="@+id/lblParcelas6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:textSize="12sp"
+                    android:textColor="@color/green4"
+                    android:text="8x R$ 231,24"/>
+
+                <TextView
+                    android:id="@+id/lblPreco6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/lblParcelas6"
+                    android:layout_alignLeft="@id/lblParcelas6"
+                    android:textSize="10sp"
+                    android:textColor="@color/green4"
+                    android:text="R$ 1.849,99"/>
+
+                <ImageButton
+                    android:layout_alignParentRight="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@color/green4"
+                    android:src="@android:drawable/ic_media_play" />
+            </RelativeLayout>
+        </LinearLayout>
+
+    </ViewFlipper>
+
+    <ImageButton
+        android:id="@+id/btnPrevious"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/background_navigation_control"
+        android:src="@drawable/ic_arrow_left"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="5dp"/>
+
+    <ImageButton
+        android:id="@+id/btnNext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/background_navigation_control"
+        android:src="@drawable/ic_arrow_right"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="5dp"/>
+
+</RelativeLayout>
+
+

@@ -138,11 +138,11 @@ public class SmartpushNotificationManager {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder( mContext )
                 .setSmallIcon(getPushIcon(extras))                   // Set Small Icon
-                .setAutoCancel( isAutoCancel( extras ) )             // Set Auto Cancel Action
+                .setAutoCancel   ( isAutoCancel( extras ) )          // Set Auto Cancel Action
                 .setContentIntent( addMainAction( extras ) )         // Set Main Action
-                .setDeleteIntent( addDeleteAction( extras ) )        // Set Delete Action
-                .setContentTitle ( extras.getString(NOTIF_TITLE) )   // Set Title
-                .setContentText  ( extras.getString(NOTIF_DETAIL) )  // Set 2nd line
+                .setDeleteIntent ( addDeleteAction( extras ) )       // Set Delete Action
+                .setContentTitle ( extras.getString( NOTIF_TITLE ) ) // Set Title
+                .setContentText  ( extras.getString( NOTIF_DETAIL ) )// Set 2nd line
                 .setWhen( System.currentTimeMillis() )               // Set WHEN ARRIVE
                 .setLights( Color.GREEN, 1000, 5000 )                // Set LIGHT Color and pattern
                 .setPriority( 5 );    // NotificationCompat.PRIORITY_HIGH
@@ -151,9 +151,14 @@ public class SmartpushNotificationManager {
             builder.setVibrate(  new long[] { 100, 500, 200, 800 } );
         }
 
+        if ( extras.containsKey( "color" ) ) {
+            int color = Color.parseColor( extras.getString( "color" ) );
+            builder.setColor( color );
+        }
+
         setBigIcon( extras, builder );                               // Set Large Icon
 
-        addSecondaryActions( extras, builder );                    // Set Secondary Actions
+        addSecondaryActions( extras, builder );                      // Set Secondary Actions
 
         String pushType  =
                 ( extras.containsKey( "type" ) )
@@ -191,12 +196,16 @@ public class SmartpushNotificationManager {
                 }
                 break;
             case 3:
+                // BANNER
+                RemoteViews remote = setSmartpushBannerNotification( extras );
+                if ( remote != null ) {
+                    builder.setCustomContentView( remote );
+                }
+                break;
             case 4:
             case 5:
-                // BANNER, SLIDER, CARROUSSEL
-                // builder.setCustomContentView( )        // small
-                // builder.setCustomBigContentView( )    // big
-                RemoteViews remote = setSmartpushRichNotification( extras );
+                // SLIDER, CARROUSSEL
+                remote = setSmartpushRichNotification( extras );
                 if ( remote != null ) {
                     builder.setCustomBigContentView(remote);
                 }
@@ -221,6 +230,12 @@ public class SmartpushNotificationManager {
         nm.notify( PUSH_INTERNAL_ID, builder.build() );
     }
 
+    private RemoteViews setSmartpushBannerNotification( Bundle data ) {
+        // TODO working in progress ...
+
+        return null;
+    }
+
     private RemoteViews setSmartpushRichNotification( Bundle data ) {
         // RemoteView
         RemoteViews remoteViews = null;
@@ -238,13 +253,13 @@ public class SmartpushNotificationManager {
 
                 if ( animate ) {
                     remoteViews =
-                            new RemoteViews( mContext.getPackageName(), R.layout.slider_auto );
+                            new RemoteViews( mContext.getPackageName(), R.layout.notif_slider_auto);
 
                     // set cards
 
                 } else {
                     remoteViews =
-                            new RemoteViews( mContext.getPackageName(), R.layout.slider_manual );
+                            new RemoteViews( mContext.getPackageName(), R.layout.notif_slider_manual);
 
                     // set cards
 
@@ -287,6 +302,8 @@ public class SmartpushNotificationManager {
                 SmartpushLog.e( Utils.TAG, e.getMessage(), e );
             }
         }
+
+        // TODO working in progress ...
 
         return remoteViews;
     }

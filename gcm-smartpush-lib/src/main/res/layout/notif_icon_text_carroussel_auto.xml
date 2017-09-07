@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_margin="5dp">
+
+        <ImageView
+            android:id="@+id/thumb_icon"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/ic_sp_buscape"
+            tools:ignore="ContentDescription" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:ellipsize="end"
+                android:textColor="#000"
+                android:text="Buscapé"/>
+
+            <TextView
+                android:id="@+id/subtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:text="Escolhemos algumas ofertas para você! Dá um busca!"
+                android:textColor="#666"/>
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <ViewFlipper
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:measureAllChildren="true"
+        android:flipInterval="1000"
+        android:inAnimation="@anim/slide_in_right"
+        android:outAnimation="@anim/slide_out_left"
+        android:animateFirstView="true"
+        android:autoStart="true"
+        android:background="@android:color/transparent">
+
+        <ImageView
+            android:id="@+id/banner1a"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scaleType="centerCrop"
+            android:adjustViewBounds="true"
+            android:src="@drawable/slider_acer_01"
+            tools:ignore="ContentDescription" />
+
+        <ImageView
+            android:id="@+id/banner2a"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scaleType="centerCrop"
+            android:src="@drawable/slider_dell_02"
+            android:adjustViewBounds="true"
+            tools:ignore="ContentDescription" />
+
+        <ImageView
+            android:id="@+id/banner3a"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scaleType="centerCrop"
+            android:src="@drawable/slider_xbox_03"
+            android:adjustViewBounds="true"
+            tools:ignore="ContentDescription" />
+
+        <ImageView
+            android:id="@+id/banner4a"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scaleType="centerCrop"
+            android:src="@drawable/slider_lenovo_04"
+            android:adjustViewBounds="true"
+            tools:ignore="ContentDescription" />
+
+        <ImageView
+            android:id="@+id/banner5a"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scaleType="centerCrop"
+            android:src="@drawable/slider_chromecast_04"
+            android:adjustViewBounds="true"
+            tools:ignore="ContentDescription" />
+    </ViewFlipper>
+
+</LinearLayout>
