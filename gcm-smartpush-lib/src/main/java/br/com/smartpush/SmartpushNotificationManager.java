@@ -15,7 +15,12 @@ import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.util.DisplayMetrics;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.RemoteViews;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Arrays;
 import java.util.Calendar;
@@ -162,7 +167,8 @@ public class SmartpushNotificationManager {
                         new String[] {
                                 "PUSH", "PUSH_AD", "PUSH_BANNER_AD",
                                 "BANNER", "SLIDER", "CARROUSSEL",
-                                "SUBSCRIBE_EMAIL", "SUBSCRIBE_PHONE" } )
+                                "SUBSCRIBE_EMAIL", "SUBSCRIBE_PHONE",
+                                "CUSTOM_BUSCAPE"} )
                         .indexOf( pushType );
 
         SmartpushLog.d( Utils.TAG, "pushTypeOrder: " + pushType );
@@ -187,12 +193,23 @@ public class SmartpushNotificationManager {
             case 3:
             case 4:
             case 5:
+                // BANNER, SLIDER, CARROUSSEL
+                // builder.setCustomContentView( )        // small
+                // builder.setCustomBigContentView( )    // big
+                RemoteViews remote = setSmartpushRichNotification( extras );
+                if ( remote != null ) {
+                    builder.setCustomBigContentView(remote);
+                }
+                break;
             case 6:
             case 7:
-                // BANNER, SLIDER, CARROUSSEL, SUBSCRIBE_EMAIL, SUBSCRIBE_PHONE
-                //builder.setCustomContentView( )        // small
+                // SUBSCRIBE_EMAIL, SUBSCRIBE_PHONE
+                // builder.setCustomContentView( )        // small
                 // builder.setCustomBigContentView( )    // big
                 // TODO working here!!
+                break;
+            case 8:
+                // CUSTOM_BUSCAPE
                 break;
             default:
                 SmartpushLog.d( Utils.TAG, "Push Type unknow" );
@@ -202,6 +219,76 @@ public class SmartpushNotificationManager {
         NotificationManagerCompat nm = NotificationManagerCompat.from( mContext );
 //        nm.cancel( PUSH_INTERNAL_ID );
         nm.notify( PUSH_INTERNAL_ID, builder.build() );
+    }
+
+    private RemoteViews setSmartpushRichNotification( Bundle data ) {
+        // RemoteView
+        RemoteViews remoteViews = null;
+
+        String extras =
+                ( data.containsKey( Utils.Constants.PUSH_EXTRAS )
+                        ? data.getString( Utils.Constants.PUSH_EXTRAS ) : null );
+
+        if ( extras != null ) {
+            try {
+                JSONObject payloadExtra = new JSONObject( extras );
+
+                boolean animate =
+                        ( payloadExtra.has( "animate" ) ) ? payloadExtra.getBoolean( "animate" ) : false;
+
+                if ( animate ) {
+                    remoteViews =
+                            new RemoteViews( mContext.getPackageName(), R.layout.slider_auto );
+
+                    // set cards
+
+                } else {
+                    remoteViews =
+                            new RemoteViews( mContext.getPackageName(), R.layout.slider_manual );
+
+                    // set cards
+
+                    // config navigate buttons
+                    Intent itNext = new Intent( mContext, SmartpushService.class )
+                            .setAction( System.currentTimeMillis() + "_action" )
+                            .putExtras( data )
+                            .putExtra( "flip.next", true )
+                            .putExtra( "flip.previous", false );
+
+                    remoteViews
+                            .setOnClickPendingIntent(
+                                    R.id.btnNext, PendingIntent.getService( mContext, 0, itNext, 0 ) );
+
+                    Intent itPrevious = new Intent( mContext, SmartpushService.class )
+                            .setAction( System.currentTimeMillis() + "_action" )
+                            .putExtras( data )
+                            .putExtra( "flip.next", false )
+                            .putExtra( "flip.previous", true );
+
+                    remoteViews
+                            .setOnClickPendingIntent(
+                                    R.id.btnPrevious, PendingIntent.getService( mContext, 0, itPrevious, 0 ) );
+
+                    // Adjust viewflipper visibility & move cards
+                    if ( data.getBoolean( "flip.next", false ) ) {
+                        remoteViews.setViewVisibility( R.id.carroussel_previous, View.GONE );
+                        remoteViews.setViewVisibility( R.id.carroussel_next, View.VISIBLE );
+                        remoteViews.showNext( R.id.carroussel_next );
+                        remoteViews.showNext( R.id.carroussel_previous );
+                    } else if ( data.getBoolean( "flip.previous", false ) ) {
+                        remoteViews.setViewVisibility( R.id.carroussel_next, View.GONE );
+                        remoteViews.setViewVisibility( R.id.carroussel_previous, View.VISIBLE );
+                        remoteViews.showPrevious( R.id.carroussel_previous );
+                        remoteViews.showPrevious( R.id.carroussel_next );
+                    }
+                }
+
+            } catch ( JSONException e ) {
+                SmartpushLog.e( Utils.TAG, e.getMessage(), e );
+            }
+        }
+
+        return remoteViews;
     }
 
     private int getPushIcon( Bundle extras ) {

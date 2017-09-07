@@ -1,12 +1,10 @@
 package br.com.smartpush;
 
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NotificationManagerCompat;
-import android.support.v4.content.ContextCompat;
 
 import com.google.android.gms.gcm.GcmListenerService;
 
@@ -30,7 +28,6 @@ public abstract class SmartpushListenerService extends GcmListenerService {
     public void onMessageReceived( String from, Bundle data ) {
 
         if ( data != null && !data.isEmpty() ) {
-
             // 1. tracking push
             String pushId =
                     SmartpushHitUtils.getValueFromPayload(
@@ -62,7 +59,6 @@ public abstract class SmartpushListenerService extends GcmListenerService {
 
             if ( "smartpush".equals( provider ) ) {
                 if ( "ICON_AD".equals( pushType ) ) {
-
                     if ( !Utils.DeviceUtils.hasPermissions( this, "com.android.launcher.permission.INSTALL_SHORTCUT" ) ) {
                         // CANCEL SHORTCUT INSTALLATION
                         return;
@@ -72,12 +68,9 @@ public abstract class SmartpushListenerService extends GcmListenerService {
                     Smartpush.hit( this, pushId, null, null, SmartpushHitUtils.Action.INSTALLED, null);
 
                     addShortcut( data );
-
                 } else if ( "LOOPBACK".equals( pushType ) ) {
-
                     // Tracking
                     Smartpush.hit( this, pushId, null, null, SmartpushHitUtils.Action.ONLINE, null );
-
                 } else {
                     new SmartpushNotificationManager( this ).onMessageReceived( from, data );
                 }
