@@ -1,12 +1,13 @@
 package br.com.smartpush;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 
 import java.security.MessageDigest;
@@ -15,6 +16,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+
+import static br.com.smartpush.Utils.Constants.NOTIF_URL;
 
 /**
  * Created by fabio.licks on 17/07/17.
@@ -268,6 +271,54 @@ final class Utils {
             }
 
             return "";
+        }
+
+        public static Intent getIntentToRedirect(Context context, String url, String packageName, Bundle extras ) {
+            Intent intent = null;
+
+            if ( context != null ) {
+                if ( packageName != null ) {
+                    intent = context.getPackageManager().getLaunchIntentForPackage( packageName );
+                    intent.putExtras( extras );
+                    intent.setFlags( Intent.FLAG_ACTIVITY_NEW_TASK );
+                    // TODO adjust
+                    context.startActivity( intent );
+//                    if ( activity != null ) activity.finish();
+                } else if ( url != null ) {
+                    if ( url.startsWith( "http" ) || url.startsWith( "https" ) ) {
+                        Intent it = new Intent( context, SmartpushActivity.class );
+                        it.putExtra( NOTIF_URL, url );
+                        it.putExtra( Utils.Constants.ONLY_PORTRAIT, true );
+                        it.putExtra( Utils.Constants.REDIRECTED, true );
+                        it.putExtra( SmartpushHitUtils.Fields.PUSH_ID.getParamName(),
+                                extras.getString( SmartpushHitUtils.Fields.PUSH_ID.getParamName() ) );
+                        it.addFlags( Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP );
+                        // TODO adjust
+                        context.startActivity(it);
+                    } else if ( url.startsWith( "market://details?id=" ) ) {
+                        Intent it = new Intent( Intent.ACTION_VIEW );
+                        it.setData(Uri.parse(url));
+                        it.setFlags( Intent.FLAG_ACTIVITY_NEW_TASK );
+                        // TODO adjust
+                        if ( it.resolveActivity( context.getPackageManager()) != null ) {
+                            context.startActivity(it);
+                        }
+//                        if ( activity != null ) activity.finish();
+                    } else {
+                        intent = new Intent();
+                        intent.putExtras( extras );
+                        intent.setData( Uri.parse( url ) );
+                        intent.setFlags( Intent.FLAG_ACTIVITY_NEW_TASK );
+                        // TODO adjust
+                        if ( intent.resolveActivity(context.getPackageManager() ) != null ) {
+                            context.startActivity(intent);
+                        }
+//                        if ( activity != null ) activity.finish();
+                    }
+                }
+            }
+
+            return intent;
         }
     }
 }

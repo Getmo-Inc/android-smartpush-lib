@@ -1,7 +1,6 @@
 package br.com.smartpush;
 
 
-import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -25,9 +24,9 @@ import android.widget.TextView;
 
 import java.util.concurrent.TimeUnit;
 
+import static br.com.smartpush.Utils.Constants.NOTIF_PACKAGENAME;
 import static br.com.smartpush.Utils.Constants.NOTIF_PLAY_VIDEO_ONLY_WIFI;
 import static br.com.smartpush.Utils.Constants.NOTIF_URL;
-import static br.com.smartpush.Utils.Constants.NOTIF_PACKAGENAME;
 import static br.com.smartpush.Utils.TAG;
 
 
@@ -110,7 +109,7 @@ public final class SmartpushFragmentVideoPlayer extends Fragment implements
         super.onStart();
 
         if ( isSetToPlayOnlyWifi() && !SmartpushConnectivityUtil.isConnectedWifi( getActivity() ) ) {
-                goForward();
+                redirectToContent();
         } else {
             if ( mediaPlayer != null ) {
                 handler.post( showSurface );
@@ -151,7 +150,7 @@ public final class SmartpushFragmentVideoPlayer extends Fragment implements
         hit( STATE.FINISHED.name() );
         //
 
-        goForward();
+        redirectToContent();
     }
 
     @Override
@@ -225,45 +224,12 @@ public final class SmartpushFragmentVideoPlayer extends Fragment implements
         surfaceView.setLayoutParams( lp );
     }
 
-    private void goForward() {
+    private void redirectToContent() {
         String url         = getArguments().getString( NOTIF_URL );
         String packageName = getArguments().getString( NOTIF_PACKAGENAME );
+        Utils.Smartpush.getIntentToRedirect( getActivity(), url, packageName, getArguments() );
 
-        if ( packageName != null ) {
-            Intent intent = getActivity().getPackageManager().getLaunchIntentForPackage( packageName );
-            intent.putExtras( getArguments() );
-            intent.setFlags( Intent.FLAG_ACTIVITY_NEW_TASK );
-            startActivity( intent );
-            getActivity().finish();
-        } else if ( url != null ) {
-            if ( url.startsWith( "http" ) || url.startsWith( "https" ) ) {
-                Intent it = new Intent( getActivity(), SmartpushActivity.class );
-                it.putExtra( NOTIF_URL, url );
-                it.putExtra( Utils.Constants.ONLY_PORTRAIT, true );
-                it.putExtra( Utils.Constants.REDIRECTED, true );
-                it.putExtra( SmartpushHitUtils.Fields.PUSH_ID.getParamName(),
-                        getArguments().getString( SmartpushHitUtils.Fields.PUSH_ID.getParamName() ) );
-                it.addFlags( Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP );
-                startActivity(it);
-            } else if ( url.startsWith( "market://details?id=" ) ) {
-                Intent it = new Intent( Intent.ACTION_VIEW );
-                it.setData(Uri.parse(url));
-                it.setFlags( Intent.FLAG_ACTIVITY_NEW_TASK );
-                if ( it.resolveActivity(getActivity().getPackageManager()) != null ) {
-                    startActivity(it);
-                }
-                getActivity().finish();
-            } else {
-                Intent intent = new Intent();
-                intent.putExtras( getArguments() );
-                intent.setData( Uri.parse( url ) );
-                intent.setFlags( Intent.FLAG_ACTIVITY_NEW_TASK );
-                if ( intent.resolveActivity(getActivity().getPackageManager() ) != null ) {
-                    startActivity(intent);
-                }
-                getActivity().finish();
-            }
-        }
+        getActivity().finish();
     }
 
     private void createMediaPlayer( Uri video ) {
@@ -302,7 +268,7 @@ public final class SmartpushFragmentVideoPlayer extends Fragment implements
             // Tracking
             hit( STATE.JUMP.name() );
             //
-            goForward();
+            redirectToContent();
         }
     }
 
@@ -433,7 +399,7 @@ public final class SmartpushFragmentVideoPlayer extends Fragment implements
 //            if ( deepLink != null ) {
 //                createMediaPlayer(Uri.parse(deepLink));
 //            } else {
-//                goForward();
+//                redirectToContent();
 //            }
 //        }
 //    }

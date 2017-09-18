@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.os.Bundle;
 import android.support.v4.app.NotificationManagerCompat;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -110,18 +109,6 @@ public final class Smartpush {
     public static void delTagOrValue( final Context context, final String key, final Date value ) {
         if ( isRegistered( context ) ) {
             SmartpushService.startActionDelTagOrValue(context, key, value);
-        }
-    }
-
-    public static void hitClick( final Context context, Bundle bundle ) {
-        // TODO revisar evento de abertura! Adicionar infos sobre tipo do push, e sobre acão ...
-        if ( isRegistered( context ) ) {
-            if ( bundle != null && bundle.containsKey( SmartpushHitUtils.Fields.PUSH_ID.getParamName() ) ) {
-                SmartpushLog.d( TAG, "App has been opened by the push sent from SMARTPUSH" );
-                SmartpushService.startActionTrackAction( context,
-                        SmartpushHitUtils.getValueFromPayload( SmartpushHitUtils.Fields.PUSH_ID, bundle ),
-                        "MAIN", null, SmartpushHitUtils.Action.CLICKED.name(), null );
-            }
         }
     }
 

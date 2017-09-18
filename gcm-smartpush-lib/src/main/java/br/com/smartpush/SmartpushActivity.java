@@ -55,7 +55,7 @@ public final class SmartpushActivity extends AppCompatActivity {
                     .getValueFromPayload( SmartpushHitUtils.Fields.PUSH_ID, extras );
 
             if ( extras != null && !"".equals( pushId ) ) {
-
+// TODO revisar a duplicacao do click!!
                 SmartpushHitUtils.Action action =
                         ( extras.containsKey( Utils.Constants.REDIRECTED ) )
                                 ? SmartpushHitUtils.Action.REDIRECTED : SmartpushHitUtils.Action.CLICKED;

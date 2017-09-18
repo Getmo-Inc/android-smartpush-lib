@@ -9,7 +9,6 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
@@ -26,6 +25,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 
 import static br.com.smartpush.SmartpushService.ACTION_NOTIF_CANCEL;
+import static br.com.smartpush.SmartpushService.ACTION_NOTIF_REDIRECT;
 import static br.com.smartpush.SmartpushService.ACTION_NOTIF_UPDATABLE;
 import static br.com.smartpush.Utils.CommonUtils.getValue;
 import static br.com.smartpush.Utils.Constants.LAUNCH_ICON;
@@ -35,10 +35,8 @@ import static br.com.smartpush.Utils.Constants.NOTIF_CATEGORY;
 import static br.com.smartpush.Utils.Constants.NOTIF_CATEGORY_BUSCAPE;
 import static br.com.smartpush.Utils.Constants.NOTIF_DETAIL;
 import static br.com.smartpush.Utils.Constants.NOTIF_TITLE;
-import static br.com.smartpush.Utils.Constants.NOTIF_URL;
 import static br.com.smartpush.Utils.Constants.NOTIF_VIBRATE;
 import static br.com.smartpush.Utils.Constants.NOTIF_VIDEO_URI;
-import static br.com.smartpush.Utils.Constants.ONLY_PORTRAIT;
 import static br.com.smartpush.Utils.Constants.PUSH_DEFAULT_ICONS;
 import static br.com.smartpush.Utils.Constants.PUSH_INTERNAL_ID;
 import static br.com.smartpush.Utils.TAG;
@@ -68,7 +66,6 @@ import static br.com.smartpush.Utils.TAG;
     },
     "extras": {
         "animate": true,
-        "animateRate": 3000,
 
         "frame:1:banner": "",
         "frame:1:url": "",
@@ -94,6 +91,7 @@ import static br.com.smartpush.Utils.TAG;
 
  Changes:
      Atributo "video" foi removido dos frames!
+     Atributo "animateRate"  foi removido dos frames!
  */
 
 public class SmartpushNotificationManager {
@@ -186,7 +184,7 @@ public class SmartpushNotificationManager {
             case 1:
             case 2:
                 // PUSH, PUSH_AD, PUSH_BANNER_AD
-                if ( !extras.containsKey( NOTIF_BANNER ) ) {
+                if ( extras.containsKey( NOTIF_BANNER ) ) {
                     if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN ) {
                         NotificationCompat.BigPictureStyle style = createBigPictureStyle( extras );
                         if ( style != null ) {
@@ -219,6 +217,10 @@ public class SmartpushNotificationManager {
                 break;
             case 8:
                 // CUSTOM_BUSCAPE
+                remote = setSmartpushRichNotification( extras );
+                if ( remote != null ) {
+                    builder.setCustomBigContentView( remote );
+                }
                 break;
             default:
                 SmartpushLog.d( Utils.TAG, "Push Type unknow" );
@@ -365,38 +367,25 @@ public class SmartpushNotificationManager {
     }
 
     private PendingIntent addMainAction( Bundle extras ) {
-        String action = extras.getString( NOTIF_URL );
+        Intent serviceIntent = new Intent( mContext, SmartpushService.class);
+        serviceIntent.setAction( ACTION_NOTIF_REDIRECT );
+        serviceIntent.putExtras( extras );
 
-        // No main action defined!
-        if ( action == null ) {
-            return null;
-        }
-
-        Intent it;
-
-        if ( action.startsWith( "market://details?id=" ) ) {
-            it = new Intent( Intent.ACTION_VIEW );
-            it.setData( Uri.parse( action ) );
-        } else {
-            it = new Intent( mContext, SmartpushActivity.class );
-            if ( !extras.containsKey( NOTIF_VIDEO_URI ) ) {
-                // Lock screen orientation
-                extras.putBoolean( ONLY_PORTRAIT, true );
-            }
-
-            it.putExtras( extras )
-                    .addFlags( Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP );
-        }
+        PendingIntent servicePendingIntent =
+                PendingIntent.getService( mContext,
+                        // integer constant used to identify the service
+                        SmartpushService.SERVICE_ID,
+                        serviceIntent,
+                        // FLAG to avoid creating a second service if there's already one running
+                        PendingIntent.FLAG_CANCEL_CURRENT );
 
         // Creates and return the PendingIntent
-        return PendingIntent
-                .getActivity( mContext, 0, it, PendingIntent.FLAG_UPDATE_CURRENT );
+        return servicePendingIntent;
     }
 
     private PendingIntent addDeleteAction( Bundle extras ) {
-        Intent serviceIntent =
-                new Intent( mContext, SmartpushService.class)
-                        .setAction( ACTION_NOTIF_CANCEL );
+        Intent serviceIntent = new Intent( mContext, SmartpushService.class);
+        serviceIntent.setAction( ACTION_NOTIF_CANCEL );
         serviceIntent.putExtras( extras );
 
         PendingIntent servicePendingIntent =

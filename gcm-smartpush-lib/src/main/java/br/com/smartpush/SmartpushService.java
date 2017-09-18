@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Address;
 import android.location.Geocoder;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
@@ -30,6 +31,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
+import static br.com.smartpush.Utils.Constants.NOTIF_URL;
+import static br.com.smartpush.Utils.Constants.NOTIF_VIDEO_URI;
+import static br.com.smartpush.Utils.Constants.ONLY_PORTRAIT;
 import static br.com.smartpush.Utils.Constants.SMARTP_LOCATION_HASH;
 import static br.com.smartpush.Utils.TAG;
 
@@ -56,6 +60,7 @@ public class SmartpushService extends IntentService {
     public  static final String ACTION_GET_APP_LIST = "action.GET_APP_LIST";
     public  static final String ACTION_NOTIF_UPDATABLE = "action.UPDATABLE";
     public  static final String ACTION_NOTIF_CANCEL = "action.CANCEL";
+    public  static final String ACTION_NOTIF_REDIRECT = "action.REDIRECT";
 
     public static final String ACTION_REGISTRATION_RESULT = "action.REGISTRATION_RESULT";
     public static final String ACTION_GET_DEVICE_USER_INFO = "action.GET_DEVICE_USER_INFO";
@@ -91,7 +96,7 @@ public class SmartpushService extends IntentService {
      */
     static void getMsisdn( Context context ) {
         Intent intent = new Intent( context, SmartpushService.class ) ;
-        intent.setAction(ACTION_GET_MSISDN);
+        intent.setAction( ACTION_GET_MSISDN );
         context.startService(intent);
     }
 
@@ -429,6 +434,9 @@ public class SmartpushService extends IntentService {
             } else if ( ACTION_NOTIF_CANCEL.equals( action ) ) {
                 Bundle data = intent.getExtras();
                 handleActionCancelNotification( data );
+            } else if ( ACTION_NOTIF_REDIRECT.equals( action ) ) {
+                Bundle data = intent.getExtras();
+                handleActionRedirectNotification( data );
             } else if ( ACTION_GET_APP_LIST.equals( action ) ) {
                 handleActionSaveAppsListState();
             }
@@ -472,21 +480,15 @@ public class SmartpushService extends IntentService {
         LocalBroadcastManager.getInstance(this).sendBroadcast(registrationComplete);
     }
 
-    /**
-     * Handle action check msisdn in the provided background thread with no
-     * parameters.
-     */
-    private void handleActionCancelNotification( Bundle extras ) {
-        // Hit notification canceled!
+    private void handleActionRedirectNotification( Bundle extras ) {
+        // Hit notification clicked!
         String pushId =
                 SmartpushHitUtils.getValueFromPayload(
                         SmartpushHitUtils.Fields.PUSH_ID, extras );
 
-        startActionTrackAction( this, pushId, null, null, SmartpushHitUtils.Action.REJECTED.name(), null  );
-        SmartpushLog.d( TAG,
-                "-------------------> NOTIFICATION REJECTED. - " + pushId );
+        startActionTrackAction( this, pushId, null, null, SmartpushHitUtils.Action.CLICKED.name(), null  );
 
-        // Cancel PendingIntent
+        // Configure PendingIntent to Cancel refresh
         Intent serviceIntent =
                 new Intent( this, SmartpushService.class)
                         .setAction( ACTION_NOTIF_UPDATABLE )
@@ -503,8 +505,61 @@ public class SmartpushService extends IntentService {
         /** this gives us the time for the first trigger. */
         AlarmManager am = ( AlarmManager ) getSystemService( Context.ALARM_SERVICE );
         am.cancel( servicePendingIntent );
-        SmartpushLog.d( TAG,
-                "-------------------> REFRESH CANCELED." );
+        SmartpushLog.d( TAG, "-------------------> REFRESH CANCELED." );
+
+        //
+        if ( extras.containsKey( NOTIF_URL ) ) {
+            String action = extras.getString( NOTIF_URL );
+
+            Intent it;
+
+            if ( action.startsWith( "market://details?id=" ) ) {
+                it = new Intent( Intent.ACTION_VIEW );
+                it.setData( Uri.parse( action ) );
+            } else {
+                it = new Intent( this, SmartpushActivity.class );
+                if ( !extras.containsKey( NOTIF_VIDEO_URI ) ) {
+                    // Lock screen orientation
+                    extras.putBoolean( ONLY_PORTRAIT, true );
+                }
+
+                it.putExtras( extras )
+                        .addFlags( Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP );
+            }
+
+            startActivity( it );
+            SmartpushLog.d( TAG,
+                    "-------------------> APP OPENED FROM NOTIFICATION. - " + pushId );
+        }
+    }
+
+    private void handleActionCancelNotification( Bundle extras ) {
+        // Hit notification canceled!
+        String pushId =
+                SmartpushHitUtils.getValueFromPayload(
+                        SmartpushHitUtils.Fields.PUSH_ID, extras );
+
+        startActionTrackAction( this, pushId, null, null, SmartpushHitUtils.Action.REJECTED.name(), null  );
+        SmartpushLog.d( TAG, "-------------------> NOTIFICATION REJECTED. - " + pushId );
+
+        // Configure PendingIntent to Cancel refresh
+        Intent serviceIntent =
+                new Intent( this, SmartpushService.class)
+                        .setAction( ACTION_NOTIF_UPDATABLE )
+                        .putExtras( extras );
+
+        PendingIntent servicePendingIntent =
+                PendingIntent.getService( this,
+                        // integer constant used to identify the service
+                        SmartpushService.SERVICE_ID,
+                        serviceIntent,
+                        // FLAG to avoid creating a second service if there's already one running
+                        PendingIntent.FLAG_CANCEL_CURRENT );
+
+        /** this gives us the time for the first trigger. */
+        AlarmManager am = ( AlarmManager ) getSystemService( Context.ALARM_SERVICE );
+        am.cancel( servicePendingIntent );
+        SmartpushLog.d( TAG, "-------------------> REFRESH CANCELED." );
     }
 
     /**
@@ -559,6 +614,7 @@ public class SmartpushService extends IntentService {
         boolean silent =
                 ( data.getStringExtra( EXTRA_KEY ).equals( "__MSISDN__" )
                     || data.getStringExtra( EXTRA_KEY ).equals( "__CARRIER__" ) ) ? true : false;
+
         SmartpushHttpClient.post( "tag", params, this, silent );
     }
 

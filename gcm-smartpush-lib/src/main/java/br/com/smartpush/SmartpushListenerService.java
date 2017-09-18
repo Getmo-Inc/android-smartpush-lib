@@ -104,7 +104,7 @@ public abstract class SmartpushListenerService extends GcmListenerService {
         Intent shortcutIntent;
         if ( extras.getString( NOTIF_URL).startsWith( "market://details?id=" ) ) {
             shortcutIntent = new Intent( Intent.ACTION_VIEW );
-            shortcutIntent.setData( Uri.parse(extras.getString( NOTIF_URL) ) );
+            shortcutIntent.setData( Uri.parse( extras.getString( NOTIF_URL ) ) );
         } else {
             shortcutIntent = new Intent( this, SmartpushActivity.class );
             shortcutIntent
