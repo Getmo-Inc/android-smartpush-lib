@@ -25,10 +25,10 @@ import static br.com.smartpush.Utils.Constants.OPEN_IN_BROWSER;
  * Created by fabio.licks on 17/07/17.
  */
 
-final class Utils {
+final public class Utils {
     public final static String TAG = "LOG";
 
-    interface Constants {
+    public interface Constants {
         // App Metadata
         String SMARTP_APP_ID = "br.com.smartpush.APPID";
         String SMARTP_API_KEY = "br.com.smartpush.APIKEY";
@@ -90,7 +90,7 @@ final class Utils {
     }
 
     //=============================================================================================
-    static class PreferenceUtils {
+    public static class PreferenceUtils {
         private final static String APP_PREFERENCES = "br.com.smartpush.PREFS";
 
         public static String readFromPreferences(Context context, String key ) {
@@ -276,7 +276,7 @@ final class Utils {
             return "";
         }
 
-        public static Intent    getIntentToRedirect( Context context, String url, String packageName, Bundle extras ) {
+        public static Intent getIntentToRedirect( Context context, String url, String packageName, Bundle extras ) {
             Intent intent = null;
 
             if ( context != null ) {
