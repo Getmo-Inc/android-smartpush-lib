@@ -426,6 +426,7 @@ public class SmartpushService extends IntentService {
                 handleActionCheckMsisdn( );
             } else if ( ACTION_NOTIF_UPDATABLE.equals( action ) ) {
                 Bundle data = intent.getExtras();
+                SmartpushLog.d( Utils.TAG, Utils.ArrayUtils.bundle2string( data ) );
                 new SmartpushNotificationManager( this ).onMessageReceived( null, data );
             } else if ( ACTION_NOTIF_CANCEL.equals( action ) ) {
                 Bundle data = intent.getExtras();
@@ -511,7 +512,7 @@ public class SmartpushService extends IntentService {
         Intent intent =
                 Utils.Smartpush.getIntentToRedirect( this, action, packageName, extras );
 
-        if ( intent.resolveActivity( getPackageManager()) != null ) {
+        if ( intent != null && intent.resolveActivity( getPackageManager()) != null ) {
             startActivity( intent );
         }
 

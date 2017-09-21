@@ -30,7 +30,6 @@ import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 import static br.com.smartpush.Utils.Constants.NOTIF_PACKAGENAME;
-import static br.com.smartpush.Utils.Constants.NOTIF_PLAY_VIDEO_ONLY_WIFI;
 import static br.com.smartpush.Utils.Constants.NOTIF_URL;
 import static br.com.smartpush.Utils.Constants.NOTIF_VIDEO_URI;
 import static br.com.smartpush.Utils.Constants.OPEN_IN_BROWSER;
@@ -117,21 +116,17 @@ public final class SmartpushFragmentVideoPlayer extends Fragment implements
         SmartpushLog.d( TAG, "onStart" );
         super.onStart();
 
-        if ( isSetToPlayOnlyWifi() && !SmartpushConnectivityUtil.isConnectedWifi( getActivity() ) ) {
-                redirectToContent();
-        } else {
-            if ( mediaPlayer != null ) {
-                handler.post( showSurface );
-                handler.postDelayed( updateSeekBarTime, 10 );
+        if ( mediaPlayer != null ) {
+            handler.post( showSurface );
+            handler.postDelayed( updateSeekBarTime, 10 );
 
-                if ( isControlsVisible ) {
-                    handler.post( showHideControlsTask );
-                    isControlsVisible = !isControlsVisible;
-                }
-            } else {
-                fetchVideoDeepLinkTask = new FetchVideoDeepLink();
-                fetchVideoDeepLinkTask.execute( getActivity().getIntent().getStringExtra( NOTIF_VIDEO_URI ) );
+            if ( isControlsVisible ) {
+                handler.post( showHideControlsTask );
+                isControlsVisible = !isControlsVisible;
             }
+        } else {
+            fetchVideoDeepLinkTask = new FetchVideoDeepLink();
+            fetchVideoDeepLinkTask.execute( getActivity().getIntent().getStringExtra( NOTIF_VIDEO_URI ) );
         }
     }
 
@@ -411,16 +406,5 @@ public final class SmartpushFragmentVideoPlayer extends Fragment implements
             }
         }
         //
-    }
-
-    private boolean isSetToPlayOnlyWifi() {
-        boolean playVideoOnlyWifi = false;
-        Bundle extras = getArguments();
-        if ( extras != null && extras.containsKey( NOTIF_PLAY_VIDEO_ONLY_WIFI) ) {
-            playVideoOnlyWifi =
-                    ( extras.getString( NOTIF_PLAY_VIDEO_ONLY_WIFI ).equals( "1" ) ) ? true : false;
-        }
-
-        return playVideoOnlyWifi;
     }
 }

@@ -276,7 +276,7 @@ final class Utils {
             return "";
         }
 
-        public static Intent getIntentToRedirect( Context context, String url, String packageName, Bundle extras ) {
+        public static Intent    getIntentToRedirect( Context context, String url, String packageName, Bundle extras ) {
             Intent intent = null;
 
             if ( context != null ) {
