@@ -421,7 +421,7 @@ public class SmartpushNotificationManager {
         return false;
     }
 
-    private PendingIntent addMainAction( Bundle extras ) {
+    public PendingIntent addMainAction( Bundle extras ) {
         Intent serviceIntent = new Intent( mContext, SmartpushService.class);
         serviceIntent.setAction( ACTION_NOTIF_REDIRECT );
         serviceIntent.putExtras( extras );
@@ -438,7 +438,7 @@ public class SmartpushNotificationManager {
         return servicePendingIntent;
     }
 
-    private PendingIntent addDeleteAction( Bundle extras ) {
+    public PendingIntent addDeleteAction( Bundle extras ) {
         Intent serviceIntent = new Intent( mContext, SmartpushService.class);
         serviceIntent.setAction( ACTION_NOTIF_CANCEL );
         serviceIntent.putExtras( extras );

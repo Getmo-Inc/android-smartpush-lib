@@ -506,7 +506,9 @@ public class SmartpushService extends IntentService {
 //        SmartpushLog.d( TAG, "-------------------> REFRESH CANCELED." );
 
         //
-        String action = extras.getString( NOTIF_URL );
+        String action = ( extras.containsKey( NOTIF_URL ) )
+                ? extras.getString( NOTIF_URL ) : extras.getString( "link" );
+
         String packageName = extras.getString( NOTIF_PACKAGENAME );
 
         Intent intent =
@@ -517,7 +519,8 @@ public class SmartpushService extends IntentService {
         }
 
         SmartpushLog.d( TAG,
-                "-------------------> APP OPENED FROM NOTIFICATION. - " + pushId );    }
+                "-------------------> APP OPENED FROM NOTIFICATION. - " + pushId );
+    }
 
     private void handleActionCancelNotification( Bundle extras ) {
         // Hit notification canceled!
