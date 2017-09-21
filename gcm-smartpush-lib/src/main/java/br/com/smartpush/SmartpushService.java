@@ -1,15 +1,12 @@
 package br.com.smartpush;
 
 import android.annotation.TargetApi;
-import android.app.AlarmManager;
 import android.app.IntentService;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Address;
 import android.location.Geocoder;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
@@ -31,9 +28,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
+import static br.com.smartpush.Utils.Constants.NOTIF_PACKAGENAME;
 import static br.com.smartpush.Utils.Constants.NOTIF_URL;
-import static br.com.smartpush.Utils.Constants.NOTIF_VIDEO_URI;
-import static br.com.smartpush.Utils.Constants.ONLY_PORTRAIT;
 import static br.com.smartpush.Utils.Constants.SMARTP_LOCATION_HASH;
 import static br.com.smartpush.Utils.TAG;
 
@@ -488,50 +484,39 @@ public class SmartpushService extends IntentService {
 
         startActionTrackAction( this, pushId, null, null, SmartpushHitUtils.Action.CLICKED.name(), null  );
 
-        // Configure PendingIntent to Cancel refresh
-        Intent serviceIntent =
-                new Intent( this, SmartpushService.class)
-                        .setAction( ACTION_NOTIF_UPDATABLE )
-                        .putExtras( extras );
-
-        PendingIntent servicePendingIntent =
-                PendingIntent.getService( this,
-                        // integer constant used to identify the service
-                        SmartpushService.SERVICE_ID,
-                        serviceIntent,
-                        // FLAG to avoid creating a second service if there's already one running
-                        PendingIntent.FLAG_CANCEL_CURRENT );
-
-        /** this gives us the time for the first trigger. */
-        AlarmManager am = ( AlarmManager ) getSystemService( Context.ALARM_SERVICE );
-        am.cancel( servicePendingIntent );
-        SmartpushLog.d( TAG, "-------------------> REFRESH CANCELED." );
+        // TODO MUTABLE PUSH NOTIFICATION
+//        // Configure PendingIntent to Cancel refresh
+//        Intent serviceIntent =
+//                new Intent( this, SmartpushService.class)
+//                        .setAction( ACTION_NOTIF_UPDATABLE )
+//                        .putExtras( extras );
+//
+//        PendingIntent servicePendingIntent =
+//                PendingIntent.getService( this,
+//                        // integer constant used to identify the service
+//                        SmartpushService.SERVICE_ID,
+//                        serviceIntent,
+//                        // FLAG to avoid creating a second service if there's already one running
+//                        PendingIntent.FLAG_CANCEL_CURRENT );
+//
+//        /** this gives us the time for the first trigger. */
+//        AlarmManager am = ( AlarmManager ) getSystemService( Context.ALARM_SERVICE );
+//        am.cancel( servicePendingIntent );
+//        SmartpushLog.d( TAG, "-------------------> REFRESH CANCELED." );
 
         //
-        if ( extras.containsKey( NOTIF_URL ) ) {
-            String action = extras.getString( NOTIF_URL );
+        String action = extras.getString( NOTIF_URL );
+        String packageName = extras.getString( NOTIF_PACKAGENAME );
 
-            Intent it;
+        Intent intent =
+                Utils.Smartpush.getIntentToRedirect( this, action, packageName, extras );
 
-            if ( action.startsWith( "market://details?id=" ) ) {
-                it = new Intent( Intent.ACTION_VIEW );
-                it.setData( Uri.parse( action ) );
-            } else {
-                it = new Intent( this, SmartpushActivity.class );
-                if ( !extras.containsKey( NOTIF_VIDEO_URI ) ) {
-                    // Lock screen orientation
-                    extras.putBoolean( ONLY_PORTRAIT, true );
-                }
-
-                it.putExtras( extras )
-                        .addFlags( Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP );
-            }
-
-            startActivity( it );
-            SmartpushLog.d( TAG,
-                    "-------------------> APP OPENED FROM NOTIFICATION. - " + pushId );
+        if ( intent.resolveActivity( getPackageManager()) != null ) {
+            startActivity( intent );
         }
-    }
+
+        SmartpushLog.d( TAG,
+                "-------------------> APP OPENED FROM NOTIFICATION. - " + pushId );    }
 
     private void handleActionCancelNotification( Bundle extras ) {
         // Hit notification canceled!
@@ -542,24 +527,25 @@ public class SmartpushService extends IntentService {
         startActionTrackAction( this, pushId, null, null, SmartpushHitUtils.Action.REJECTED.name(), null  );
         SmartpushLog.d( TAG, "-------------------> NOTIFICATION REJECTED. - " + pushId );
 
-        // Configure PendingIntent to Cancel refresh
-        Intent serviceIntent =
-                new Intent( this, SmartpushService.class)
-                        .setAction( ACTION_NOTIF_UPDATABLE )
-                        .putExtras( extras );
-
-        PendingIntent servicePendingIntent =
-                PendingIntent.getService( this,
-                        // integer constant used to identify the service
-                        SmartpushService.SERVICE_ID,
-                        serviceIntent,
-                        // FLAG to avoid creating a second service if there's already one running
-                        PendingIntent.FLAG_CANCEL_CURRENT );
-
-        /** this gives us the time for the first trigger. */
-        AlarmManager am = ( AlarmManager ) getSystemService( Context.ALARM_SERVICE );
-        am.cancel( servicePendingIntent );
-        SmartpushLog.d( TAG, "-------------------> REFRESH CANCELED." );
+        // TODO MUTABLE PUSH NOTIFICATION
+//        // Configure PendingIntent to Cancel refresh
+//        Intent serviceIntent =
+//                new Intent( this, SmartpushService.class)
+//                        .setAction( ACTION_NOTIF_UPDATABLE )
+//                        .putExtras( extras );
+//
+//        PendingIntent servicePendingIntent =
+//                PendingIntent.getService( this,
+//                        // integer constant used to identify the service
+//                        SmartpushService.SERVICE_ID,
+//                        serviceIntent,
+//                        // FLAG to avoid creating a second service if there's already one running
+//                        PendingIntent.FLAG_CANCEL_CURRENT );
+//
+//        /** this gives us the time for the first trigger. */
+//        AlarmManager am = ( AlarmManager ) getSystemService( Context.ALARM_SERVICE );
+//        am.cancel( servicePendingIntent );
+//        SmartpushLog.d( TAG, "-------------------> REFRESH CANCELED." );
     }
 
     /**
@@ -968,9 +954,9 @@ public class SmartpushService extends IntentService {
                     uninstalled.add( item.getPackageName() );
                 }
 
-                // TODO complete operation ... ???
-                item.setSinc( SmartpushConnectivityUtil.isConnected( this ) );
-                AppInfoDAO.save( db, item );
+                // TODO LIST APPS - revisar para proxima versao da SDK, completar a operacao de persistencia
+//                item.setSinc( SmartpushConnectivityUtil.isConnected( this ) );
+//                AppInfoDAO.save( db, item );
             }
         }
 

@@ -140,7 +140,7 @@ public final class Smartpush {
                 SmartpushService.subscrive( context );
                 SmartpushService.getMsisdn( context );
                 SmartpushService.getMccMnc( context );
-                SmartpushService.getAppList( context );
+//                SmartpushService.getAppList( context );
             }
         }
     }

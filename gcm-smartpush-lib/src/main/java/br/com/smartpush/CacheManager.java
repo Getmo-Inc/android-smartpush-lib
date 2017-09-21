@@ -58,7 +58,7 @@ public class CacheManager {
 
     public Bitmap loadBitmap( String urlpath, ExpirationTime expirationTime ) {
         final String key = CacheManager.generateKey( urlpath );
-
+        Log.d( TAG, "LINK: " + urlpath );
         if ( key != null ) {
             Log.d( TAG, "KEY: " + key );
 
@@ -76,8 +76,10 @@ public class CacheManager {
                                     BitmapFactory.decodeStream( new URL( urlpath ).openStream() ) )
                                     .getBitmap();
 
-                    SmartpushLog.d( TAG, "ADDING IMAGE TO CACHE..." );
-                    bitmapToFile( bitmap, key );
+                    if ( bitmap != null ) {
+                        SmartpushLog.d(TAG, "ADDING IMAGE TO CACHE...");
+                        bitmapToFile(bitmap, key);
+                    }
 
                     return bitmap;
 
@@ -93,7 +95,7 @@ public class CacheManager {
 
     public String prefetchVideo( String midiaId, ExpirationTime expirationTime ) {
         String key = generateKey( midiaId );
-
+        SmartpushLog.d(TAG, "LINK: " + midiaId);
         if ( key != null ) {
             SmartpushLog.d(TAG, "KEY: " + key);
 

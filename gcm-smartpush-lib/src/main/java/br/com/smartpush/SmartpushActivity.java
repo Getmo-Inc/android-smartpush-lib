@@ -55,12 +55,10 @@ public final class SmartpushActivity extends AppCompatActivity {
                     .getValueFromPayload( SmartpushHitUtils.Fields.PUSH_ID, extras );
 
             if ( extras != null && !"".equals( pushId ) ) {
-// TODO revisar a duplicacao do click!!
-                SmartpushHitUtils.Action action =
-                        ( extras.containsKey( Utils.Constants.REDIRECTED ) )
-                                ? SmartpushHitUtils.Action.REDIRECTED : SmartpushHitUtils.Action.CLICKED;
+                if ( extras.containsKey( Utils.Constants.REDIRECTED ) ) {
+                    Smartpush.hit(this, pushId, null, null, SmartpushHitUtils.Action.REDIRECTED, null);
 
-                Smartpush.hit(this, pushId, null, null, action, null);
+                }
             }
             // [END] Tracking
 
@@ -99,11 +97,10 @@ public final class SmartpushActivity extends AppCompatActivity {
                 .getValueFromPayload( SmartpushHitUtils.Fields.PUSH_ID, extras );
 
         if ( extras != null && !"".equals( pushId ) ) {
-            SmartpushHitUtils.Action action =
-                    ( extras.containsKey( Utils.Constants.REDIRECTED ) )
-                            ? SmartpushHitUtils.Action.REDIRECTED : SmartpushHitUtils.Action.CLICKED;
+            if ( extras.containsKey( Utils.Constants.REDIRECTED ) ) {
+                Smartpush.hit(this, pushId, null, null, SmartpushHitUtils.Action.REDIRECTED, null);
 
-            Smartpush.hit( this, pushId, null, null, action, null );
+            }
         }
         // [END] Tracking
 

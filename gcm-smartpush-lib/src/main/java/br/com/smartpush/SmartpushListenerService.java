@@ -28,7 +28,7 @@ public abstract class SmartpushListenerService extends GcmListenerService {
     public void onMessageReceived( String from, Bundle data ) {
 
         if ( data != null && !data.isEmpty() ) {
-            // 1. tracking push
+            // 1. tracking push RECEIVED
             String pushId =
                     SmartpushHitUtils.getValueFromPayload(
                             SmartpushHitUtils.Fields.PUSH_ID, data );
@@ -40,6 +40,7 @@ public abstract class SmartpushListenerService extends GcmListenerService {
             if ( nmc != null ) {
                 if ( !nmc.areNotificationsEnabled() ) {
                     Smartpush.blockPush( this, true );
+                    // CANCEL NOTIFICATION
                     return;
                 } else {
                     Smartpush.blockPush( this, false );
@@ -64,18 +65,20 @@ public abstract class SmartpushListenerService extends GcmListenerService {
                         return;
                     }
 
+                    addShortcut( data );
+
                     // Tracking
                     Smartpush.hit( this, pushId, null, null, SmartpushHitUtils.Action.INSTALLED, null);
 
-                    addShortcut( data );
                 } else if ( "LOOPBACK".equals( pushType ) ) {
                     // Tracking
                     Smartpush.hit( this, pushId, null, null, SmartpushHitUtils.Action.ONLINE, null );
                 } else {
+                    // RICH NOTIFICATION
                     new SmartpushNotificationManager( this ).onMessageReceived( from, data );
                 }
             } else {
-                // by pass
+                // by pass to developer
                 handleMessage( data );
             }
         }

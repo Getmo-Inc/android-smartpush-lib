@@ -17,7 +17,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
-import static br.com.smartpush.Utils.Constants.NOTIF_URL;
+import static br.com.smartpush.Utils.Constants.NOTIF_VIDEO_URI;
+import static br.com.smartpush.Utils.Constants.ONLY_PORTRAIT;
+import static br.com.smartpush.Utils.Constants.OPEN_IN_BROWSER;
 
 /**
  * Created by fabio.licks on 17/07/17.
@@ -48,6 +50,7 @@ final class Utils {
         String NOTIF_URL         = "url";
         String NOTIF_VIDEO_URI   = "video";
         String NOTIF_PLAY_VIDEO_ONLY_WIFI = "play_video_only_on_wifi";
+        String OPEN_IN_BROWSER   = "open_url_in_browser";
         String NOTIF_AUTO_CANCEL = "ac";
         String NOTIF_VIBRATE     = "vib";
         String NOTIF_PACKAGENAME = "package";
@@ -58,6 +61,7 @@ final class Utils {
         String PUSH_STATUS       = "push.status";
         String PUSH_EXTRAS       = "push.extras";
         String PUSH_UPDATE_COUNT = "push.update.count";
+
 
         // Se o array de icones for alterado tem de ajustar o indice desta variavel.
         int NOTIF_CATEGORY_BUSCAPE = 18;
@@ -83,7 +87,6 @@ final class Utils {
                 R.drawable.ic_animais,
                 R.drawable.ic_sp_notif_buscape  // BUSCAPE
         };
-
     }
 
     //=============================================================================================
@@ -273,50 +276,45 @@ final class Utils {
             return "";
         }
 
-        public static Intent getIntentToRedirect(Context context, String url, String packageName, Bundle extras ) {
+        public static Intent getIntentToRedirect( Context context, String url, String packageName, Bundle extras ) {
             Intent intent = null;
 
             if ( context != null ) {
                 if ( packageName != null ) {
                     intent = context.getPackageManager().getLaunchIntentForPackage( packageName );
+                    if ( intent != null ) {
+                        intent.putExtras( extras );
+                    }
+                } else if ( extras.containsKey( NOTIF_VIDEO_URI ) ) {
+                    intent = new Intent( context, SmartpushActivity.class );
                     intent.putExtras( extras );
-                    intent.setFlags( Intent.FLAG_ACTIVITY_NEW_TASK );
-                    // TODO adjust
-                    context.startActivity( intent );
-//                    if ( activity != null ) activity.finish();
                 } else if ( url != null ) {
                     if ( url.startsWith( "http" ) || url.startsWith( "https" ) ) {
-                        Intent it = new Intent( context, SmartpushActivity.class );
-                        it.putExtra( NOTIF_URL, url );
-                        it.putExtra( Utils.Constants.ONLY_PORTRAIT, true );
-                        it.putExtra( Utils.Constants.REDIRECTED, true );
-                        it.putExtra( SmartpushHitUtils.Fields.PUSH_ID.getParamName(),
-                                extras.getString( SmartpushHitUtils.Fields.PUSH_ID.getParamName() ) );
-                        it.addFlags( Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP );
-                        // TODO adjust
-                        context.startActivity(it);
-                    } else if ( url.startsWith( "market://details?id=" ) ) {
-                        Intent it = new Intent( Intent.ACTION_VIEW );
-                        it.setData(Uri.parse(url));
-                        it.setFlags( Intent.FLAG_ACTIVITY_NEW_TASK );
-                        // TODO adjust
-                        if ( it.resolveActivity( context.getPackageManager()) != null ) {
-                            context.startActivity(it);
+                        boolean openInBrowser = true;
+
+                        if ( extras.containsKey( OPEN_IN_BROWSER ) ) {
+                            openInBrowser = extras.getInt( OPEN_IN_BROWSER ) == 0 ? false : true;
                         }
-//                        if ( activity != null ) activity.finish();
+
+                        if ( !openInBrowser ) {
+                            intent = new Intent( context, SmartpushActivity.class );
+                            intent.putExtras( extras );
+                            intent.putExtra( ONLY_PORTRAIT, true );
+                        } else {
+                            intent = new Intent( Intent.ACTION_VIEW, Uri.parse( url ));
+                        }
+                    } else if ( url.startsWith( "market://details?id=" ) ) {
+                        intent = new Intent( Intent.ACTION_VIEW, Uri.parse( url ) );
                     } else {
                         intent = new Intent();
                         intent.putExtras( extras );
                         intent.setData( Uri.parse( url ) );
-                        intent.setFlags( Intent.FLAG_ACTIVITY_NEW_TASK );
-                        // TODO adjust
-                        if ( intent.resolveActivity(context.getPackageManager() ) != null ) {
-                            context.startActivity(intent);
-                        }
-//                        if ( activity != null ) activity.finish();
                     }
                 }
             }
+
+            if ( intent != null )
+                intent.addFlags( Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP );
 
             return intent;
         }

@@ -57,12 +57,14 @@ import static br.com.smartpush.Utils.TAG;
         "title": "",
         "detail": "",
         "banner": "",
+        "open_url_in_browser":1,
         "url": "",
         "package": "",
         "ac": "",
         "vib": "",
         "video": "",
-        "play_video_only_on_wifi": 1
+        "play_video_only_on_wifi": 1,
+        "color":""
     },
     "extras": {
         "animate": true,
@@ -90,8 +92,9 @@ import static br.com.smartpush.Utils.TAG;
  }
 
  Changes:
-     Atributo "video" foi removido dos frames!
-     Atributo "animateRate"  foi removido dos frames!
+    Atributo "color" foi adicionado a notificacao.
+    Atributo "video" foi removido dos frames!
+    Atributo "animateRate"  foi removido dos frames!
  */
 
 public class SmartpushNotificationManager {
@@ -111,10 +114,13 @@ public class SmartpushNotificationManager {
                     SmartpushHitUtils.getValueFromPayload(
                             SmartpushHitUtils.Fields.PUSH_ID, data );
 
-            scheduleNotificationRefreshTime( data );
+            // MUTABLE NOTIFICATION SCHEDULE - begin
+            // TODO: MUTABLE NOTIFICATION : implementar, revisar e liberar em uma versao futura da SDK.
+            // scheduleNotificationRefreshTime( data );
 
             // Retrieve updated payload
-            data = SmartpushHttpClient.getPushPayload( mContext, pushId, data );
+            // data = SmartpushHttpClient.getPushPayload( mContext, pushId, data );
+            // MUTABLE NOTIFICATION SCHEDULE - end
 
             // If has "video" attribute in bundle prefetch
             if ( data.containsKey( NOTIF_VIDEO_URI ) ) {
@@ -171,7 +177,7 @@ public class SmartpushNotificationManager {
                                 "PUSH", "PUSH_AD", "PUSH_BANNER_AD",
                                 "BANNER", "SLIDER", "CARROUSSEL",
                                 "SUBSCRIBE_EMAIL", "SUBSCRIBE_PHONE",
-                                "CUSTOM_BUSCAPE"} )
+                                "CARROUSSEL_BUSCAPE", "SLIDER_BUSCAPE"} )
                         .indexOf( pushType );
 
         SmartpushLog.d( Utils.TAG, "pushTypeOrder: " + pushType );
@@ -195,29 +201,32 @@ public class SmartpushNotificationManager {
                 break;
             case 3:
                 // BANNER
-                RemoteViews remote = setSmartpushBannerNotification( extras );
-                if ( remote != null ) {
-                    builder.setCustomContentView( remote );
-                }
+                // TODO: RICH PUSH (BANNER) : implementar e revisar para proxima versao da SDK
+//                RemoteViews remote = setSmartpushBannerNotification( extras );
+//                if ( remote != null ) {
+//                    builder.setCustomContentView( remote );
+//                }
                 break;
             case 4:
             case 5:
                 // SLIDER, CARROUSSEL
-                remote = setSmartpushRichNotification( extras );
-                if ( remote != null ) {
-                    builder.setCustomBigContentView(remote);
-                }
+                // TODO: RICH PUSH (SLIDER, CARROUSSEL) : implementar e revisar para proxima versao da SDK
+//                remote = setSmartpushRichNotification( extras );
+//                if ( remote != null ) {
+//                    builder.setCustomBigContentView(remote);
+//                }
                 break;
             case 6:
             case 7:
                 // SUBSCRIBE_EMAIL, SUBSCRIBE_PHONE
+                // TODO: RICH PUSH (SUBSCRIBE_EMAIL, SUBSCRIBE_PHONE) : implementar e revisar para proxima versao da SDK
                 // builder.setCustomContentView( )        // small
                 // builder.setCustomBigContentView( )    // big
-                // TODO working here!!
                 break;
             case 8:
+            case 9:
                 // CUSTOM_BUSCAPE
-                remote = setSmartpushRichNotification( extras );
+                RemoteViews remote = setSmartpushRichNotification( extras );
                 if ( remote != null ) {
                     builder.setCustomBigContentView( remote );
                 }
@@ -232,11 +241,10 @@ public class SmartpushNotificationManager {
         nm.notify( PUSH_INTERNAL_ID, builder.build() );
     }
 
-    private RemoteViews setSmartpushBannerNotification( Bundle data ) {
-        // TODO working in progress ...
-
-        return null;
-    }
+//    private RemoteViews setSmartpushBannerNotification( Bundle data ) {
+//
+//        return null;
+//    }
 
     private RemoteViews setSmartpushRichNotification( Bundle data ) {
         // RemoteView
