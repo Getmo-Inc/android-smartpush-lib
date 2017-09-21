@@ -255,6 +255,7 @@ public class SmartpushNotificationManager {
         if ( extras != null ) {
             try {
                 JSONObject payloadExtra = new JSONObject( extras );
+                SmartpushLog.d( Utils.TAG, " ------------> \n " + payloadExtra.toString( 4 ) );
 
                 boolean animate = false;
 //                        ( payloadExtra.has( "animate" ) ) ? payloadExtra.getBoolean( "animate" ) : false;
@@ -289,6 +290,19 @@ public class SmartpushNotificationManager {
                                 ( payloadExtra.has( "frame:" + ( i + 1 ) + ":url" ) ||
                                         payloadExtra.has( "frame:" + ( i + 1 ) + ":package" ) ) ) {
 
+                            String url = payloadExtra.getString( "frame:" + ( i + 1 ) + ":url" );
+                            String packageName = payloadExtra.getString( "frame:" + ( i + 1 ) + ":package" );
+
+                            SmartpushLog.d( Utils.TAG, " ------------> ENTROU! " + url );
+                            SmartpushLog.d( Utils.TAG, " ------------> ENTROU! " + packageName );
+                            Intent actionIntent =
+                                    Utils.Smartpush
+                                            .getIntentToRedirect( mContext, url, packageName, data );
+
+                            remoteViews
+                                    .setOnClickPendingIntent(
+                                            R.id.root, PendingIntent.getService( mContext, 0, actionIntent, 0 ) );
+
                             Bitmap bitmap =
                                     CacheManager
                                             .getInstance( mContext )
@@ -299,18 +313,6 @@ public class SmartpushNotificationManager {
                                 remoteViews.setImageViewBitmap( ids_previous[ i ], bitmap );
                                 remoteViews.setImageViewBitmap( ids_next[ i ], bitmap );
 
-                                String url = payloadExtra.getString( "frame:" + ( i + 1 ) + ":url" );
-                                String packageName = payloadExtra.getString( "frame:" + ( i + 1 ) + ":package" );
-
-                                SmartpushLog.d( Utils.TAG, " ------------> ENTROU! " + url );
-                                SmartpushLog.d( Utils.TAG, " ------------> ENTROU! " + packageName );
-                                Intent actionIntent =
-                                        Utils.Smartpush
-                                                .getIntentToRedirect( mContext, url, packageName, data );
-
-                                remoteViews
-                                        .setOnClickPendingIntent(
-                                                R.id.root, PendingIntent.getService( mContext, 0, actionIntent, 0 ) );
                             }
                         } else {
                             remoteViews.setViewVisibility( ids_previous[ i ], View.GONE );
