@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:layout_margin="5dp">
+
+        <ImageView
+            android:id="@+id/thumb_icon"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/ic_sp_buscape"
+            tools:ignore="ContentDescription" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="5dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:ellipsize="end"
+                android:textColor="#000"
+                android:text="Buscapé"/>
+
+            <TextView
+                android:id="@+id/subtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:text="Escolhemos algumas ofertas para você! Dá um busca!"
+                android:textColor="#666"/>
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <ImageButton
+            android:id="@+id/btnPrevious"
+            android:layout_width="30dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/background_navigation_control_rect"
+            android:src="@drawable/ic_arrow_left" />
+
+        <ViewFlipper
+            android:id="@+id/carroussel_next"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:measureAllChildren="true"
+            android:inAnimation="@anim/slide_in_right"
+            android:outAnimation="@anim/slide_out_left"
+            android:animateFirstView="true"
+            android:background="@android:color/transparent">
+
+            <ImageView
+                android:id="@+id/frame_1_next"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scaleType="centerCrop"
+                android:adjustViewBounds="true"/>
+
+            <ImageView
+                android:id="@+id/frame_2_next"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scaleType="centerCrop"
+                android:adjustViewBounds="true"/>
+
+            <ImageView
+                android:id="@+id/frame_3_next"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scaleType="centerCrop"
+                android:adjustViewBounds="true"/>
+
+            <ImageView
+                android:id="@+id/frame_4_next"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scaleType="centerCrop"
+                android:adjustViewBounds="true"/>
+
+            <ImageView
+                android:id="@+id/frame_5_next"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scaleType="centerCrop"
+                android:adjustViewBounds="true"/>
+        </ViewFlipper>
+
+        <ViewFlipper
+            android:id="@+id/carroussel_previous"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:measureAllChildren="true"
+            android:flipInterval="500"
+            android:inAnimation="@android:anim/slide_in_left"
+            android:outAnimation="@android:anim/slide_out_right"
+            android:animateFirstView="true"
+            android:visibility="gone"
+            android:background="@android:color/transparent">
+
+            <ImageView
+                android:id="@+id/frame_1_previous"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scaleType="centerCrop"
+                android:adjustViewBounds="true"/>
+
+            <ImageView
+                android:id="@+id/frame_2_previous"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scaleType="centerCrop"
+                android:adjustViewBounds="true"/>
+
+            <ImageView
+                android:id="@+id/frame_3_previous"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scaleType="centerCrop"
+                android:adjustViewBounds="true"/>
+
+            <ImageView
+                android:id="@+id/frame_4_previous"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scaleType="centerCrop"
+                android:adjustViewBounds="true"/>
+
+            <ImageView
+                android:id="@+id/frame_5_previous"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scaleType="centerCrop"
+                android:adjustViewBounds="true"/>
+
+        </ViewFlipper>
+
+        <ImageButton
+            android:id="@+id/btnNext"
+            android:layout_width="30dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/background_navigation_control_rect"
+            android:src="@drawable/ic_arrow_right" />
+
+    </LinearLayout>
+
+</LinearLayout>

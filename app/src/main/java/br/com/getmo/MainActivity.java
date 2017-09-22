@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
 
 //        // Register at Smartpush!
         Smartpush.subscribe( this );
+//        Smartpush.setSmallPushIcon(  );
 
         // optional - Tracking :: Call this method always! if app was opened by push one event will
         // be saved, if no nothing will happen.

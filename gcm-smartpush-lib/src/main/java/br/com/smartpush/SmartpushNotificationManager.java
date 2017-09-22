@@ -21,8 +21,10 @@ import android.widget.RemoteViews;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 
 import static br.com.smartpush.SmartpushService.ACTION_NOTIF_CANCEL;
 import static br.com.smartpush.SmartpushService.ACTION_NOTIF_REDIRECT;
@@ -92,10 +94,14 @@ import static br.com.smartpush.Utils.TAG;
  }
 
  Changes:
+    ADDED:
     Atributo "color" foi adicionado a notificacao.
+
+    REMOVED:
     Atributo "play_video_only_on_wifi" foi removido.
     Atributo "video" foi removido dos frames!
     Atributo "animateRate"  foi removido dos frames!
+    Atributo "package" foi removido dos frames!
  */
 
 public class SmartpushNotificationManager {
@@ -142,7 +148,7 @@ public class SmartpushNotificationManager {
     private void createNotification( Bundle extras ) {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder( mContext )
-                .setSmallIcon(getPushIcon(extras))                   // Set Small Icon
+                .setSmallIcon( getPushIcon( extras ) )               // Set Small Icon
                 .setAutoCancel   ( isAutoCancel( extras ) )          // Set Auto Cancel Action
                 .setContentIntent( addMainAction( extras ) )         // Set Main Action
                 .setDeleteIntent ( addDeleteAction( extras ) )       // Set Delete Action
@@ -255,129 +261,174 @@ public class SmartpushNotificationManager {
                         ? data.getString( Utils.Constants.PUSH_EXTRAS ) : null );
 
         if ( extras != null ) {
+            JSONObject payloadExtra = null;
             try {
-                JSONObject payloadExtra = new JSONObject( extras );
+                payloadExtra = new JSONObject( extras );
                 SmartpushLog.d( Utils.TAG, " ------------> \n " + payloadExtra.toString( 4 ) );
+            } catch ( JSONException e ) {
+                SmartpushLog.e( Utils.TAG, e.getMessage(), e );
+                return null;
+            }
 
-                boolean animate = false;
+            boolean animate = false;
 //                        ( payloadExtra.has( "animate" ) ) ? payloadExtra.getBoolean( "animate" ) : false;
 
-                if ( animate ) {
-                    // TODO adjust animate true!
-//                    remoteViews =
-//                            new RemoteViews( mContext.getPackageName(), R.layout.notif_slider_auto);
-//
-//                    // set cards
+            if ( animate ) {
+                // TODO adjust animate true!
+                throw new RuntimeException( "Not implemented yet" );
+            } else {
+                SmartpushLog.d(Utils.TAG, " ------------> FETCHING BANNERS! ");
+                List<SlideInfo> slides = new ArrayList<>();
 
-                } else {
-                    remoteViews =
-                            new RemoteViews( mContext.getPackageName(), R.layout.notif_icon_text_carroussel_alternative_1 );
+                for (int i = 0; i < 5; i++) {
+                    if (payloadExtra.has("frame:" + (i + 1) + ":banner")
+                            && (payloadExtra.has("frame:" + (i + 1) + ":url"))) {
 
-                    // Set Title
-                    remoteViews
-                            .setTextViewText( R.id.title, data.getString( NOTIF_TITLE ) );
-
-                    // Set 2nd line
-                    remoteViews
-                            .setTextViewText( R.id.subtitle, data.getString( NOTIF_DETAIL ) );
-
-                    SmartpushLog.d( Utils.TAG, " ------------> CONFIG BUTTONS! " );
-
-                    // config navigate buttons
-                    Intent itNext = new Intent( mContext, SmartpushService.class )
-                            .setAction( ACTION_NOTIF_UPDATABLE )
-                            .putExtras( data )
-                            .putExtra( "flip.next", true )
-                            .putExtra( "flip.previous", false );
-
-                    remoteViews
-                            .setOnClickPendingIntent(
-                                    R.id.btnNext, PendingIntent.getService( mContext, 0, itNext, 0 ) );
-
-                    Intent itPrevious = new Intent( mContext, SmartpushService.class )
-                            .setAction( ACTION_NOTIF_UPDATABLE )
-                            .putExtras( data )
-                            .putExtra( "flip.next", false )
-                            .putExtra( "flip.previous", true );
-
-                    remoteViews
-                            .setOnClickPendingIntent(
-                                    R.id.btnPrevious, PendingIntent.getService( mContext, 0, itPrevious, 0 ) );
-
-                    SmartpushLog.d( Utils.TAG, " ------------> CONFIG BUTTONS! FIM " );
-
-                    // Adjust viewflipper visibility & move cards
-                    if ( data.getBoolean( "flip.next", false ) ) {
-                        SmartpushLog.d( Utils.TAG, " ------------> NEXT! " );
-                        remoteViews.setViewVisibility( R.id.carroussel_next, View.VISIBLE );
-                        remoteViews.setViewVisibility( R.id.carroussel_previous, View.GONE );
-                        remoteViews.showNext( R.id.carroussel_next );
-                        remoteViews.showNext( R.id.carroussel_previous );
-                    } else if ( data.getBoolean( "flip.next", true ) ) {
-                        SmartpushLog.d( Utils.TAG, " ------------> PREV! " );
-                        remoteViews.setViewVisibility( R.id.carroussel_previous, View.VISIBLE );
-                        remoteViews.setViewVisibility( R.id.carroussel_next, View.GONE );
-                        remoteViews.showPrevious( R.id.carroussel_previous );
-                        remoteViews.showPrevious( R.id.carroussel_next );
-                    }
-                    SmartpushLog.d( Utils.TAG, " ------------> AFTER! " );
-                    // set cards
-                    int[] ids_previous = {
-                            R.id.frame_1_previous, R.id.frame_2_previous, R.id.frame_3_previous,
-                            R.id.frame_4_previous, R.id.frame_5_previous
-                    };
-
-                    int[] ids_next = {
-                            R.id.frame_1_next, R.id.frame_2_next, R.id.frame_3_next,
-                            R.id.frame_4_next, R.id.frame_5_next
-                    };
-                    SmartpushLog.d( Utils.TAG, " ------------> SET CARDS! " );
-                    for ( int i = 0; i < 5; i++ ) {
-                        if ( payloadExtra.has( "frame:" + ( i + 1 ) + ":banner" ) &&
-                                ( payloadExtra.has( "frame:" + ( i + 1 ) + ":url" ) ||
-                                        payloadExtra.has( "frame:" + ( i + 1 ) + ":package" ) ) ) {
-
-                            SmartpushLog.d( Utils.TAG, " ------------> CARD[" + ( i + 1 ) + "]! " );
-
-                            String url = payloadExtra.getString( "frame:" + ( i + 1 ) + ":url" );
-                            SmartpushLog.d( Utils.TAG, " ------------> ENTROU! " + url );
-
-                            String packageName = null;//payloadExtra.getString( "frame:" + ( i + 1 ) + ":package" );
-                            SmartpushLog.d( Utils.TAG, " ------------> ENTROU! " + packageName );
-
-                            Intent actionIntent =
-                                    Utils.Smartpush
-                                            .getIntentToRedirect( mContext, url, packageName, data );
-
-                            remoteViews
-                                    .setOnClickPendingIntent(
-                                            R.id.root, PendingIntent.getService( mContext, 0, actionIntent, 0 ) );
-
-                            Bitmap bitmap =
+                        try {
+                            SlideInfo slide = new SlideInfo();
+                            slide.bitmap =
                                     CacheManager
-                                            .getInstance( mContext )
-                                            .loadBitmap( payloadExtra.getString( "frame:" + ( i + 1 ) + ":banner" ), CacheManager.ExpirationTime.DAY );
+                                            .getInstance(mContext)
+                                            .loadBitmap(payloadExtra.getString("frame:"
+                                                    + (i + 1) + ":banner"), CacheManager.ExpirationTime.DAY);
 
-                            if ( bitmap != null ) {
+                            slide.url = payloadExtra.getString("frame:" + (i + 1) + ":url");
 
-                                remoteViews.setImageViewBitmap( ids_previous[ i ], bitmap );
-                                remoteViews.setImageViewBitmap( ids_next[ i ], bitmap );
-
+                            if (slide.bitmap != null && slide.url != null) {
+                                slides.add(slide);
+                                SmartpushLog.d(Utils.TAG, slide.toString());
                             }
-                        } else {
-                            SmartpushLog.d( Utils.TAG, " ------------> CARD[" + ( i + 1 ) + "] - REMOVED! " );
-                            remoteViews.setViewVisibility( ids_previous[ i ], View.GONE );
-//                            remoteViews.removeAllViews( ids_previous[ i ] );
-                            remoteViews.setViewVisibility( ids_next[ i ], View.GONE );
-//                            remoteViews.removeAllViews( ids_next[ i ] );
+                        } catch ( JSONException e ) {
+                            SmartpushLog.e(Utils.TAG, e.getMessage(), e);
                         }
                     }
                 }
 
-            } catch ( JSONException e ) {
-                SmartpushLog.e( Utils.TAG, e.getMessage(), e );
+                switch ( slides.size() ) {
+                    case 0:
+                        return null;
+                    case 1:
+                        remoteViews =
+                                new RemoteViews(
+                                        mContext.getPackageName(), R.layout.notif_icon_text_carroussel_buscape_1);
+                        break;
+                    case 2:
+                        remoteViews =
+                                new RemoteViews(
+                                        mContext.getPackageName(), R.layout.notif_icon_text_carroussel_buscape_2);
+                        break;
+                    case 3:
+                        remoteViews =
+                                new RemoteViews(
+                                        mContext.getPackageName(), R.layout.notif_icon_text_carroussel_buscape_3);
+                        break;
+                    case 4:
+                        remoteViews =
+                                new RemoteViews(
+                                        mContext.getPackageName(), R.layout.notif_icon_text_carroussel_buscape_4);
+                        break;
+                    case 5:
+                        remoteViews =
+                                new RemoteViews(
+                                        mContext.getPackageName(), R.layout.notif_icon_text_carroussel_buscape_5);
+                        break;
+                    default:
+                        return null;
+                }
+
+                // Set Title
+                if (data.containsKey(NOTIF_TITLE)) {
+                    remoteViews
+                            .setTextViewText(R.id.title, data.getString(NOTIF_TITLE));
+                }
+
+                // Set 2nd line
+                if (data.containsKey(NOTIF_DETAIL)) {
+                    remoteViews
+                            .setTextViewText(R.id.subtitle, data.getString(NOTIF_DETAIL));
+                }
+
+                if ( slides.size() > 1 ) {
+                    SmartpushLog.d(Utils.TAG, " ------------> CONFIG NAV BUTTONS! START ");
+                    // config navigate buttons
+                    Intent itNext = new Intent(mContext, SmartpushService.class)
+                            .setAction(ACTION_NOTIF_UPDATABLE)
+                            .putExtras(data)
+                            .putExtra("flip.next", true)
+                            .putExtra("flip.previous", false);
+
+                    remoteViews
+                            .setOnClickPendingIntent(
+                                    R.id.btnNext, PendingIntent.getService(mContext, 0, itNext, 0));
+
+                    Intent itPrevious = new Intent(mContext, SmartpushService.class)
+                            .setAction(ACTION_NOTIF_UPDATABLE)
+                            .putExtras(data)
+                            .putExtra("flip.next", false)
+                            .putExtra("flip.previous", true);
+
+                    remoteViews
+                            .setOnClickPendingIntent(
+                                    R.id.btnPrevious, PendingIntent.getService(mContext, 0, itPrevious, 0));
+
+                    SmartpushLog.d(Utils.TAG, " ------------> CONFIG NAV BUTTONS! END ");
+
+                    // Adjust viewflipper visibility & move cards
+                    if (data.getBoolean("flip.next", false)) {
+                        SmartpushLog.d(Utils.TAG, " ------------> GOING TO NEXT! ");
+                        remoteViews.setViewVisibility(R.id.carroussel_next, View.VISIBLE);
+                        remoteViews.setViewVisibility(R.id.carroussel_previous, View.GONE);
+                        remoteViews.showNext(R.id.carroussel_next);
+                        remoteViews.showNext(R.id.carroussel_previous);
+                    } else if (data.getBoolean("flip.next", true)) {
+                        SmartpushLog.d(Utils.TAG, " ------------> GOING TO PREV! ");
+                        remoteViews.setViewVisibility(R.id.carroussel_previous, View.VISIBLE);
+                        remoteViews.setViewVisibility(R.id.carroussel_next, View.GONE);
+                        remoteViews.showPrevious(R.id.carroussel_previous);
+                        remoteViews.showPrevious(R.id.carroussel_next);
+                    }
+
+                    SmartpushLog.d(Utils.TAG, " ------------> SETTING SLIDES! ");
+                }
+
+                // set cards
+                int[] ids_previous = {
+                        R.id.frame_1_previous,
+                        R.id.frame_2_previous,
+                        R.id.frame_3_previous,
+                        R.id.frame_4_previous,
+                        R.id.frame_5_previous
+                };
+
+                int[] ids_next = {
+                        R.id.frame_1_next,
+                        R.id.frame_2_next,
+                        R.id.frame_3_next,
+                        R.id.frame_4_next,
+                        R.id.frame_5_next
+                };
+
+                for ( int i = 0; slides != null && i < slides.size(); i++ ) {
+                    SlideInfo slide = slides.get( i );
+
+                    Intent actionIntent =
+                            Utils.Smartpush
+                                    .getIntentToRedirect(mContext, slide.url, null, data);
+
+                    remoteViews
+                            .setOnClickPendingIntent(
+                                    R.id.root, PendingIntent.getService(mContext, 0, actionIntent, 0));
+
+                    if ( slides.size() == 1 ) {
+                        remoteViews.setImageViewBitmap( R.id.frame_1, slide.bitmap);
+                    } else {
+                        remoteViews.setImageViewBitmap(ids_previous[i], slide.bitmap);
+                        remoteViews.setImageViewBitmap(ids_next[i], slide.bitmap);
+                    }
+                }
             }
         }
+
         SmartpushLog.d( Utils.TAG, " ------------> DONE! " );
         return remoteViews;
     }
