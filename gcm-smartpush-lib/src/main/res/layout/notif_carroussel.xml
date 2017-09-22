@@ -38,7 +38,6 @@
                     android:gravity="center">
 
                     <ImageView
-                        android:src="@drawable/thumb_consul_cinza_20litros"
                         android:layout_width="wrap_content"
                         android:layout_height="120dp"
                         android:adjustViewBounds="true"/>
@@ -143,7 +142,6 @@
                     android:gravity="center">
 
                     <ImageView
-                        android:src="@drawable/thumb_ps4_slim_500gb"
                         android:layout_width="wrap_content"
                         android:layout_height="120dp"
                         android:adjustViewBounds="true"/>
@@ -247,7 +245,6 @@
                     android:gravity="center">
 
                     <ImageView
-                        android:src="@drawable/thumb_smarttv_samsung_serie_6"
                         android:layout_width="wrap_content"
                         android:layout_height="120dp"
                         android:adjustViewBounds="true"/>
@@ -366,7 +363,6 @@
                     android:gravity="center">
 
                     <ImageView
-                        android:src="@drawable/thumb_consul_cinza_20litros"
                         android:layout_width="wrap_content"
                         android:layout_height="120dp"
                         android:adjustViewBounds="true"/>
@@ -471,7 +467,6 @@
                     android:gravity="center">
 
                     <ImageView
-                        android:src="@drawable/thumb_ps4_slim_500gb"
                         android:layout_width="wrap_content"
                         android:layout_height="120dp"
                         android:adjustViewBounds="true"/>
@@ -575,7 +570,6 @@
                     android:gravity="center">
 
                     <ImageView
-                        android:src="@drawable/thumb_smarttv_samsung_serie_6"
                         android:layout_width="wrap_content"
                         android:layout_height="120dp"
                         android:adjustViewBounds="true"/>

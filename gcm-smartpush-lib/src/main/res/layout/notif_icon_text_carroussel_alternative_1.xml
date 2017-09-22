@@ -79,7 +79,6 @@
                 android:id="@+id/frame_1_next"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:src="@drawable/slider_acer_01"
                 android:scaleType="centerCrop"
                 android:adjustViewBounds="true"/>
 
@@ -87,7 +86,6 @@
                 android:id="@+id/frame_2_next"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:src="@drawable/slider_dell_02"
                 android:scaleType="centerCrop"
                 android:adjustViewBounds="true"/>
 
@@ -95,7 +93,6 @@
                 android:id="@+id/frame_3_next"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:src="@drawable/slider_xbox_03"
                 android:scaleType="centerCrop"
                 android:adjustViewBounds="true"/>
 
@@ -103,7 +100,6 @@
                 android:id="@+id/frame_4_next"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:src="@drawable/slider_lenovo_04"
                 android:scaleType="centerCrop"
                 android:adjustViewBounds="true"/>
 
@@ -111,7 +107,6 @@
                 android:id="@+id/frame_5_next"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:src="@drawable/slider_chromecast_04"
                 android:scaleType="centerCrop"
                 android:adjustViewBounds="true"/>
         </ViewFlipper>
@@ -133,7 +128,6 @@
                 android:id="@+id/frame_1_previous"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:src="@drawable/slider_acer_01"
                 android:scaleType="centerCrop"
                 android:adjustViewBounds="true"/>
 
@@ -141,7 +135,6 @@
                 android:id="@+id/frame_2_previous"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:src="@drawable/slider_dell_02"
                 android:scaleType="centerCrop"
                 android:adjustViewBounds="true"/>
 
@@ -149,7 +142,6 @@
                 android:id="@+id/frame_3_previous"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:src="@drawable/slider_xbox_03"
                 android:scaleType="centerCrop"
                 android:adjustViewBounds="true"/>
 
@@ -157,7 +149,6 @@
                 android:id="@+id/frame_4_previous"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:src="@drawable/slider_lenovo_04"
                 android:scaleType="centerCrop"
                 android:adjustViewBounds="true"/>
 
@@ -165,7 +156,6 @@
                 android:id="@+id/frame_5_previous"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:src="@drawable/slider_chromecast_04"
                 android:scaleType="centerCrop"
                 android:adjustViewBounds="true"/>
 

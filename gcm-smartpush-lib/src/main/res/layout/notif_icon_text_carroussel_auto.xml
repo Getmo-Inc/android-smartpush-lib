@@ -68,7 +68,6 @@
             android:layout_height="wrap_content"
             android:scaleType="centerCrop"
             android:adjustViewBounds="true"
-            android:src="@drawable/slider_acer_01"
             tools:ignore="ContentDescription" />
 
         <ImageView
@@ -76,7 +75,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:scaleType="centerCrop"
-            android:src="@drawable/slider_dell_02"
             android:adjustViewBounds="true"
             tools:ignore="ContentDescription" />
 
@@ -85,7 +83,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:scaleType="centerCrop"
-            android:src="@drawable/slider_xbox_03"
             android:adjustViewBounds="true"
             tools:ignore="ContentDescription" />
 
@@ -94,7 +91,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:scaleType="centerCrop"
-            android:src="@drawable/slider_lenovo_04"
             android:adjustViewBounds="true"
             tools:ignore="ContentDescription" />
 
@@ -103,7 +99,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:scaleType="centerCrop"
-            android:src="@drawable/slider_chromecast_04"
             android:adjustViewBounds="true"
             tools:ignore="ContentDescription" />
     </ViewFlipper>

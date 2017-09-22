@@ -13,7 +13,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
@@ -53,7 +52,7 @@ public class SmartpushService extends IntentService {
     private static final String ACTION_TRACK_ACTION = "action.TRACK_ACTION";
     private static final String ACTION_GET_MSISDN = "action.GET_MSISDN";
 //    private static final String ACTION_GET_CARRIER = "action.GET_CARRIER";
-    public  static final String ACTION_GET_APP_LIST = "action.GET_APP_LIST";
+//    public  static final String ACTION_GET_APP_LIST = "action.GET_APP_LIST";
     public  static final String ACTION_NOTIF_UPDATABLE = "action.UPDATABLE";
     public  static final String ACTION_NOTIF_CANCEL = "action.CANCEL";
     public  static final String ACTION_NOTIF_REDIRECT = "action.REDIRECT";
@@ -96,17 +95,17 @@ public class SmartpushService extends IntentService {
         context.startService(intent);
     }
 
-    /**
-     * Starts this service to perform action retrieve a list of apps with no parameters. If
-     * the service is already performing a task this action will be queued.
-     *
-     * @see IntentService
-     */
-    static void getAppList( Context context ) {
-        Intent intent = new Intent( context, SmartpushService.class ) ;
-        intent.setAction(ACTION_GET_APP_LIST);
-        context.startService(intent);
-    }
+//    /**
+//     * Starts this service to perform action retrieve a list of apps with no parameters. If
+//     * the service is already performing a task this action will be queued.
+//     *
+//     * @see IntentService
+//     */
+//    static void getAppList( Context context ) {
+//        Intent intent = new Intent( context, SmartpushService.class ) ;
+//        intent.setAction(ACTION_GET_APP_LIST);
+//        context.startService(intent);
+//    }
 
     /**
      * Starts this service to perform action check msisdn with no parameters. If
@@ -434,9 +433,10 @@ public class SmartpushService extends IntentService {
             } else if ( ACTION_NOTIF_REDIRECT.equals( action ) ) {
                 Bundle data = intent.getExtras();
                 handleActionRedirectNotification( data );
-            } else if ( ACTION_GET_APP_LIST.equals( action ) ) {
-                handleActionSaveAppsListState();
             }
+//            else if ( ACTION_GET_APP_LIST.equals( action ) ) {
+//                handleActionSaveAppsListState();
+//            }
         }
     }
 
@@ -885,86 +885,86 @@ public class SmartpushService extends IntentService {
         SmartpushHttpClient.post( "hit", fields, this, false );
     }
 
-    private void handleActionSaveAppsListState() {
-        SQLiteDatabase db = new DatabaseManager( this ).getWritableDatabase();
-
-        // Active apps list
-        List<String> installedAppsList =
-                Utils.DeviceUtils.getInstalledApps( this );
-
-        // List with last state sinc to SMARTPUSH
-        List<AppInfo> savedList =
-                AppInfoDAO.listAll( db );
-
-        Log.d( TAG, "savedList: " + savedList.size() );
-        Log.d( TAG, "installedAppsList: " + installedAppsList.size() );
-
-        // insert/update packages installed state
-        for ( String packageName : installedAppsList ) {
-            boolean found = false;
-            for( AppInfo saved : savedList ) {
-                if ( packageName.equals( saved.getPackageName() ) ) {
-                    Log.d( TAG, "savedList.contains: " + packageName );
-                    if ( saved != null && saved.getState() == AppInfo.UNINSTALLED ) {
-                        saved.setState( AppInfo.INSTALLED );
-                        saved.setSinc( false );
-                        AppInfoDAO.save( db, saved );
-                    }
-
-                    found = true;
-                    saved.setMatch( found );
-                    break;
-                }
-            }
-
-            if ( !found ) {
-                Log.d( TAG, "savedList.not.contains: " + packageName );
-                AppInfo newApp = new AppInfo();
-                newApp.setPackageName( packageName );
-                newApp.setState( AppInfo.INSTALLED );
-                newApp.setSinc( false );
-                newApp.setMatch( true );
-
-                AppInfoDAO.save( db, newApp );
-            }
-        }
-
-        // mark packages were uninstalled
-        for ( AppInfo item : savedList ) {
-            if ( !item.isMatch() ) {
-                Log.d( TAG, "savedList.contains.uninstalled.app: " + item.getPackageName() );
-                item.setState( AppInfo.UNINSTALLED );
-                item.setSinc( false );
-
-                AppInfoDAO.save( db, item );
-            }
-        }
-
-        // renew list with last state
-        savedList = AppInfoDAO.listAll( db );
-
-        List<String> uninstalled = new ArrayList<>();
-        List<String> installed   = new ArrayList<>();
-
-        for ( AppInfo item : savedList ) {
-            if ( !item.isSinc() ) {
-                if ( item.getState() == AppInfo.INSTALLED ) {
-                    Log.d( TAG, "INSTALLED: " + item.toString() );
-                    installed.add( item.getPackageName() );
-                }
-
-                if ( item.getState() == AppInfo.UNINSTALLED ) {
-                    Log.d( TAG, "UNINSTALLED: " + item.toString() );
-                    uninstalled.add( item.getPackageName() );
-                }
-
-                // TODO LIST APPS - revisar para proxima versao da SDK, completar a operacao de persistencia
-//                item.setSinc( SmartpushConnectivityUtil.isConnected( this ) );
+//    private void handleActionSaveAppsListState() {
+//        SQLiteDatabase db = new DatabaseManager( this ).getWritableDatabase();
+//
+//        // Active apps list
+//        List<String> installedAppsList =
+//                Utils.DeviceUtils.getInstalledApps( this );
+//
+//        // List with last state sinc to SMARTPUSH
+//        List<AppInfo> savedList =
+//                AppInfoDAO.listAll( db );
+//
+//        Log.d( TAG, "savedList: " + savedList.size() );
+//        Log.d( TAG, "installedAppsList: " + installedAppsList.size() );
+//
+//        // insert/update packages installed state
+//        for ( String packageName : installedAppsList ) {
+//            boolean found = false;
+//            for( AppInfo saved : savedList ) {
+//                if ( packageName.equals( saved.getPackageName() ) ) {
+//                    Log.d( TAG, "savedList.contains: " + packageName );
+//                    if ( saved != null && saved.getState() == AppInfo.UNINSTALLED ) {
+//                        saved.setState( AppInfo.INSTALLED );
+//                        saved.setSinc( false );
+//                        AppInfoDAO.save( db, saved );
+//                    }
+//
+//                    found = true;
+//                    saved.setMatch( found );
+//                    break;
+//                }
+//            }
+//
+//            if ( !found ) {
+//                Log.d( TAG, "savedList.not.contains: " + packageName );
+//                AppInfo newApp = new AppInfo();
+//                newApp.setPackageName( packageName );
+//                newApp.setState( AppInfo.INSTALLED );
+//                newApp.setSinc( false );
+//                newApp.setMatch( true );
+//
+//                AppInfoDAO.save( db, newApp );
+//            }
+//        }
+//
+//        // mark packages were uninstalled
+//        for ( AppInfo item : savedList ) {
+//            if ( !item.isMatch() ) {
+//                Log.d( TAG, "savedList.contains.uninstalled.app: " + item.getPackageName() );
+//                item.setState( AppInfo.UNINSTALLED );
+//                item.setSinc( false );
+//
 //                AppInfoDAO.save( db, item );
-            }
-        }
-
-        // Release
-        db.close();
-    }
+//            }
+//        }
+//
+//        // renew list with last state
+//        savedList = AppInfoDAO.listAll( db );
+//
+//        List<String> uninstalled = new ArrayList<>();
+//        List<String> installed   = new ArrayList<>();
+//
+//        for ( AppInfo item : savedList ) {
+//            if ( !item.isSinc() ) {
+//                if ( item.getState() == AppInfo.INSTALLED ) {
+//                    Log.d( TAG, "INSTALLED: " + item.toString() );
+//                    installed.add( item.getPackageName() );
+//                }
+//
+//                if ( item.getState() == AppInfo.UNINSTALLED ) {
+//                    Log.d( TAG, "UNINSTALLED: " + item.toString() );
+//                    uninstalled.add( item.getPackageName() );
+//                }
+//
+//                // TODO LIST APPS - revisar para proxima versao da SDK, completar a operacao de persistencia
+////                item.setSinc( SmartpushConnectivityUtil.isConnected( this ) );
+////                AppInfoDAO.save( db, item );
+//            }
+//        }
+//
+//        // Release
+//        db.close();
+//    }
 }

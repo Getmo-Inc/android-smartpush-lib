@@ -107,8 +107,10 @@ public class SmartpushNotificationManager {
     }
 
     public void onMessageReceived( String from, Bundle data ) {
-        if ( data != null && !data.isEmpty() ) {  // has effect of unparcelling Bundle
+        // TODO revisar
+        SmartpushLog.d( Utils.TAG, "PACKAGE_NAME: " + mContext.getApplicationContext().getPackageName() );
 
+        if ( data != null && !data.isEmpty() ) {  // has effect of unparcelling Bundle
             String pushId =
                     SmartpushHitUtils.getValueFromPayload(
                             SmartpushHitUtils.Fields.PUSH_ID, data );
@@ -271,56 +273,16 @@ public class SmartpushNotificationManager {
                     remoteViews =
                             new RemoteViews( mContext.getPackageName(), R.layout.notif_icon_text_carroussel_alternative_1 );
 
-                    remoteViews.setTextViewText( R.id.title, data.getString( NOTIF_TITLE ) );       // Set Title
-                    remoteViews.setTextViewText( R.id.subtitle, data.getString( NOTIF_DETAIL ) );   // Set 2nd line
+                    // Set Title
+                    remoteViews
+                            .setTextViewText( R.id.title, data.getString( NOTIF_TITLE ) );
 
-                    // set cards
-                    int[] ids_previous = {
-                            R.id.frame_1_previous, R.id.frame_2_previous, R.id.frame_3_previous,
-                            R.id.frame_4_previous, R.id.frame_5_previous
-                    };
-
-                    int[] ids_next = {
-                            R.id.frame_1_next, R.id.frame_2_next, R.id.frame_3_next,
-                            R.id.frame_4_next, R.id.frame_5_next
-                    };
-
-                    for ( int i = 0; i < 5; i++ ) {
-                        if ( payloadExtra.has( "frame:" + ( i + 1 ) + ":banner" ) &&
-                                ( payloadExtra.has( "frame:" + ( i + 1 ) + ":url" ) ||
-                                        payloadExtra.has( "frame:" + ( i + 1 ) + ":package" ) ) ) {
-
-                            String url = payloadExtra.getString( "frame:" + ( i + 1 ) + ":url" );
-                            String packageName = payloadExtra.getString( "frame:" + ( i + 1 ) + ":package" );
-
-                            SmartpushLog.d( Utils.TAG, " ------------> ENTROU! " + url );
-                            SmartpushLog.d( Utils.TAG, " ------------> ENTROU! " + packageName );
-                            Intent actionIntent =
-                                    Utils.Smartpush
-                                            .getIntentToRedirect( mContext, url, packageName, data );
-
-                            remoteViews
-                                    .setOnClickPendingIntent(
-                                            R.id.root, PendingIntent.getService( mContext, 0, actionIntent, 0 ) );
-
-                            Bitmap bitmap =
-                                    CacheManager
-                                            .getInstance( mContext )
-                                            .loadBitmap( payloadExtra.getString( "frame:" + ( i + 1 ) + ":banner" ), CacheManager.ExpirationTime.DAY );
-
-                            if ( bitmap != null ) {
-
-                                remoteViews.setImageViewBitmap( ids_previous[ i ], bitmap );
-                                remoteViews.setImageViewBitmap( ids_next[ i ], bitmap );
-
-                            }
-                        } else {
-                            remoteViews.setViewVisibility( ids_previous[ i ], View.GONE );
-                            remoteViews.setViewVisibility( ids_next[ i ], View.GONE );
-                        }
-                    }
+                    // Set 2nd line
+                    remoteViews
+                            .setTextViewText( R.id.subtitle, data.getString( NOTIF_DETAIL ) );
 
                     SmartpushLog.d( Utils.TAG, " ------------> CONFIG BUTTONS! " );
+
                     // config navigate buttons
                     Intent itNext = new Intent( mContext, SmartpushService.class )
                             .setAction( ACTION_NOTIF_UPDATABLE )
@@ -342,18 +304,73 @@ public class SmartpushNotificationManager {
                             .setOnClickPendingIntent(
                                     R.id.btnPrevious, PendingIntent.getService( mContext, 0, itPrevious, 0 ) );
 
-                    SmartpushLog.d( Utils.TAG, Utils.ArrayUtils.bundle2string( data ) );
+                    SmartpushLog.d( Utils.TAG, " ------------> CONFIG BUTTONS! FIM " );
+
                     // Adjust viewflipper visibility & move cards
                     if ( data.getBoolean( "flip.next", false ) ) {
+                        SmartpushLog.d( Utils.TAG, " ------------> NEXT! " );
                         remoteViews.setViewVisibility( R.id.carroussel_next, View.VISIBLE );
                         remoteViews.setViewVisibility( R.id.carroussel_previous, View.GONE );
                         remoteViews.showNext( R.id.carroussel_next );
                         remoteViews.showNext( R.id.carroussel_previous );
                     } else if ( data.getBoolean( "flip.next", true ) ) {
+                        SmartpushLog.d( Utils.TAG, " ------------> PREV! " );
                         remoteViews.setViewVisibility( R.id.carroussel_previous, View.VISIBLE );
                         remoteViews.setViewVisibility( R.id.carroussel_next, View.GONE );
                         remoteViews.showPrevious( R.id.carroussel_previous );
                         remoteViews.showPrevious( R.id.carroussel_next );
+                    }
+                    SmartpushLog.d( Utils.TAG, " ------------> AFTER! " );
+                    // set cards
+                    int[] ids_previous = {
+                            R.id.frame_1_previous, R.id.frame_2_previous, R.id.frame_3_previous,
+                            R.id.frame_4_previous, R.id.frame_5_previous
+                    };
+
+                    int[] ids_next = {
+                            R.id.frame_1_next, R.id.frame_2_next, R.id.frame_3_next,
+                            R.id.frame_4_next, R.id.frame_5_next
+                    };
+                    SmartpushLog.d( Utils.TAG, " ------------> SET CARDS! " );
+                    for ( int i = 0; i < 5; i++ ) {
+                        if ( payloadExtra.has( "frame:" + ( i + 1 ) + ":banner" ) &&
+                                ( payloadExtra.has( "frame:" + ( i + 1 ) + ":url" ) ||
+                                        payloadExtra.has( "frame:" + ( i + 1 ) + ":package" ) ) ) {
+
+                            SmartpushLog.d( Utils.TAG, " ------------> CARD[" + ( i + 1 ) + "]! " );
+
+                            String url = payloadExtra.getString( "frame:" + ( i + 1 ) + ":url" );
+                            SmartpushLog.d( Utils.TAG, " ------------> ENTROU! " + url );
+
+                            String packageName = null;//payloadExtra.getString( "frame:" + ( i + 1 ) + ":package" );
+                            SmartpushLog.d( Utils.TAG, " ------------> ENTROU! " + packageName );
+
+                            Intent actionIntent =
+                                    Utils.Smartpush
+                                            .getIntentToRedirect( mContext, url, packageName, data );
+
+                            remoteViews
+                                    .setOnClickPendingIntent(
+                                            R.id.root, PendingIntent.getService( mContext, 0, actionIntent, 0 ) );
+
+                            Bitmap bitmap =
+                                    CacheManager
+                                            .getInstance( mContext )
+                                            .loadBitmap( payloadExtra.getString( "frame:" + ( i + 1 ) + ":banner" ), CacheManager.ExpirationTime.DAY );
+
+                            if ( bitmap != null ) {
+
+                                remoteViews.setImageViewBitmap( ids_previous[ i ], bitmap );
+                                remoteViews.setImageViewBitmap( ids_next[ i ], bitmap );
+
+                            }
+                        } else {
+                            SmartpushLog.d( Utils.TAG, " ------------> CARD[" + ( i + 1 ) + "] - REMOVED! " );
+                            remoteViews.setViewVisibility( ids_previous[ i ], View.GONE );
+//                            remoteViews.removeAllViews( ids_previous[ i ] );
+                            remoteViews.setViewVisibility( ids_next[ i ], View.GONE );
+//                            remoteViews.removeAllViews( ids_next[ i ] );
+                        }
                     }
                 }
 
@@ -361,7 +378,7 @@ public class SmartpushNotificationManager {
                 SmartpushLog.e( Utils.TAG, e.getMessage(), e );
             }
         }
-
+        SmartpushLog.d( Utils.TAG, " ------------> DONE! " );
         return remoteViews;
     }
 
