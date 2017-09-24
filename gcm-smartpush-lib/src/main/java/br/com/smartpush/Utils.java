@@ -67,6 +67,8 @@ final public class Utils {
         int PUSH_INTERNAL_ID = 427738108;
 
         int[] PUSH_DEFAULT_ICONS = {
+                R.drawable.ic_notif_getmo,
+/**
                 R.drawable.ic_esporte,
                 R.drawable.ic_cultura,
                 R.drawable.ic_turismo,
@@ -84,6 +86,7 @@ final public class Utils {
                 R.drawable.ic_bebes_criancas,
                 R.drawable.ic_casa_jardim,
                 R.drawable.ic_animais,
+*/
                 R.drawable.ic_sp_notif_buscape  // BUSCAPE
         };
     }

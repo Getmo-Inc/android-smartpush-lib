@@ -54,6 +54,8 @@ public class SmartpushService extends IntentService {
 //    private static final String ACTION_GET_CARRIER = "action.GET_CARRIER";
 //    public  static final String ACTION_GET_APP_LIST = "action.GET_APP_LIST";
     public  static final String ACTION_NOTIF_UPDATABLE = "action.UPDATABLE";
+    public  static final String ACTION_NOTIF_UPDATABLE_NEXT = "action.UPDATABLE_NEXT";
+    public  static final String ACTION_NOTIF_UPDATABLE_PREV = "action.UPDATABLE_PREV";
     public  static final String ACTION_NOTIF_CANCEL = "action.CANCEL";
     public  static final String ACTION_NOTIF_REDIRECT = "action.REDIRECT";
 
@@ -423,9 +425,11 @@ public class SmartpushService extends IntentService {
                 handleActionTrackAction(intent);
             } else if ( ACTION_GET_MSISDN.equals( action ) ) {
                 handleActionCheckMsisdn( );
-            } else if ( ACTION_NOTIF_UPDATABLE.equals( action ) ) {
+            } else if ( ACTION_NOTIF_UPDATABLE.equals( action )
+                    || ACTION_NOTIF_UPDATABLE_NEXT.equals( action )
+                    || ACTION_NOTIF_UPDATABLE_PREV.equals( action ) ) {
                 Bundle data = intent.getExtras();
-                SmartpushLog.d( Utils.TAG, Utils.ArrayUtils.bundle2string( data ) );
+                SmartpushLog.d( Utils.TAG, "----------> " + Utils.ArrayUtils.bundle2string( data ) );
                 new SmartpushNotificationManager( this ).onMessageReceived( null, data );
             } else if ( ACTION_NOTIF_CANCEL.equals( action ) ) {
                 Bundle data = intent.getExtras();
@@ -885,6 +889,7 @@ public class SmartpushService extends IntentService {
         SmartpushHttpClient.post( "hit", fields, this, false );
     }
 
+    // TODO implementar LIST APPS na forma de broadcast!
 //    private void handleActionSaveAppsListState() {
 //        SQLiteDatabase db = new DatabaseManager( this ).getWritableDatabase();
 //
@@ -958,7 +963,7 @@ public class SmartpushService extends IntentService {
 //                    uninstalled.add( item.getPackageName() );
 //                }
 //
-//                // TODO LIST APPS - revisar para proxima versao da SDK, completar a operacao de persistencia
+//                // LIST APPS - revisar para proxima versao da SDK, completar a operacao de persistencia
 ////                item.setSinc( SmartpushConnectivityUtil.isConnected( this ) );
 ////                AppInfoDAO.save( db, item );
 //            }

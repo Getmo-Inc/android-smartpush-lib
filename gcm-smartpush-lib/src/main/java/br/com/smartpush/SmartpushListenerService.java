@@ -11,6 +11,7 @@ import com.google.android.gms.gcm.GcmListenerService;
 import static br.com.smartpush.Utils.Constants.LAUNCH_ICON;
 import static br.com.smartpush.Utils.Constants.NOTIF_TITLE;
 import static br.com.smartpush.Utils.Constants.NOTIF_URL;
+import static br.com.smartpush.Utils.Constants.NOTIF_VIDEO_URI;
 
 /**
  * Created by fabio.licks on 10/02/16.
@@ -74,6 +75,21 @@ public abstract class SmartpushListenerService extends GcmListenerService {
                     // Tracking
                     Smartpush.hit( this, pushId, null, null, SmartpushHitUtils.Action.ONLINE, null );
                 } else {
+
+                    // Retrieve updated payload
+                    data = SmartpushHttpClient.getPushPayload( this, pushId, data );
+
+                    // If has "video" attribute in bundle prefetch
+                    if ( data.containsKey( NOTIF_VIDEO_URI ) ) {
+                        // Prefetching video...
+                        String midiaId =
+                                data.getString( NOTIF_VIDEO_URI, null );
+
+                        CacheManager
+                                .getInstance( this )
+                                .prefetchVideo( midiaId, CacheManager.ExpirationTime.NONE );
+                    }
+
                     // RICH NOTIFICATION
                     new SmartpushNotificationManager( this ).onMessageReceived( from, data );
                 }

@@ -29,16 +29,15 @@ import java.util.List;
 import static br.com.smartpush.SmartpushService.ACTION_NOTIF_CANCEL;
 import static br.com.smartpush.SmartpushService.ACTION_NOTIF_REDIRECT;
 import static br.com.smartpush.SmartpushService.ACTION_NOTIF_UPDATABLE;
+import static br.com.smartpush.SmartpushService.ACTION_NOTIF_UPDATABLE_NEXT;
+import static br.com.smartpush.SmartpushService.ACTION_NOTIF_UPDATABLE_PREV;
 import static br.com.smartpush.Utils.CommonUtils.getValue;
-import static br.com.smartpush.Utils.Constants.LAUNCH_ICON;
 import static br.com.smartpush.Utils.Constants.NOTIF_AUTO_CANCEL;
 import static br.com.smartpush.Utils.Constants.NOTIF_BANNER;
 import static br.com.smartpush.Utils.Constants.NOTIF_CATEGORY;
-import static br.com.smartpush.Utils.Constants.NOTIF_CATEGORY_BUSCAPE;
 import static br.com.smartpush.Utils.Constants.NOTIF_DETAIL;
 import static br.com.smartpush.Utils.Constants.NOTIF_TITLE;
 import static br.com.smartpush.Utils.Constants.NOTIF_VIBRATE;
-import static br.com.smartpush.Utils.Constants.NOTIF_VIDEO_URI;
 import static br.com.smartpush.Utils.Constants.PUSH_DEFAULT_ICONS;
 import static br.com.smartpush.Utils.Constants.PUSH_INTERNAL_ID;
 import static br.com.smartpush.Utils.TAG;
@@ -113,32 +112,33 @@ public class SmartpushNotificationManager {
     }
 
     public void onMessageReceived( String from, Bundle data ) {
-        // TODO revisar
+        // TODO Excluir apos testes...
         SmartpushLog.d( Utils.TAG, "PACKAGE_NAME: " + mContext.getApplicationContext().getPackageName() );
 
         if ( data != null && !data.isEmpty() ) {  // has effect of unparcelling Bundle
-            String pushId =
-                    SmartpushHitUtils.getValueFromPayload(
-                            SmartpushHitUtils.Fields.PUSH_ID, data );
+
+//            String pushId =
+//                    SmartpushHitUtils.getValueFromPayload(
+//                            SmartpushHitUtils.Fields.PUSH_ID, data );
 
             // MUTABLE NOTIFICATION SCHEDULE - begin
             // TODO: MUTABLE NOTIFICATION : implementar, revisar e liberar em uma versao futura da SDK.
             // scheduleNotificationRefreshTime( data );
             // MUTABLE NOTIFICATION SCHEDULE - end
 
-            // Retrieve updated payload
-            data = SmartpushHttpClient.getPushPayload( mContext, pushId, data );
-
-            // If has "video" attribute in bundle prefetch
-            if ( data.containsKey( NOTIF_VIDEO_URI ) ) {
-                // Prefetching video...
-                String midiaId =
-                        data.getString( NOTIF_VIDEO_URI, null );
-
-                CacheManager
-                        .getInstance( mContext )
-                        .prefetchVideo( midiaId, CacheManager.ExpirationTime.NONE );
-            }
+//            // Retrieve updated payload
+//            data = SmartpushHttpClient.getPushPayload( mContext, pushId, data );
+//
+//            // If has "video" attribute in bundle prefetch
+//            if ( data.containsKey( NOTIF_VIDEO_URI ) ) {
+//                // Prefetching video...
+//                String midiaId =
+//                        data.getString( NOTIF_VIDEO_URI, null );
+//
+//                CacheManager
+//                        .getInstance( mContext )
+//                        .prefetchVideo( midiaId, CacheManager.ExpirationTime.NONE );
+//            }
 
             createNotification( data );
         }
@@ -277,13 +277,11 @@ public class SmartpushNotificationManager {
                 // TODO adjust animate true!
                 throw new RuntimeException( "Not implemented yet" );
             } else {
-                SmartpushLog.d(Utils.TAG, " ------------> FETCHING BANNERS! ");
                 List<SlideInfo> slides = new ArrayList<>();
-
                 for (int i = 0; i < 5; i++) {
                     if (payloadExtra.has("frame:" + (i + 1) + ":banner")
                             && (payloadExtra.has("frame:" + (i + 1) + ":url"))) {
-
+                        SmartpushLog.d(Utils.TAG, " ------------> FETCHING BANNER [" + (i + 1) + "] ");
                         try {
                             SlideInfo slide = new SlideInfo();
                             slide.bitmap =
@@ -292,17 +290,19 @@ public class SmartpushNotificationManager {
                                             .loadBitmap(payloadExtra.getString("frame:"
                                                     + (i + 1) + ":banner"), CacheManager.ExpirationTime.DAY);
 
-                            slide.url = payloadExtra.getString("frame:" + (i + 1) + ":url");
+                            slide.url = payloadExtra.getString( "frame:" + (i + 1) + ":url" );
 
-                            if (slide.bitmap != null && slide.url != null) {
-                                slides.add(slide);
-                                SmartpushLog.d(Utils.TAG, slide.toString());
+                            if ( slide.bitmap != null && slide.url != null ) {
+                                slides.add( slide );
+                                SmartpushLog.d( Utils.TAG, slide.toString() );
                             }
                         } catch ( JSONException e ) {
-                            SmartpushLog.e(Utils.TAG, e.getMessage(), e);
+                            SmartpushLog.e( Utils.TAG, e.getMessage(), e );
                         }
                     }
                 }
+
+                SmartpushLog.d(Utils.TAG, " ------------> BANNERS COUNT:" + slides.size() );
 
                 switch ( slides.size() ) {
                     case 0:
@@ -352,40 +352,40 @@ public class SmartpushNotificationManager {
                     SmartpushLog.d(Utils.TAG, " ------------> CONFIG NAV BUTTONS! START ");
                     // config navigate buttons
                     Intent itNext = new Intent(mContext, SmartpushService.class)
-                            .setAction(ACTION_NOTIF_UPDATABLE)
+                            .setAction(ACTION_NOTIF_UPDATABLE_NEXT)
                             .putExtras(data)
                             .putExtra("flip.next", true)
                             .putExtra("flip.previous", false);
 
                     remoteViews
                             .setOnClickPendingIntent(
-                                    R.id.btnNext, PendingIntent.getService(mContext, 0, itNext, 0));
+                                    R.id.btnNext,
+                                    PendingIntent.getService( mContext, 0, itNext, PendingIntent.FLAG_UPDATE_CURRENT ) );
 
                     Intent itPrevious = new Intent(mContext, SmartpushService.class)
-                            .setAction(ACTION_NOTIF_UPDATABLE)
+                            .setAction(ACTION_NOTIF_UPDATABLE_PREV)
                             .putExtras(data)
                             .putExtra("flip.next", false)
                             .putExtra("flip.previous", true);
 
                     remoteViews
                             .setOnClickPendingIntent(
-                                    R.id.btnPrevious, PendingIntent.getService(mContext, 0, itPrevious, 0));
+                                    R.id.btnPrevious,
+                                    PendingIntent.getService(mContext, 0, itPrevious, PendingIntent.FLAG_UPDATE_CURRENT ) );
 
                     SmartpushLog.d(Utils.TAG, " ------------> CONFIG NAV BUTTONS! END ");
 
                     // Adjust viewflipper visibility & move cards
-                    if (data.getBoolean("flip.next", false)) {
-                        SmartpushLog.d(Utils.TAG, " ------------> GOING TO NEXT! ");
-                        remoteViews.setViewVisibility(R.id.carroussel_next, View.VISIBLE);
-                        remoteViews.setViewVisibility(R.id.carroussel_previous, View.GONE);
-                        remoteViews.showNext(R.id.carroussel_next);
-                        remoteViews.showNext(R.id.carroussel_previous);
-                    } else if (data.getBoolean("flip.next", true)) {
-                        SmartpushLog.d(Utils.TAG, " ------------> GOING TO PREV! ");
-                        remoteViews.setViewVisibility(R.id.carroussel_previous, View.VISIBLE);
-                        remoteViews.setViewVisibility(R.id.carroussel_next, View.GONE);
-                        remoteViews.showPrevious(R.id.carroussel_previous);
-                        remoteViews.showPrevious(R.id.carroussel_next);
+                    if ( data.getBoolean( "flip.next", false ) ) {
+                        remoteViews.setViewVisibility( R.id.carroussel_previous, View.GONE );
+                        remoteViews.setViewVisibility( R.id.carroussel_next, View.VISIBLE );
+                        remoteViews.showNext( R.id.carroussel_next );
+                        remoteViews.showNext( R.id.carroussel_previous );
+                    } else if ( data.getBoolean( "flip.previous", false ) ) {
+                        remoteViews.setViewVisibility( R.id.carroussel_next, View.GONE );
+                        remoteViews.setViewVisibility( R.id.carroussel_previous, View.VISIBLE );
+                        remoteViews.showPrevious( R.id.carroussel_previous );
+                        remoteViews.showPrevious( R.id.carroussel_next );
                     }
 
                     SmartpushLog.d(Utils.TAG, " ------------> SETTING SLIDES! ");
@@ -415,15 +415,28 @@ public class SmartpushNotificationManager {
                             Utils.Smartpush
                                     .getIntentToRedirect(mContext, slide.url, null, data);
 
-                    remoteViews
-                            .setOnClickPendingIntent(
-                                    R.id.root, PendingIntent.getService(mContext, 0, actionIntent, 0));
-
                     if ( slides.size() == 1 ) {
                         remoteViews.setImageViewBitmap( R.id.frame_1, slide.bitmap);
+
+//                        remoteViews
+//                                .setOnClickPendingIntent(
+//                                        R.id.frame_1,
+//                                        PendingIntent.getService( mContext, 0, actionIntent, PendingIntent.FLAG_UPDATE_CURRENT ) );
                     } else {
                         remoteViews.setImageViewBitmap(ids_previous[i], slide.bitmap);
+
+//                        remoteViews
+//                                .setOnClickPendingIntent(
+//                                        ids_previous[i],
+//                                        PendingIntent.getService( mContext, 0, actionIntent, PendingIntent.FLAG_UPDATE_CURRENT ) );
+
                         remoteViews.setImageViewBitmap(ids_next[i], slide.bitmap);
+
+//                        remoteViews
+//                                .setOnClickPendingIntent(
+//                                        ids_next[i],
+//                                        PendingIntent.getService( mContext, 0, actionIntent, PendingIntent.FLAG_UPDATE_CURRENT ) );
+
                     }
                 }
             }
@@ -436,44 +449,69 @@ public class SmartpushNotificationManager {
     private int getPushIcon( Bundle extras ) {
         int category =
                 Integer.parseInt( getValue( extras.getString( NOTIF_CATEGORY ), "1" )  ) ;
-
-        category = ( category >= PUSH_DEFAULT_ICONS.length ) ? 1 : category;
-
-        return PUSH_DEFAULT_ICONS[ category - 1 ];
+//        category = ( category >= PUSH_DEFAULT_ICONS.length ) ? 1 : category;
+        // TODO ... pensar alguma solucao melhor.
+        // Hack - begin
+        switch( category ) {
+            case 18:
+                return PUSH_DEFAULT_ICONS[ 1 ]; // Buscape
+            default:
+                return PUSH_DEFAULT_ICONS[ 0 ]; // Getmo
+        }
+        // Hack - end
+//        return PUSH_DEFAULT_ICONS[ category - 1 ];
     }
 
     private void setBigIcon( Bundle extras, NotificationCompat.Builder builder ) {
-        String urlpath = extras.getString( LAUNCH_ICON );
-
+//        String urlpath = extras.getString( LAUNCH_ICON );
+//
         Resources resources = mContext.getResources();
+//
+//        if ( urlpath == null ) {
+//            int category =
+//                    Integer.parseInt( getValue( extras.getString( NOTIF_CATEGORY ), "1" ) ) ;
+//
+//            category = ( category >= PUSH_DEFAULT_ICONS.length ) ? 1 : category;
+//
+//            if ( category == NOTIF_CATEGORY_BUSCAPE ) {
+//                builder.setLargeIcon(
+//                        BitmapFactory.decodeResource( resources, R.drawable.ic_sp_buscape ) );
+//            }
+//
+//            return;
+//        }
+//
+////			int h = ( int ) getResources().getDimension( android.R.dimen.notification_large_icon_height );
+////			int w = ( int ) getResources().getDimension( android.R.dimen.notification_large_icon_width );
+//
+//        float scaleFactor = resources.getDisplayMetrics().density;
+//        int size = ( int ) ( 48 * scaleFactor + 0.5f );
+//
+//        Bitmap b =
+//                CacheManager
+//                        .getInstance( mContext )
+//                        .loadBitmap( urlpath, CacheManager.ExpirationTime.DAY );
+//
+//        if ( b != null ) {
+//            builder.setLargeIcon( Bitmap.createScaledBitmap( b, size, size, false ) );
+//        }
 
-        if ( urlpath == null ) {
-            int category =
-                    Integer.parseInt( getValue( extras.getString( NOTIF_CATEGORY ), "1" ) ) ;
+        int category =
+                Integer.parseInt( getValue( extras.getString( NOTIF_CATEGORY ), "1" )  ) ;
 
-            category = ( category >= PUSH_DEFAULT_ICONS.length ) ? 1 : category;
+//        category = ( category >= PUSH_DEFAULT_ICONS.length ) ? 1 : category;
 
-            if ( category == NOTIF_CATEGORY_BUSCAPE ) {
+        // TODO ... pensar alguma solucao melhor.
+        switch( category ) {
+            case 18:
+                // Buscape
                 builder.setLargeIcon(
                         BitmapFactory.decodeResource( resources, R.drawable.ic_sp_buscape ) );
-            }
-
-            return;
-        }
-
-//			int h = ( int ) getResources().getDimension( android.R.dimen.notification_large_icon_height );
-//			int w = ( int ) getResources().getDimension( android.R.dimen.notification_large_icon_width );
-
-        float scaleFactor = resources.getDisplayMetrics().density;
-        int size = ( int ) ( 48 * scaleFactor + 0.5f );
-
-        Bitmap b =
-                CacheManager
-                        .getInstance( mContext )
-                        .loadBitmap( urlpath, CacheManager.ExpirationTime.DAY );
-
-        if ( b != null ) {
-            builder.setLargeIcon( Bitmap.createScaledBitmap( b, size, size, false ) );
+                break;
+            default:
+                // Getmo
+                builder.setLargeIcon(
+                        BitmapFactory.decodeResource( resources, R.drawable.ic_getmo ) );
         }
     }
 
