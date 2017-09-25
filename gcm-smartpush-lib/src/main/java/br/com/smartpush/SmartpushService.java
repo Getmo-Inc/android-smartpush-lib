@@ -2,6 +2,7 @@ package br.com.smartpush;
 
 import android.annotation.TargetApi;
 import android.app.IntentService;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
@@ -29,6 +30,7 @@ import java.util.Locale;
 
 import static br.com.smartpush.Utils.Constants.NOTIF_PACKAGENAME;
 import static br.com.smartpush.Utils.Constants.NOTIF_URL;
+import static br.com.smartpush.Utils.Constants.PUSH_INTERNAL_ID;
 import static br.com.smartpush.Utils.Constants.SMARTP_LOCATION_HASH;
 import static br.com.smartpush.Utils.TAG;
 
@@ -436,6 +438,18 @@ public class SmartpushService extends IntentService {
                 handleActionCancelNotification( data );
             } else if ( ACTION_NOTIF_REDIRECT.equals( action ) ) {
                 Bundle data = intent.getExtras();
+
+                if ( data != null && SmartpushNotificationManager.isAutoCancel( data ) ) {
+                    NotificationManager manager =
+                            ( NotificationManager ) getSystemService( NOTIFICATION_SERVICE );
+
+                    // Cancels the notification
+                    manager.cancel( PUSH_INTERNAL_ID );
+                }
+
+                // Close notification bar!
+                sendBroadcast( new Intent( Intent.ACTION_CLOSE_SYSTEM_DIALOGS ) );
+
                 handleActionRedirectNotification( data );
             }
 //            else if ( ACTION_GET_APP_LIST.equals( action ) ) {
@@ -481,13 +495,32 @@ public class SmartpushService extends IntentService {
         LocalBroadcastManager.getInstance(this).sendBroadcast(registrationComplete);
     }
 
-    private void handleActionRedirectNotification( Bundle extras ) {
+    private void handleActionRedirectNotification( Bundle data ) {
         // Hit notification clicked!
         String pushId =
                 SmartpushHitUtils.getValueFromPayload(
-                        SmartpushHitUtils.Fields.PUSH_ID, extras );
+                        SmartpushHitUtils.Fields.PUSH_ID, data );
 
-        startActionTrackAction( this, pushId, null, null, SmartpushHitUtils.Action.CLICKED.name(), null  );
+        String label = null;
+        if ( data.containsKey( "frame.current" ) ) {
+            int slideClickedId = data.getInt( "frame.current", 0 );
+
+            String extras =
+                    ( data.containsKey( Utils.Constants.PUSH_EXTRAS )
+                            ? data.getString( Utils.Constants.PUSH_EXTRAS ) : null );
+
+            if ( extras != null ) {
+                JSONObject payloadExtra = null;
+                try {
+                    payloadExtra = new JSONObject( extras );
+                    label = payloadExtra.getString( "frame:" + ( slideClickedId + 1 ) + ":url" );
+                } catch ( JSONException e ) {
+                    SmartpushLog.e( Utils.TAG, e.getMessage(), e );
+                }
+            }
+        }
+
+        startActionTrackAction( this, pushId, null, null, SmartpushHitUtils.Action.CLICKED.name(), label );
 
         // TODO MUTABLE PUSH NOTIFICATION
 //        // Configure PendingIntent to Cancel refresh
@@ -510,13 +543,13 @@ public class SmartpushService extends IntentService {
 //        SmartpushLog.d( TAG, "-------------------> REFRESH CANCELED." );
 
         //
-        String action = ( extras.containsKey( NOTIF_URL ) )
-                ? extras.getString( NOTIF_URL ) : extras.getString( "link" );
+        String action = ( data.containsKey( NOTIF_URL ) )
+                ? data.getString( NOTIF_URL ) : data.getString( "link" );
 
-        String packageName = extras.getString( NOTIF_PACKAGENAME );
+        String packageName = data.getString( NOTIF_PACKAGENAME );
 
         Intent intent =
-                Utils.Smartpush.getIntentToRedirect( this, action, packageName, extras );
+                Utils.Smartpush.getIntentToRedirect( this, action, packageName, data );
 
         if ( intent != null && intent.resolveActivity( getPackageManager()) != null ) {
             startActivity( intent );
