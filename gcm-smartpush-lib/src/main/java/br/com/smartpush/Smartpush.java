@@ -158,7 +158,7 @@ public final class Smartpush {
             if ( checkSmartpush( context ) ) {
                 SmartpushService.subscrive( context );
                 SmartpushService.getMsisdn( context );
-                SmartpushService.getMccMnc( context );
+//                SmartpushService.getMccMnc( context );
 //                SmartpushService.getAppList( context );
             }
         }

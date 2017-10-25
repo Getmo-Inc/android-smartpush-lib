@@ -1,6 +1,5 @@
 package br.com.smartpush;
 
-import android.annotation.TargetApi;
 import android.app.IntentService;
 import android.app.NotificationManager;
 import android.content.Context;
@@ -11,9 +10,6 @@ import android.location.Geocoder;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
-import android.telephony.SubscriptionInfo;
-import android.telephony.SubscriptionManager;
-import android.telephony.TelephonyManager;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
@@ -111,57 +107,57 @@ public class SmartpushService extends IntentService {
 //        context.startService(intent);
 //    }
 
-    /**
-     * Starts this service to perform action check msisdn with no parameters. If
-     * the service is already performing a task this action will be queued.
-     *
-     * @see IntentService
-     */
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP_MR1)
-    static void getMccMnc(Context context ) {
-        ArrayList<String> values = new ArrayList<>();
-        boolean supportMultiSim =
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1;
-
-        boolean hasPermissions  =
-                Utils.DeviceUtils.hasPermissions(
-                        context, android.Manifest.permission.READ_PHONE_STATE );
-
-        if ( supportMultiSim && hasPermissions ) {
-
-            //new way - gives access to all SIMs
-            SubscriptionManager subscriptionManager =
-                    ( SubscriptionManager ) context.getSystemService(
-                            Context.TELEPHONY_SUBSCRIPTION_SERVICE );
-
-            List<SubscriptionInfo> subInfoList =
-                    subscriptionManager.getActiveSubscriptionInfoList();
-
-            for( SubscriptionInfo info : subInfoList ) {
-                int mcc = info.getMcc();
-                int mnc = info.getMnc();
-
-                values.add( String.valueOf( mcc ) + String.valueOf( mnc ) );
-            }
-
-        } else {
-            TelephonyManager telephonyManager =
-                    ( TelephonyManager ) context.getSystemService( Context.TELEPHONY_SERVICE );
-
-            if ( telephonyManager != null ) {
-                String carrier = telephonyManager.getSimOperator();
-                if ( carrier != null
-                        && !"".equals( carrier.trim() )
-                        && !"NULL".equals( carrier.trim().toUpperCase() ) ) {
-
-                    values.add( carrier.toUpperCase() );
-                }
-            }
-        }
-
-        SmartpushLog.d( TAG, new JSONArray( values ).toString() );
-        startActionSetTag( context, "__CARRIER__", values );
-    }
+//    /**
+//     * Starts this service to perform action check msisdn with no parameters. If
+//     * the service is already performing a task this action will be queued.
+//     *
+//     * @see IntentService
+//     */
+//    @TargetApi(Build.VERSION_CODES.LOLLIPOP_MR1)
+//    static void getMccMnc(Context context ) {
+//        ArrayList<String> values = new ArrayList<>();
+//        boolean supportMultiSim =
+//                Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1;
+//
+//        boolean hasPermissions  =
+//                Utils.DeviceUtils.hasPermissions(
+//                        context, android.Manifest.permission.READ_PHONE_STATE );
+//
+//        if ( supportMultiSim && hasPermissions ) {
+//
+//            //new way - gives access to all SIMs
+//            SubscriptionManager subscriptionManager =
+//                    ( SubscriptionManager ) context.getSystemService(
+//                            Context.TELEPHONY_SUBSCRIPTION_SERVICE );
+//
+//            List<SubscriptionInfo> subInfoList =
+//                    subscriptionManager.getActiveSubscriptionInfoList();
+//
+//            for( SubscriptionInfo info : subInfoList ) {
+//                int mcc = info.getMcc();
+//                int mnc = info.getMnc();
+//
+//                values.add( String.valueOf( mcc ) + String.valueOf( mnc ) );
+//            }
+//
+//        } else {
+//            TelephonyManager telephonyManager =
+//                    ( TelephonyManager ) context.getSystemService( Context.TELEPHONY_SERVICE );
+//
+//            if ( telephonyManager != null ) {
+//                String carrier = telephonyManager.getSimOperator();
+//                if ( carrier != null
+//                        && !"".equals( carrier.trim() )
+//                        && !"NULL".equals( carrier.trim().toUpperCase() ) ) {
+//
+//                    values.add( carrier.toUpperCase() );
+//                }
+//            }
+//        }
+//
+//        SmartpushLog.d( TAG, new JSONArray( values ).toString() );
+//        startActionSetTag( context, "__CARRIER__", values );
+//    }
 
     /**
      * Starts this service to perform action setTAG with the given parameters. If
