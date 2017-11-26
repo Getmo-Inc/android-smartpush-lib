@@ -492,31 +492,6 @@ public class SmartpushService extends IntentService {
     }
 
     private void handleActionRedirectNotification( Bundle data ) {
-        // Hit notification clicked!
-        String pushId =
-                SmartpushHitUtils.getValueFromPayload(
-                        SmartpushHitUtils.Fields.PUSH_ID, data );
-
-        String label = null;
-        if ( data.containsKey( "frame.current" ) ) {
-            int slideClickedId = data.getInt( "frame.current", 0 );
-
-            String extras =
-                    ( data.containsKey( Utils.Constants.PUSH_EXTRAS )
-                            ? data.getString( Utils.Constants.PUSH_EXTRAS ) : null );
-
-            if ( extras != null ) {
-                JSONObject payloadExtra = null;
-                try {
-                    payloadExtra = new JSONObject( extras );
-                    label = payloadExtra.getString( "frame:" + ( slideClickedId + 1 ) + ":url" );
-                } catch ( JSONException e ) {
-                    SmartpushLog.e( Utils.TAG, e.getMessage(), e );
-                }
-            }
-        }
-
-        startActionTrackAction( this, pushId, null, null, SmartpushHitUtils.Action.CLICKED.name(), label );
 
         // TODO MUTABLE PUSH NOTIFICATION
 //        // Configure PendingIntent to Cancel refresh
@@ -551,6 +526,31 @@ public class SmartpushService extends IntentService {
             startActivity( intent );
         }
 
+        // Hit notification clicked!
+        String pushId =
+                SmartpushHitUtils.getValueFromPayload(
+                        SmartpushHitUtils.Fields.PUSH_ID, data );
+
+        String label = null;
+        if ( data.containsKey( "frame.current" ) ) {
+            int slideClickedId = data.getInt( "frame.current", 0 );
+
+            String extras =
+                    ( data.containsKey( Utils.Constants.PUSH_EXTRAS )
+                            ? data.getString( Utils.Constants.PUSH_EXTRAS ) : null );
+
+            if ( extras != null ) {
+                JSONObject payloadExtra = null;
+                try {
+                    payloadExtra = new JSONObject( extras );
+                    label = payloadExtra.getString( "frame:" + ( slideClickedId + 1 ) + ":url" );
+                } catch ( JSONException e ) {
+                    SmartpushLog.e( Utils.TAG, e.getMessage(), e );
+                }
+            }
+        }
+
+        startActionTrackAction( this, pushId, null, null, SmartpushHitUtils.Action.CLICKED.name(), label );
         SmartpushLog.d( TAG,
                 "-------------------> APP OPENED FROM NOTIFICATION. - " + pushId );
     }
