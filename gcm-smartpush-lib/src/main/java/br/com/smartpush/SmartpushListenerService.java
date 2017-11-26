@@ -40,11 +40,11 @@ public abstract class SmartpushListenerService extends GcmListenerService {
             NotificationManagerCompat nmc = NotificationManagerCompat.from( this );
             if ( nmc != null ) {
                 if ( !nmc.areNotificationsEnabled() ) {
-                    Smartpush.blockPush( this, true );
+//                    Smartpush.blockPush( this, true );
                     // CANCEL NOTIFICATION
                     return;
-                } else {
-                    Smartpush.blockPush( this, false );
+//                } else {
+//                    Smartpush.blockPush( this, false );
                 }
             }
 
@@ -72,8 +72,12 @@ public abstract class SmartpushListenerService extends GcmListenerService {
                     Smartpush.hit( this, pushId, null, null, SmartpushHitUtils.Action.INSTALLED, null);
 
                 } else if ( "LOOPBACK".equals( pushType ) ) {
-                    // Tracking
-                    Smartpush.hit( this, pushId, null, null, SmartpushHitUtils.Action.ONLINE, null );
+//                    // Tracking
+//                    Smartpush.hit( this, pushId, null, null, SmartpushHitUtils.Action.ONLINE, null );
+                    // 2. is it blocked? If yes abort notification...
+                    if ( nmc != null ) {
+                        Smartpush.blockPush( this, !nmc.areNotificationsEnabled() );
+                    }
                 } else {
 
                     // Retrieve updated payload
@@ -152,7 +156,6 @@ public abstract class SmartpushListenerService extends GcmListenerService {
             } else {
                 return;
             }
-
         }
 
         addIntent.setAction( "com.android.launcher.action.INSTALL_SHORTCUT" );
