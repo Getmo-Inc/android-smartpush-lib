@@ -213,8 +213,8 @@ public final class SmartpushHttpClient {
     private static String genUserAgent( Context _c ) {
         StringBuilder userAgent = new StringBuilder();
 
-        userAgent.append( "Smartpush;sdk_v;" )
-                 .append( _c.getString( R.string.smartp_version ) )
+        userAgent.append( "Smartpush;v" )
+                 .append( BuildConfig.VERSION_NAME )
                  .append( ";android;" )
                  .append( Build.VERSION.SDK_INT );
 

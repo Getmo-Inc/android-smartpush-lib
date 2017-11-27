@@ -174,6 +174,7 @@ public final class Smartpush {
     }
 
     private static boolean checkSmartpush(Context context) {
+        SmartpushLog.d( TAG, "Smartpush SDK : version " + BuildConfig.VERSION_NAME );
         SmartpushLog.d( TAG, "checkSmartpush() : begin - Configurations tests : " + context.getPackageName() );
 
         if ( Utils.Smartpush.getMetadata( context, Utils.Constants.SMARTP_API_KEY) == null ) {
@@ -245,5 +246,9 @@ public final class Smartpush {
         return  (  Utils.PreferenceUtils.readFromPreferences( context, Utils.Constants.SMARTP_REGID ) != null
                 && Utils.PreferenceUtils.readFromPreferences( context, Utils.Constants.SMARTP_ALIAS ) != null
                 && Utils.PreferenceUtils.readFromPreferences( context, Utils.Constants.SMARTP_HWID  ) != null );
+    }
+
+    public static String printVersion() {
+        return BuildConfig.VERSION_NAME;
     }
 }

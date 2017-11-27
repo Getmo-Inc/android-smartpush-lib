@@ -1,21 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
     package="br.com.getmo">
 
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
-    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission
+        android:name="android.permission.READ_PHONE_STATE"/>
+
+    <uses-permission
+        android:name="android.permission.VIBRATE"/>
+
+    <uses-permission
+        android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <!-- copy & adjust & adjust -->
     <permission
         android:name="br.com.getmo.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
+
     <uses-permission
         android:name="br.com.getmo.permission.C2D_MESSAGE" />
     <!-- copy & adjust & adjust -->
-
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-
-    <!-- -->
 
     <application
         android:allowBackup="true"
@@ -25,19 +29,41 @@
         android:theme="@style/AppTheme">
 
         <!-- copy & adjust & adjust -->
-        <meta-data android:name="br.com.smartpush.APPID"  android:value="@string/smartpush_appid" />
-        <meta-data android:name="br.com.smartpush.APIKEY" android:value="@string/smartpush_apikey"/>
-        <meta-data android:name="br.com.smartpush.PROXY" android:value="https://api.getmo.com.br/"/>
-        <meta-data android:name="br.com.smartpush.LOCATIONUPDT" android:value="IMMEDIATELY"/>
-        <meta-data android:name="br.com.smartpush.DEBUG" android:value="true"/>
-        <!-- copy & adjust & adjust -->
+        <meta-data
+            android:name="br.com.smartpush.APPID"
+            android:value="@string/smartpush_appid" />
 
-        <activity android:name=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <meta-data
+            android:name="br.com.smartpush.APIKEY"
+            android:value="@string/smartpush_apikey"/>
+
+        <meta-data
+            android:name="br.com.smartpush.PROXY"
+            android:value="https://api.getmo.com.br/"/>
+
+        <!--<meta-data -->
+            <!--android:name="br.com.smartpush.LOCATIONUPDT" -->
+            <!--android:value="IMMEDIATELY"/>-->
+        <!---->
+        <!--<meta-data -->
+            <!--android:name="br.com.smartpush.DEBUG" -->
+            <!--android:value="true"/>-->
+
+        <!-- Set custom default icons. This is used when no icon is set for incoming notification messages. -->
+        <meta-data
+            android:name="br.com.smartpush.default_notification_small_icon"
+            android:resource="@drawable/ic_stat_ic_notification" />
+
+        <meta-data
+            android:name="br.com.smartpush.default_notification_big_icon"
+            android:resource="@drawable/ic_stat_ic_notification" />
+
+        <!-- Set color used with incoming notification messages. This is used when no color is set for the incoming
+             notification message. -->
+        <meta-data
+            android:name="br.com.smartpush.default_notification_color"
+            android:resource="@color/colorAccent" />
+        <!-- copy & adjust & adjust -->
 
         <!-- start : copy & paste area -->
         <receiver
@@ -84,6 +110,13 @@
             </intent-filter>
         </service>
         <!-- end : custom config area -->
+
+        <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
     </application>
 
