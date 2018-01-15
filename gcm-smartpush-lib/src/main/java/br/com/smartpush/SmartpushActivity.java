@@ -57,7 +57,6 @@ public final class SmartpushActivity extends AppCompatActivity {
             if ( extras != null && !"".equals( pushId ) ) {
                 if ( extras.containsKey( Utils.Constants.REDIRECTED ) ) {
                     Smartpush.hit(this, pushId, null, null, SmartpushHitUtils.Action.REDIRECTED, null);
-
                 }
             }
             // [END] Tracking
@@ -99,7 +98,6 @@ public final class SmartpushActivity extends AppCompatActivity {
         if ( extras != null && !"".equals( pushId ) ) {
             if ( extras.containsKey( Utils.Constants.REDIRECTED ) ) {
                 Smartpush.hit(this, pushId, null, null, SmartpushHitUtils.Action.REDIRECTED, null);
-
             }
         }
         // [END] Tracking

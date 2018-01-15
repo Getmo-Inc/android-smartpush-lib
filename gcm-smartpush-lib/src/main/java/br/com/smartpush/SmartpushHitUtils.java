@@ -35,4 +35,8 @@ final class SmartpushHitUtils {
     public static String getValueFromPayload( Fields field, Bundle payload ) {
         return ( payload != null && payload.containsKey( field.getParamName() ) ) ? payload.getString( field.getParamName() ) : "";
     }
+
+    public static boolean shouldSendHitsToGetmo( Bundle payload ) {
+        return ( payload.getInt( "send_hits_to_getmo", 1 ) == 1 ) ? true : false;
+    }
 }

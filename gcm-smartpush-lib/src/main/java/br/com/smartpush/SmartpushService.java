@@ -885,7 +885,6 @@ public class SmartpushService extends IntentService {
     private void handleActionTrackAction( Intent data ) {
         HashMap<String,String> fields = new HashMap<>();
         fields.put( "uuid", Utils.PreferenceUtils.readFromPreferences( this, Utils.Constants.SMARTP_HWID ) );
-//        fields.put( "latlong", "0,0" );
         fields.put( "appid", Utils.Smartpush.getMetadata(this, Utils.Constants.SMARTP_APP_ID) );
         fields.put( "devid", Utils.Smartpush.getMetadata( this, Utils.Constants.SMARTP_API_KEY ) );
         fields.put( "regid", Utils.PreferenceUtils.readFromPreferences( this, Utils.Constants.SMARTP_REGID ) );
@@ -916,6 +915,7 @@ public class SmartpushService extends IntentService {
                     b.getString( SmartpushHitUtils.Fields.LABEL.getParamName() ) );
 
         SmartpushHttpClient.post( "hit", fields, this, false );
+
     }
 
     // TODO implementar LIST APPS na forma de broadcast!

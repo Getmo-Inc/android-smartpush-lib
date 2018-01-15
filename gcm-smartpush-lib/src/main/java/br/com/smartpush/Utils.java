@@ -35,6 +35,9 @@ final public class Utils {
         String SMARTP_LOCATION_HASH = "br.com.smartpush.LOCATION_HASH";
         String SMARTP_LOCATIONUPDT = "br.com.smartpush.LOCATIONUPDT";
         String SMARTP_LOCATIONUPDT_IMMEDIATELY = "IMMEDIATELY";
+        String SMARTP_SMALL_ICON = "br.com.smartpush.default_notification_small_icon";
+        String SMARTP_BIG_ICON = "br.com.smartpush.default_notification_big_icon";
+        String SMARTP_NOTIFICATION_COLOR = "br.com.smartpush.default_notification_color";
         String SMARTP_HWID = "br.com.smartpush.HWID";
         String SMARTP_ALIAS = "br.com.smartpush.ALIAS";
         String SMARTP_REGID = "br.com.smartpush.REGID";
@@ -61,34 +64,7 @@ final public class Utils {
         String PUSH_EXTRAS       = "push.extras";
         String PUSH_UPDATE_COUNT = "push.update.count";
 
-
-        // Se o array de icones for alterado tem de ajustar o indice desta variavel.
-        int NOTIF_CATEGORY_BUSCAPE = 18;
         int PUSH_INTERNAL_ID = 427738108;
-
-        int[] PUSH_DEFAULT_ICONS = {
-                R.drawable.ic_notif_getmo,
-/**
-                R.drawable.ic_esporte,
-                R.drawable.ic_cultura,
-                R.drawable.ic_turismo,
-                R.drawable.ic_noticias,
-                R.drawable.ic_imoveis,
-                R.drawable.ic_veiculos,
-                R.drawable.ic_refeicoes,
-                R.drawable.ic_vestuario,         // vestuario
-                R.drawable.stat_notify_weather,  // outros
-                R.drawable.ic_celular_tablets,
-                R.drawable.ic_eletro_info,
-                R.drawable.ic_eventos,
-                R.drawable.ic_empregos_negocios,
-                R.drawable.ic_promocoes,
-                R.drawable.ic_bebes_criancas,
-                R.drawable.ic_casa_jardim,
-                R.drawable.ic_animais,
-*/
-                R.drawable.ic_sp_notif_buscape  // BUSCAPE
-        };
     }
 
     //=============================================================================================
@@ -276,6 +252,23 @@ final public class Utils {
             }
 
             return "";
+        }
+
+        public static int getResourceIdFromMetadata( Context _c, String key ) {
+            try {
+                ApplicationInfo ai =
+                        _c.getPackageManager()
+                                .getApplicationInfo(_c.getPackageName(), PackageManager.GET_META_DATA);
+                return ai.metaData.getInt(key, -1);
+            } catch ( PackageManager.NameNotFoundException e ) {
+                SmartpushLog.e(TAG,
+                        "Failed to load meta-data, NameNotFound: " + e.getMessage(), e);
+            } catch ( NullPointerException e ) {
+                SmartpushLog.e(TAG,
+                        "Failed to load meta-data, NullPointer: " + e.getMessage(), e);
+            }
+
+            return -1;
         }
 
         public static Intent getIntentToRedirect( Context context, String url, String packageName, Bundle extras ) {

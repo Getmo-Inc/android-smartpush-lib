@@ -16,7 +16,7 @@
             android:id="@+id/thumb_icon"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:src="@drawable/ic_sp_buscape"
+            android:src="@drawable/ic_getmo"
             tools:ignore="ContentDescription" />
 
         <LinearLayout

@@ -5,7 +5,6 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -31,15 +30,12 @@ import static br.com.smartpush.SmartpushService.ACTION_NOTIF_REDIRECT;
 import static br.com.smartpush.SmartpushService.ACTION_NOTIF_UPDATABLE;
 import static br.com.smartpush.SmartpushService.ACTION_NOTIF_UPDATABLE_NEXT;
 import static br.com.smartpush.SmartpushService.ACTION_NOTIF_UPDATABLE_PREV;
-import static br.com.smartpush.Utils.CommonUtils.getValue;
 import static br.com.smartpush.Utils.Constants.NOTIF_AUTO_CANCEL;
 import static br.com.smartpush.Utils.Constants.NOTIF_BANNER;
-import static br.com.smartpush.Utils.Constants.NOTIF_CATEGORY;
 import static br.com.smartpush.Utils.Constants.NOTIF_DETAIL;
 import static br.com.smartpush.Utils.Constants.NOTIF_TITLE;
 import static br.com.smartpush.Utils.Constants.NOTIF_URL;
 import static br.com.smartpush.Utils.Constants.NOTIF_VIBRATE;
-import static br.com.smartpush.Utils.Constants.PUSH_DEFAULT_ICONS;
 import static br.com.smartpush.Utils.Constants.PUSH_INTERNAL_ID;
 import static br.com.smartpush.Utils.TAG;
 
@@ -54,20 +50,17 @@ import static br.com.smartpush.Utils.TAG;
     "params": {
         "type": "BANNER|SLIDER|CARROUSSEL|SUBSCRIBE_EMAIL|SUBSCRIBE_PHONE",
         "provider": "SMARTPUSH",
-        "icon": "",
-        "category": 1,
         "title": "",
         "detail": "",
         "banner": "",
-        "open_url_in_browser":1,
         "url": "",
         "package": "",
         "ac": "",
         "vib": "",
         "video": "",
-        "play_video_only_on_wifi": 1,
-        "color":""
-    },
+        "open_url_in_browser":1,
+        "send_hits_to_getmo":1,
+ },
     "extras": {
         "animate": true,
 
@@ -95,9 +88,11 @@ import static br.com.smartpush.Utils.TAG;
 
  Changes:
     ADDED:
-    Atributo "color" foi adicionado a notificacao.
 
     REMOVED:
+    Atributo "category" foi removido.
+    Atributo "icon" foi removido.
+    Atributo "color" foi removido.
     Atributo "play_video_only_on_wifi" foi removido.
     Atributo "video" foi removido dos frames!
     Atributo "animateRate"  foi removido dos frames!
@@ -113,19 +108,18 @@ public class SmartpushNotificationManager {
     }
 
     public void onMessageReceived( String from, Bundle data ) {
-        // TODO Excluir apos testes...
-        SmartpushLog.d( Utils.TAG, "PACKAGE_NAME: " + mContext.getApplicationContext().getPackageName() );
+//        // TODO Excluir apos testes...
+//        SmartpushLog.d( Utils.TAG, "PACKAGE_NAME: " + mContext.getApplicationContext().getPackageName() );
 
         if ( data != null && !data.isEmpty() ) {  // has effect of unparcelling Bundle
-
 //            String pushId =
 //                    SmartpushHitUtils.getValueFromPayload(
 //                            SmartpushHitUtils.Fields.PUSH_ID, data );
 
-            // MUTABLE NOTIFICATION SCHEDULE - begin
-            // TODO: MUTABLE NOTIFICATION : implementar, revisar e liberar em uma versao futura da SDK.
-            // scheduleNotificationRefreshTime( data );
-            // MUTABLE NOTIFICATION SCHEDULE - end
+//             MUTABLE NOTIFICATION SCHEDULE - begin
+//             TODO: MUTABLE NOTIFICATION : implementar, revisar e liberar em uma versao futura da SDK.
+//             scheduleNotificationRefreshTime( data );
+//             MUTABLE NOTIFICATION SCHEDULE - end
 
 //            // Retrieve updated payload
 //            data = SmartpushHttpClient.getPushPayload( mContext, pushId, data );
@@ -149,28 +143,23 @@ public class SmartpushNotificationManager {
     private void createNotification( Bundle extras ) {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder( mContext )
-                .setSmallIcon( getPushIcon( extras ) )               // Set Small Icon
                 .setAutoCancel   ( isAutoCancel( extras ) )          // Set Auto Cancel Action
-                .setContentIntent( addMainAction( extras ) )         // Set Main Action
-                .setDeleteIntent ( addDeleteAction( extras ) )       // Set Delete Action
+                .setColor        ( getPushColor() )                  // Set push color
                 .setContentTitle ( extras.getString( NOTIF_TITLE ) ) // Set Title
                 .setContentText  ( extras.getString( NOTIF_DETAIL ) )// Set 2nd line
-                .setWhen( System.currentTimeMillis() )               // Set WHEN ARRIVE
-                .setLights( Color.GREEN, 1000, 5000 )                // Set LIGHT Color and pattern
-                .setPriority( 5 );    // NotificationCompat.PRIORITY_HIGH
+                .setContentIntent( addMainAction( extras ) )         // Set Main Action
+                .setDeleteIntent ( addDeleteAction( extras ) )       // Set Delete Action
+                .setLargeIcon    ( getBigIcon() )                    // Set big icon
+                .setLights       ( Color.GREEN, 1000, 5000 )// Set LIGHT Color and pattern
+                .setSmallIcon    ( getPushIcon( ) )                      // Set Small Icon
+                .setWhen         ( System.currentTimeMillis() )          // Set WHEN ARRIVE
+                .setPriority     ( 5 );    // NotificationCompat.PRIORITY_HIGH
 
-        if ( vibrate( extras ) ) {                                   // NOTIF_VIBRATE
+        if ( vibrate( extras ) ) {                                       // NOTIF_VIBRATE
             builder.setVibrate(  new long[] { 100, 500, 200, 800 } );
         }
 
-        if ( extras.containsKey( "color" ) ) {
-            int color = Color.parseColor( extras.getString( "color" ) );
-            builder.setColor( color );
-        }
-
-        setBigIcon( extras, builder );                               // Set Large Icon
-
-        addSecondaryActions( extras, builder );                      // Set Secondary Actions
+        addSecondaryActions( extras, builder );                          // Set Secondary Actions
 
         String pushType  =
                 ( extras.containsKey( "type" ) )
@@ -346,6 +335,9 @@ public class SmartpushNotificationManager {
                             .setTextViewText(R.id.subtitle, data.getString(NOTIF_DETAIL));
                 }
 
+                // Set Big Icon
+                remoteViews.setImageViewBitmap( R.id.thumb_icon, getBigIcon() );
+
                 int pos = data.getInt( "frame.current", 0 );
                 SmartpushLog.d( Utils.TAG, "--------> POS: " + pos );
 
@@ -444,35 +436,29 @@ public class SmartpushNotificationManager {
         return remoteViews;
     }
 
-    private int getPushIcon( Bundle extras ) {
-        int category =
-                Integer.parseInt( getValue( extras.getString( NOTIF_CATEGORY ), "1" )  ) ;
+    private int getPushColor( ) {
+        int colorId =
+                Utils.Smartpush.getResourceIdFromMetadata( mContext, Utils.Constants.SMARTP_NOTIFICATION_COLOR );
 
-        switch( category ) {
-            case 18:
-                return PUSH_DEFAULT_ICONS[ 1 ]; // Buscape
-            default:
-                return PUSH_DEFAULT_ICONS[ 0 ]; // Getmo
-        }
+        colorId = ( colorId == -1 ) ? R.color.colorPrimary : colorId;
+
+        return mContext.getResources().getColor( colorId );
     }
 
-    private void setBigIcon( Bundle extras, NotificationCompat.Builder builder ) {
-        Resources resources = mContext.getResources();
+    private int getPushIcon( ) {
+        int smallIcon =
+                Utils.Smartpush.getResourceIdFromMetadata( mContext, Utils.Constants.SMARTP_SMALL_ICON );
 
-        int category =
-                Integer.parseInt( getValue( extras.getString( NOTIF_CATEGORY ), "1" )  ) ;
+        return ( smallIcon == -1 ) ? R.drawable.ic_notif_getmo :smallIcon;
+    }
 
-        switch( category ) {
-            case 18:
-                // Buscape
-                builder.setLargeIcon(
-                        BitmapFactory.decodeResource( resources, R.drawable.ic_sp_buscape ) );
-                break;
-            default:
-                // Getmo
-                builder.setLargeIcon(
-                        BitmapFactory.decodeResource( resources, R.drawable.ic_getmo ) );
-        }
+    private Bitmap getBigIcon( ) {
+        int bigIcon =
+                Utils.Smartpush.getResourceIdFromMetadata( mContext, Utils.Constants.SMARTP_BIG_ICON );
+
+        bigIcon = ( bigIcon == -1 ) ? R.drawable.ic_getmo : bigIcon;
+
+        return BitmapFactory.decodeResource( mContext.getResources(), bigIcon );
     }
 
     public static boolean isAutoCancel( Bundle extras ) {

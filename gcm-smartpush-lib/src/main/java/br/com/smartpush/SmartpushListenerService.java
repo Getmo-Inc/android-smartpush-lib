@@ -34,30 +34,30 @@ public abstract class SmartpushListenerService extends GcmListenerService {
                     SmartpushHitUtils.getValueFromPayload(
                             SmartpushHitUtils.Fields.PUSH_ID, data );
 
+//            Smartpush.hit( this, pushId, null, null, SmartpushHitUtils.Action.RECEIVED, null,
+//                    SmartpushHitUtils.shouldSendHitsToGetmo( data ) );
+
             Smartpush.hit( this, pushId, null, null, SmartpushHitUtils.Action.RECEIVED, null );
 
             // 2. is it blocked? If yes abort notification...
             NotificationManagerCompat nmc = NotificationManagerCompat.from( this );
             if ( nmc != null ) {
                 if ( !nmc.areNotificationsEnabled() ) {
-//                    Smartpush.blockPush( this, true );
                     // CANCEL NOTIFICATION
                     return;
-//                } else {
-//                    Smartpush.blockPush( this, false );
                 }
             }
 
             // 3.
-            String pushType  =
-                    ( data.containsKey( "type" ) )
-                            ? data.getString( "type" )
-                            : data.getString( "adtype" );
-
             String provider  =
                     ( data.containsKey( "provider" ) )
                             ? data.getString( "provider" )
                             : data.getString( "adnetwork" );
+
+            String pushType  =
+                    ( data.containsKey( "type" ) )
+                            ? data.getString( "type" )
+                            : data.getString( "adtype" );
 
             if ( "smartpush".equals( provider ) ) {
                 if ( "ICON_AD".equals( pushType ) ) {
@@ -74,12 +74,12 @@ public abstract class SmartpushListenerService extends GcmListenerService {
                 } else if ( "LOOPBACK".equals( pushType ) ) {
 //                    // Tracking
 //                    Smartpush.hit( this, pushId, null, null, SmartpushHitUtils.Action.ONLINE, null );
-                    // 2. is it blocked? If yes abort notification...
+
+                    // 2. Update status - optin/optout
                     if ( nmc != null ) {
                         Smartpush.blockPush( this, !nmc.areNotificationsEnabled() );
                     }
                 } else {
-
                     // Retrieve updated payload
                     data = SmartpushHttpClient.getPushPayload( this, pushId, data );
 

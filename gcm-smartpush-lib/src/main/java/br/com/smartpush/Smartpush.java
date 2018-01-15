@@ -20,24 +20,24 @@ import static br.com.smartpush.Utils.TAG;
  */
 public final class Smartpush {
 
-    private static int smallPushIcon = R.drawable.ic_notif_getmo;
-    private static int largePushIcon = R.drawable.ic_getmo;
-
-    public static void setSmallPushIcon( int drawableId ) {
-        smallPushIcon = drawableId;
-    }
-
-    public static void setLargePushIcon( int drawableId ) {
-        largePushIcon = drawableId;
-    }
-
-    public static int getSmallPushIcon( ) {
-        return smallPushIcon;
-    }
-
-    public static int getLargePushIcon( ) {
-        return largePushIcon;
-    }
+//    private static int smallPushIcon = R.drawable.ic_notif_getmo;
+//    private static int largePushIcon = R.drawable.ic_getmo;
+//
+//    public static void setSmallPushIcon( int drawableId ) {
+//        smallPushIcon = drawableId;
+//    }
+//
+//    public static void setLargePushIcon( int drawableId ) {
+//        largePushIcon = drawableId;
+//    }
+//
+//    public static int getSmallPushIcon( ) {
+//        return smallPushIcon;
+//    }
+//
+//    public static int getLargePushIcon( ) {
+//        return largePushIcon;
+//    }
 
     public static boolean areNotificationsEnabled( final Context context ) {
         NotificationManagerCompat nmc = NotificationManagerCompat.from( context );
@@ -56,7 +56,7 @@ public final class Smartpush {
                     SmartpushService.startActionBlockPush(context, block);
                     return !block;
                 } else {
-                    SmartpushLog.d( TAG, "Notifications have been blocked by the S.O." );
+                    SmartpushLog.d( TAG, "The Notification has been blocked by the S.O." );
                     return true;
                 }
             }
