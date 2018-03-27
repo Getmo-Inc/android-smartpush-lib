@@ -24,7 +24,6 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.UUID;
 
 import static br.com.smartpush.Utils.TAG;
 
@@ -182,32 +181,6 @@ public final class SmartpushHttpClient {
         }
 
         return null;
-    }
-
-    public static void sendHitToAnalytics( Context _c ) {
-        if ( !isConnected( _c ) ) return;
-
-        disableConnectionReuseIfNecessary();
-// TODO ...
-        try {
-            String mURL =
-                    String.format(
-                            "https://www.google-analytics.com/collect?v=1&tid=UA-108900354-1" +
-                                    "&cid=" + UUID.randomUUID() +
-                                    "&t=pageview" +
-                                    "&dp=%2Fhits%2F{$data['campaignId']}%2F{$data['appid']}%2F{$data['action']}", null );
-
-            URL url = new URL( mURL );
-
-            HttpURLConnection conn = ( HttpURLConnection ) url.openConnection();
-            conn.setRequestProperty( "User-Agent", genUserAgent( _c ) );
-            conn.disconnect();
-
-        } catch ( IOException e ) {
-            SmartpushLog.e( TAG, e.getMessage(), e );
-        }
-
-        return;
     }
 
     private static String getQueryString( HashMap<String,String> params ) throws UnsupportedEncodingException {

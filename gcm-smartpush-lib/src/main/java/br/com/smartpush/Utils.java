@@ -283,28 +283,21 @@ final public class Utils {
                 } else if ( extras.containsKey( NOTIF_VIDEO_URI ) ) {
                     intent = new Intent( context, SmartpushActivity.class );
                     intent.putExtras( extras );
-                } else if ( url != null ) {
-                    if ( url.startsWith( "http" ) || url.startsWith( "https" ) ) {
-                        boolean openInBrowser = true;
+                } else if ( url != null && url.contains( "://" )) {
+                    boolean openInBrowser = true;
 
-                        if ( extras.containsKey( OPEN_IN_BROWSER ) ) {
-                            openInBrowser = extras.getInt( OPEN_IN_BROWSER ) == 0 ? false : true;
-                        }
-
-                        if ( !openInBrowser ) {
-                            intent = new Intent( context, SmartpushActivity.class );
-                            intent.putExtras( extras );
-                            intent.putExtra( ONLY_PORTRAIT, true );
-                        } else {
-                            intent = new Intent( Intent.ACTION_VIEW, Uri.parse( url ));
-                        }
-                    } else if ( url.startsWith( "market://details?id=" ) ) {
-                        intent = new Intent( Intent.ACTION_VIEW, Uri.parse( url ) );
-                    } else {
-                        intent = new Intent();
-                        intent.putExtras( extras );
-                        intent.setData( Uri.parse( url ) );
+                    if ( extras.containsKey( OPEN_IN_BROWSER ) ) {
+                        openInBrowser = extras.getInt( OPEN_IN_BROWSER ) == 0 ? false : true;
                     }
+
+                    if ( !openInBrowser ) {
+                        intent = new Intent( context, SmartpushActivity.class );
+                        intent.putExtra( ONLY_PORTRAIT, true );
+                    } else {
+                        intent = new Intent( Intent.ACTION_VIEW, Uri.parse( url ));
+                    }
+
+                    intent.putExtras( extras );
                 }
             }
 

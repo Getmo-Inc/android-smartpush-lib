@@ -174,7 +174,7 @@ public final class Smartpush {
     }
 
     private static boolean checkSmartpush(Context context) {
-        SmartpushLog.d( TAG, "Smartpush SDK : version " + BuildConfig.VERSION_NAME );
+        SmartpushLog.d( TAG, "Smartpush SDK : " + printVersion() );
         SmartpushLog.d( TAG, "checkSmartpush() : begin - Configurations tests : " + context.getPackageName() );
 
         if ( Utils.Smartpush.getMetadata( context, Utils.Constants.SMARTP_API_KEY) == null ) {
@@ -249,6 +249,6 @@ public final class Smartpush {
     }
 
     public static String printVersion() {
-        return BuildConfig.VERSION_NAME;
+        return "Smartpush - version " + BuildConfig.VERSION_NAME ;
     }
 }

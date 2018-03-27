@@ -34,9 +34,6 @@ public abstract class SmartpushListenerService extends GcmListenerService {
                     SmartpushHitUtils.getValueFromPayload(
                             SmartpushHitUtils.Fields.PUSH_ID, data );
 
-//            Smartpush.hit( this, pushId, null, null, SmartpushHitUtils.Action.RECEIVED, null,
-//                    SmartpushHitUtils.shouldSendHitsToGetmo( data ) );
-
             Smartpush.hit( this, pushId, null, null, SmartpushHitUtils.Action.RECEIVED, null );
 
             // 2. is it blocked? If yes abort notification...
@@ -72,13 +69,15 @@ public abstract class SmartpushListenerService extends GcmListenerService {
                     Smartpush.hit( this, pushId, null, null, SmartpushHitUtils.Action.INSTALLED, null);
 
                 } else if ( "LOOPBACK".equals( pushType ) ) {
+
 //                    // Tracking
 //                    Smartpush.hit( this, pushId, null, null, SmartpushHitUtils.Action.ONLINE, null );
 
                     // 2. Update status - optin/optout
-                    if ( nmc != null ) {
-                        Smartpush.blockPush( this, !nmc.areNotificationsEnabled() );
-                    }
+//                    if ( nmc != null ) {
+//                        Smartpush.blockPush( this, !nmc.areNotificationsEnabled() );
+//                    }
+
                 } else {
                     // Retrieve updated payload
                     data = SmartpushHttpClient.getPushPayload( this, pushId, data );

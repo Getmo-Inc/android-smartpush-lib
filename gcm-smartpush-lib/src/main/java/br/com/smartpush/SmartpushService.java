@@ -18,6 +18,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -892,30 +894,62 @@ public class SmartpushService extends IntentService {
         fields.put( "sdk_v", getString(R.string.smartp_version) );
         fields.put( "plataformId", "ANDROID" );
 
-        Bundle b = data.getExtras();
+        Bundle bundle = data.getExtras();
 
-        if ( b != null && b.containsKey( SmartpushHitUtils.Fields.PUSH_ID.getParamName() ) )
-            fields.put( SmartpushHitUtils.Fields.PUSH_ID.getParamName(),
-                    b.getString( SmartpushHitUtils.Fields.PUSH_ID.getParamName() ) );
+        String pushId = "";
 
-        if ( b != null && b.containsKey( SmartpushHitUtils.Fields.SCREEN_NAME.getParamName() ) )
+        if ( bundle != null && bundle.containsKey( SmartpushHitUtils.Fields.PUSH_ID.getParamName() ) ) {
+            pushId = bundle.getString(SmartpushHitUtils.Fields.PUSH_ID.getParamName());
+
+            fields.put(SmartpushHitUtils.Fields.PUSH_ID.getParamName(), pushId );
+        }
+
+        if ( bundle != null && bundle.containsKey( SmartpushHitUtils.Fields.SCREEN_NAME.getParamName() ) )
             fields.put( SmartpushHitUtils.Fields.SCREEN_NAME.getParamName(),
-                    b.getString( SmartpushHitUtils.Fields.SCREEN_NAME.getParamName() ) );
+                    bundle.getString( SmartpushHitUtils.Fields.SCREEN_NAME.getParamName() ) );
 
-        if ( b != null && b.containsKey( SmartpushHitUtils.Fields.CATEGORY.getParamName() ) )
+        if ( bundle != null && bundle.containsKey( SmartpushHitUtils.Fields.CATEGORY.getParamName() ) )
             fields.put( SmartpushHitUtils.Fields.CATEGORY.getParamName(),
-                    b.getString( SmartpushHitUtils.Fields.CATEGORY.getParamName() ) );
+                    bundle.getString( SmartpushHitUtils.Fields.CATEGORY.getParamName() ) );
 
-        if ( b != null && b.containsKey( SmartpushHitUtils.Fields.ACTION.getParamName() ) )
-            fields.put( SmartpushHitUtils.Fields.ACTION.getParamName(),
-                    b.getString( SmartpushHitUtils.Fields.ACTION.getParamName() ) );
+        String action = "";
+        if ( bundle != null && bundle.containsKey( SmartpushHitUtils.Fields.ACTION.getParamName() ) ) {
+            action = bundle.getString(SmartpushHitUtils.Fields.ACTION.getParamName());
+            fields.put(SmartpushHitUtils.Fields.ACTION.getParamName(), action );
+        }
 
-        if ( b != null && b.containsKey( SmartpushHitUtils.Fields.LABEL.getParamName() ) )
+        if ( bundle != null && bundle.containsKey( SmartpushHitUtils.Fields.LABEL.getParamName() ) )
             fields.put( SmartpushHitUtils.Fields.LABEL.getParamName(),
-                    b.getString( SmartpushHitUtils.Fields.LABEL.getParamName() ) );
+                    bundle.getString( SmartpushHitUtils.Fields.LABEL.getParamName() ) );
 
-        SmartpushHttpClient.post( "hit", fields, this, false );
+//        if ( SmartpushHitUtils.shouldISendHitsToGetmo( bundle ) ) {
+//            SmartpushHttpClient.post("hit", fields, this, false);
+//        }
 
+        sendToAnalytics( this, pushId, action );
+    }
+
+    private static void sendToAnalytics( Context context, String pushId, String action ) {
+        // SEND HIT TO GOOGLE ANALYTICS
+        String urlUA =
+                "https://www.google-analytics.com/collect?v=1&tid=UA-108900354-1" +
+                        "&cid=" +
+                        Utils.PreferenceUtils.readFromPreferences( context, Utils.Constants.SMARTP_REGID ) +
+                        "&t=pageview" +
+                        "&dp=%2Fhits%2F" + pushId + "%2F" +
+                        Utils.Smartpush.getMetadata(context, Utils.Constants.SMARTP_APP_ID) + "%2F" + action;
+
+
+        SmartpushLog.d( Utils.TAG, urlUA );
+
+        try {
+            URL targetUrl = new URL(urlUA);
+            HttpURLConnection conn = (HttpURLConnection) targetUrl.openConnection();
+            conn.setRequestMethod("HEAD");
+
+        } catch ( Exception e ) {
+            SmartpushLog.e( Utils.TAG, e.getMessage(), e );
+        }
     }
 
     // TODO implementar LIST APPS na forma de broadcast!
