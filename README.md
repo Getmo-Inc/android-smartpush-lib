@@ -1,6 +1,6 @@
 # android-smartpush-lib
 
-A [SMARTPUSH](http://admin.getmo.com.br) é plataforma de mensagens da [GETMO](http://novo.getmo.com.br). 
+A [SMARTPUSH](http://admin.getmo.com.br) é a plataforma de mensagens (push, webpush, sms, email, redes sociais, e chatbots) da [GETMO](http://novo.getmo.com.br). 
 
 #### Requisitos e Dependências
 
@@ -36,7 +36,13 @@ selecione a ação "_open module settings_". Conforme a figura a seguir:
 
 ![Step5](images/add_new_module_5.png)
 
-Agora, vamos adicionar uma "_Module Dependency_" ao seu projeto. Clique no + dentro da aba "_Dependencies_", então na janela que irá abrir selecione o module :gcmsmartpush-lib-release
+Agora, vamos adicionar uma "_Module Dependency_" ao seu projeto. Clique no + dentro da aba "_Dependencies_", então na janela que irá abrir selecione o module :gcm-smartpush-lib-release
 e pressione ok. 
 
 ![Step5](images/add_new_module_6.png)
+
+Feito isso, o próximo passo é configurar sua app para usar a biblioteca e permitir o cadastramento dos dispositivos, das tags, geofences e o processamento das
+mensagens push.
+
+
+Para isso vamos começar pelo arquivo de manifesto da sua aplicação. 
