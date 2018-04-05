@@ -17,17 +17,26 @@ Para adicionar suporte a push em sua aplicação android siga as instruções a 
 
 2. Abra o seu projeto de aplicação no _Android Studio_ e selecione adicionar um novo _módulo_.
 
-![Criando novo módulo](images/add_new_module.png)
+![Step1](images/add_new_module.png)
 
-Na janela que irá abrir, selecione a opção "Import JAR/AAR Package͟" conforme a
-figura abaixo. 
+Selecione a opção "Import JAR/AAR Package" conforme a figura abaixo. 
 
-![Criando novo módulo](images/add_new_module_2.png)
+![Step2](images/add_new_module_2.png)
 
 Na próxima tela, clique no botão para navegar pelo seu filesystem ...
 
-![Criando novo módulo](images/add_new_module_3.png)
+![Step3](images/add_new_module_3.png)
 
-... então localize o local onde você baixou a biblioteca, e então selecione o arquivo .aar, pressione OK e então FINISH. 
+... então navegue até o local onde você baixou a biblioteca, selecione o arquivo .aar, pressione OK e então FINISH. 
 
-![Criando novo módulo](images/add_new_module_4.png)
+![Step4](images/add_new_module_4.png)
+
+Agora no "_Project explorer_" selecione sua app, clique com o botão direito do mouse, e
+selecione a ação "_open module settings_". Conforme a figura a seguir:
+
+![Step5](images/add_new_module_5.png)
+
+Agora, vamos adicionar uma "_Module Dependency_" ao seu projeto. Clique no + dentro da aba "_Dependencies_", então na janela que irá abrir selecione o module :gcmsmartpush-lib-release
+e pressione ok. 
+
+![Step5](images/add_new_module_6.png)
