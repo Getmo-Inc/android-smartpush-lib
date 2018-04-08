@@ -109,5 +109,11 @@ Adicione os seguintes itens ao manifesto do app:
     <meta-data
         android:name="br.com.smartpush.default_notification_big_icon"
         android:resource="@drawable/[NOTIFICATION_BIG_ICON]" />
+        
+    <meta-data
+        android:name="br.com.smartpush.default_notification_color"
+        android:resource="@color/[SUA_COR]" />
 ```
+
+> Não esqueça de substituir [NOTIFICATION_SMALL_ICON], [NOTIFICATION_BIG_ICON] e [SUA_COR] pelos recursos correspondentes na sua aplicação. Estas propriedades definem os icones pequeno e grande, e também a cor, que devem ser utilizados na notificação.
 
