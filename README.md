@@ -88,6 +88,15 @@ Adicione os seguintes itens ao manifesto do app:
 <meta-data android:name="br.com.smartpush.APIKEY" android:value="[SUA_API_KEY]"/>
 ```
 
-> Não esqueça de substituir [SEU_APP_ID] e [SUA_API_KEY] pelos códigos obtidos no painel de controle do [SMARTPUSH](https://admin.getmo.com.br). Em caso de dúvida de como obter esses códigos consulte [aqui]().
+> Não esqueça de substituir [SEU_APP_ID] e [SUA_API_KEY] pelos códigos obtidos no painel de controle do [SMARTPUSH](https://admin.getmo.com.br). Em caso de dúvida sobre como obter esses códigos consulte [aqui]().
 
+```xml
+        <meta-data
+            android:name="br.com.smartpush.default_notification_small_icon"
+            android:resource="@drawable/[NOTIFICATION_SMALL_ICON]" />
+
+        <meta-data
+            android:name="br.com.smartpush.default_notification_big_icon"
+            android:resource="@drawable/[NOTIFICATION_BIG_ICON]" />
+```
 
