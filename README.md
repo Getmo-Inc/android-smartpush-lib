@@ -117,3 +117,31 @@ Adicione os seguintes itens ao manifesto do app:
 
 > Não esqueça de substituir [NOTIFICATION_SMALL_ICON], [NOTIFICATION_BIG_ICON] e [SUA_COR] pelos recursos correspondentes na sua aplicação. Estas propriedades definem os icones pequeno e grande, e também a cor, que devem ser utilizados na notificação.
 
+* Ainda dentro da tag ```<application>``` configure o BroadcastReceiver **com.google.android.gms.gcm.GcmReceiver** ele irá monitorar a chegada de push e encaminhará para o tratador na sua aplicação.
+
+```xml
+    <receiver
+        android:name="com.google.android.gms.gcm.GcmReceiver"
+        android:exported="true"
+        android:permission="com.google.android.c2dm.permission.SEND" >
+        <intent-filter>
+            <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+            <category android:name="[PACOTE_SUA_APLICACAO]" />
+        </intent-filter>
+    </receiver>
+```
+> Não esqueça de substituir [PACOTE_SUA_APLICACAO] pelo pacote correto da sua aplicação.
+
+* Ainda dentro da tag ```<application>``` configure o Service **SmartpushIDListenerService**  para processar a criação, a rotação e a atualização dos tokens de registro.
+
+```xml
+    <service
+        android:name="br.com.smartpush.SmartpushIDListenerService"
+        android:exported="false">
+        <intent-filter>
+            <action android:name="com.google.android.gms.iid.InstanceID" />
+        </intent-filter>
+    </service>
+```
+
+* Ainda dentro da tag ```<application>``` configure
