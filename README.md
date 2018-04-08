@@ -74,9 +74,15 @@ Adicione os seguintes itens ao manifesto do app:
 * Dentro da tag ```<manifest>``` adicione as permissões abaixo. Elas são necessarias para ativar o recebimento de push a partir da GCM;
 
 ```xml
-<permission android:name="[PACOTE_SUA_APLICACAO].permission.C2D_MESSAGE" android:protectionLevel="signature" />
-<uses-permission android:name="[PACOTE_SUA_APLICACAO].permission.C2D_MESSAGE" />
-<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission
+        android:name="android.permission.ACCESS_NETWORK_STATE"/>
+
+    <permission
+        android:name="[PACOTE_SUA_APLICACAO].permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+
+    <uses-permission
+        android:name="[PACOTE_SUA_APLICACAO].permission.C2D_MESSAGE" />
 ```
 
 > Não esqueça de substituir [PACOTE_SUA_APLICACAO] pelo pacote correto da sua aplicação.
@@ -84,19 +90,24 @@ Adicione os seguintes itens ao manifesto do app:
 * Dentro da tag ```<application>``` adicione as tags de metadados a seguir;
 
 ```xml
-<meta-data android:name="br.com.smartpush.APPID"  android:value="[SEU_APP_ID]" />
-<meta-data android:name="br.com.smartpush.APIKEY" android:value="[SUA_API_KEY]"/>
+    <meta-data
+        android:name="br.com.smartpush.APPID"
+        android:value="[SEU_APP_ID]" />
+
+    <meta-data
+        android:name="br.com.smartpush.APIKEY"
+        android:value="[SUA_API_KEY]"/>
 ```
 
 > Não esqueça de substituir [SEU_APP_ID] e [SUA_API_KEY] pelos códigos obtidos no painel de controle do [SMARTPUSH](https://admin.getmo.com.br). Em caso de dúvida sobre como obter esses códigos consulte [aqui]().
 
 ```xml
-        <meta-data
-            android:name="br.com.smartpush.default_notification_small_icon"
-            android:resource="@drawable/[NOTIFICATION_SMALL_ICON]" />
+    <meta-data
+        android:name="br.com.smartpush.default_notification_small_icon"
+        android:resource="@drawable/[NOTIFICATION_SMALL_ICON]" />
 
-        <meta-data
-            android:name="br.com.smartpush.default_notification_big_icon"
-            android:resource="@drawable/[NOTIFICATION_BIG_ICON]" />
+    <meta-data
+        android:name="br.com.smartpush.default_notification_big_icon"
+        android:resource="@drawable/[NOTIFICATION_BIG_ICON]" />
 ```
 
