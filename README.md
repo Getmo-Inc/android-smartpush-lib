@@ -66,3 +66,28 @@ mensagens push.
 
 
 Para isso vamos começar pelo arquivo de manifesto (AndroidManifest.xml) da sua aplicação. 
+
+### Editando o arquivo de Manifesto
+
+Adicione os seguintes itens ao manifesto do app:
+
+* Dentro da tag ```<manifest>``` adicione as permissões abaixo. Elas são necessarias para ativar o recebimento de push a partir da GCM;
+
+```xml
+<permission android:name="[PACOTE_SUA_APLICACAO].permission.C2D_MESSAGE" android:protectionLevel="signature" />
+<uses-permission android:name="[PACOTE_SUA_APLICACAO].permission.C2D_MESSAGE" />
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+```
+
+> Não esqueça de substituir [PACOTE_SUA_APLICACAO] pelo pacote correto da sua aplicação.
+
+* Dentro da tag ```<application>``` adicione as tags de metadados a seguir;
+
+```xml
+<meta-data android:name="br.com.smartpush.APPID"  android:value="[SEU_APP_ID]" />
+<meta-data android:name="br.com.smartpush.APIKEY" android:value="[SUA_API_KEY]"/>
+```
+
+> Não esqueça de substituir [SEU_APP_ID] e [SUA_API_KEY] pelos códigos obtidos no painel de controle do [SMARTPUSH](https://admin.getmo.com.br). Em caso de dúvida de como obter esses códigos consulte [aqui]().
+
+
