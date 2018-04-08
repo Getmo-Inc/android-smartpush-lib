@@ -7,9 +7,9 @@ A [SMARTPUSH](http://admin.getmo.com.br) é a plataforma de mensagens (push, web
 - Android minSdkVersion **11**
 - Google Play Services **11.6.0**
 
-### Configurando a biblioteca SMARTPUSH
+### Configurando a biblioteca Android SMARTPUSH 
 
-A biblioteca android do **SMARTPUSH** é responsável por integrar as aplicações mobile ao backend do **SMARTPUSH** para a gestão do cadastro de dispositivos, tags, geofences, processamento e monitoramento de mensagens push. 
+A biblioteca android do **SMARTPUSH** é responsável por integrar sua aplicação mobile ao backend do **SMARTPUSH** para a gestão do cadastro de dispositivos, tags, geofences, processamento e monitoramento de mensagens push. 
 
 Para adicionar suporte a push em sua aplicação android siga as instruções a seguir.
 
@@ -23,11 +23,11 @@ Selecione a opção "Import JAR/AAR Package" conforme a figura abaixo.
 
 ![Step2](images/add_new_module_2.png)
 
-Na próxima tela, clique no botão para navegar pelo seu filesystem ...
+Na próxima tela, clique no botão para navegar pelo seu sistema de arquivos ...
 
 ![Step3](images/add_new_module_3.png)
 
-... então navegue até o local onde você baixou a biblioteca, selecione o arquivo .aar, pressione OK e então FINISH. 
+... e encontre o local onde você baixou a biblioteca, selecione o arquivo .aar, pressione OK e então FINISH. 
 
 ![Step4](images/add_new_module_4.png)
 
@@ -36,10 +36,31 @@ selecione a ação "_open module settings_". Conforme a figura a seguir:
 
 ![Step5](images/add_new_module_5.png)
 
-Agora, vamos adicionar uma "_Module Dependency_" ao seu projeto. Clique no + dentro da aba "_Dependencies_", então na janela que irá abrir selecione o module :gcm-smartpush-lib-release
+Agora, vamos adicionar a biblioteca Smartpush como uma "_Module Dependency_" do seu projeto. Clique no + dentro da aba "_Dependencies_", então na janela que irá abrir selecione o module :gcm-smartpush-lib-release
 e pressione ok. 
 
-![Step5](images/add_new_module_6.png)
+![Step6](images/add_new_module_6.png)
+
+Aproveite e também adicione a Google Play Service como uma "_Library Dependency_" do seu projeto. Ela é necessária em conjunto com a biblioteca do Smartpush para ativar o uso de push em sua aplicação.
+
+![Step7](images/add_new_module_7.png)
+
+> **Importante** 
+>
+> A plataforma Android continua crescendo, e o tamanho dos aplicativos para Android também. Quando um aplicativo e as bibliotecas às quais ele faz referência alcançam determinado tamanho, ocorrem erros de compilação que indicam que o aplicativo chegou ao limite da arquitetura de compilação de aplicativos Android.  
+
+> Você pode ler mais sobre esse problema [aqui](https://developer.android.com/studio/build/multidex.html?hl=pt-br).
+
+Então se ocorrer um erro de compilação uma solução possível é importar apenas as depêndencias que são necessárias, no caso da biblioteca **Google Play Service** altere o arquivo **build.gradle** da sua aplicação da seguinte forma:
+ 
+```json
+dependencies {
+    ...
+    implementation project(':gcm-smartpush-lib-release')
+    implementation 'com.google.android.gms:play-services-gcm:12.0.1'
+ }
+```
+
 
 Feito isso, o próximo passo é configurar sua app para usar a biblioteca e permitir o cadastramento dos dispositivos, das tags, geofences e o processamento das
 mensagens push.
