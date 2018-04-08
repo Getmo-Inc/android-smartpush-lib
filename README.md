@@ -48,14 +48,13 @@ Aproveite e também adicione a Google Play Service como uma "_Library Dependency
 > **Importante** 
 >
 > A plataforma Android continua crescendo, e o tamanho dos aplicativos para Android também. Quando um aplicativo e as bibliotecas às quais ele faz referência alcançam determinado tamanho, ocorrem erros de compilação que indicam que o aplicativo chegou ao limite da arquitetura de compilação de aplicativos Android.  
-
+> 
 > Você pode ler mais sobre esse problema [aqui](https://developer.android.com/studio/build/multidex.html?hl=pt-br).
 
-Então se ocorrer um erro de compilação uma solução possível é importar apenas as depêndencias que são necessárias, no caso da biblioteca **Google Play Service** altere o arquivo **build.gradle** da sua aplicação da seguinte forma:
+Então se ocorrer um erro de compilação uma solução possível é importar apenas as dependências que são necessárias, no caso da biblioteca **Google Play Service** altere o arquivo **build.gradle** da sua aplicação da seguinte forma:
  
 ```json
 dependencies {
-    ...
     implementation project(':gcm-smartpush-lib-release')
     implementation 'com.google.android.gms:play-services-gcm:12.0.1'
  }
@@ -66,4 +65,4 @@ Feito isso, o próximo passo é configurar sua app para usar a biblioteca e perm
 mensagens push.
 
 
-Para isso vamos começar pelo arquivo de manifesto da sua aplicação. 
+Para isso vamos começar pelo arquivo de manifesto (AndroidManifest.xml) da sua aplicação. 
