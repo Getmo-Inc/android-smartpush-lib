@@ -297,6 +297,6 @@ Agora, compile seu projeto, instale em um dispositivo, abra a aplicação para q
 
 A informação importante aqui é o "**alias**" ele é um identificador gerado pela plataforma Smartpush que permite localizar o seu dispositivo na base de dispositivos. 
 
-> Você pode criar seus próprios identificados, veremos isso mais adiante quando falarmos em **TAGs**. Por hora copie esse código e vamos testar o envio de push.
+> Você pode criar seus próprios identificadores, veremos isso mais adiante quando falarmos em **TAGs**. 
 
-Vamos voltar ao painel do Smartpush e configurar o envio de um push para o seu dispositivo.
+Copie o valor do código "**alias**" e vamos testar o envio de push. Para saber como enviar um push a partir do painel do Smartpush acesse esse [link]().
