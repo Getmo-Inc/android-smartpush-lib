@@ -299,4 +299,4 @@ A informação importante aqui é o "**alias**" ele é um identificador gerado p
 
 > Você pode criar seus próprios identificadores, veremos isso mais adiante quando falarmos em **TAGs**. 
 
-Copie o valor do código "**alias**" e vamos testar o envio de push. Para saber como enviar um push a partir do painel do Smartpush acesse esse [link]().
+Copie o valor do código "**alias**" e teste o envio de push. Para saber como enviar um push a partir do painel do Smartpush acesse esse [link]().
