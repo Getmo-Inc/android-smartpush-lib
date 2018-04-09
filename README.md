@@ -256,7 +256,7 @@ public class MySmartpushListenerService extends SmartpushListenerService {
 
 ### Registrando o dispositivo para receber push
 
-Na Activity principal da sua aplicação adicione no método _onCreate_ uma chamada ao serviço de registro da plataforma Smartpush para ativar o receimento de push.
+Na Activity principal da sua aplicação adicione no método _onCreate_ uma chamada ao serviço de registro da plataforma Smartpush para ativar a chegada de push e a criação de notificações.
 
 Veja um exemplo:
 
@@ -272,3 +272,27 @@ Veja um exemplo:
         // do something else...
     }
 ```
+
+Pronto, com isso terminamos a configuração básica para ativar o push. 
+
+Agora, compile seu projeto, instale em um dispositivo, abra a aplicação para que o registro seja efetivado. Vamos dar uma olhada no LOGCAT para ver o que aconteceu.
+
+>04-08 21:40:56.961 13209-13209/? D/LOG: checkSmartpush() : begin - Configurations tests : br.com.buscape.MainPack
+04-08 21:40:56.971 13209-13209/? D/LOG: checkSmartpush() : Metadata, pass!
+04-08 21:40:56.971 13209-13209/? D/LOG: checkSmartpush() : Activity, pass!
+04-08 21:40:56.971 13209-13209/? D/LOG: checkSmartpush() : end - Configurations tests : br.com.buscape.MainPack
+04-08 21:40:57.242 13209-14152/? D/LOG: GCM Registration Token: dXbwAUTsFfQ:APA91bH0oEItl6TeUowjFE_vTxWEYwbwdbokn-sA0BGgWAvcgfNoF9mS-sgMPJbIGX9y7ktVeX2mTOq15tc13KTvygY_xIVstxlJdplJZ5_VIKxIUephAua79YhssZ0AF86T4YBTDIgk
+04-08 21:40:57.262 13209-14152/? D/LOG: url : https://api.getmo.com.br/device
+04-08 21:40:57.262 13209-14152/? D/LOG: method: POST
+04-08 21:40:57.262 13209-14152/? D/LOG: params : device=SM-J320M&platformId=ANDROID&devid=CN6Z8Eka3FSQ9IG&uuid=702E265C2321AC0E&appid=AK0Z1AzB1tr31N7&manufacturer=SAMSUNG&regid=dXbwAUTsFfQ%3AAPA91bH0oEItl6TeUowjFE_vTxWEYwbwdbokn-sA0BGgWAvcgfNoF9mS-sgMPJbIGX9y7ktVeX2mTOq15tc13KTvygY_xIVstxlJdplJZ5_VIKxIUephAua79YhssZ0AF86T4YBTDIgk&framework=5.1.1
+04-08 21:40:59.314 13209-14152/? D/LOG: rsp : {"status":true,"message":"Success","alias":"E1E18049","hwid":"702E265C2321AC0E"}
+04-08 21:40:59.314 13209-14152/? D/LOG: {
+                                            "status": true,
+                                            "message": "Success",
+                                            "alias": "E1E18049",
+                                            "hwid": "702E265C2321AC0E"
+                                        }
+
+A informação importante aqui é o "alias" ele é um identificador gerado pela plataforma Smartpush que permite localizar o seu dispositivo na base de dispositivos. Você pode criar seus próprios identificados, veremos isso mais adiante quando falarmos em **TAGs**. Por hora copie esse código e vamos testar o envio de push.
+
+Vamos voltar ao painel do Smartpush e configurar o envio de um push para o seu dispositivo.
