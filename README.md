@@ -184,7 +184,7 @@ Adicione os seguintes itens ao manifesto do app:
  
 Nessa parte da configuração, o Android Studio, irá indicar um erro, acontece que esse serviço ainda precisa ser criado. Veremos um exemplo mais adiante.
 
-### Criando um serviço para tratar do push e criar notificações
+### Criando o serviço para tratar do push e criar notificações
 
 Vamos criar um serviço simples para tratar do push e criar uma notificação. Veja o exemplo abaixo:
 
@@ -254,3 +254,21 @@ public class MySmartpushListenerService extends SmartpushListenerService {
 }
 ```
 
+### Registrando o dispositivo para receber push
+
+Na Activity principal da sua aplicação adicione no método _onCreate_ uma chamada ao serviço de registro da plataforma Smartpush para ativar o receimento de push.
+
+Veja um exemplo:
+
+```java
+@Override
+    protected void onCreate( Bundle savedInstanceState ) {
+        super.onCreate( savedInstanceState );
+        setContentView( R.layout.main );
+
+        // Register at Smartpush!
+        Smartpush.subscribe( this );
+        
+        // do something else...
+    }
+```
