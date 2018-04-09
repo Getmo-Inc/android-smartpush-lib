@@ -117,7 +117,7 @@ Adicione os seguintes itens ao manifesto do app:
 
 > Não esqueça de substituir [NOTIFICATION_SMALL_ICON], [NOTIFICATION_BIG_ICON] e [SUA_COR] pelos recursos correspondentes na sua aplicação. Estas propriedades definem os icones pequeno e grande, e também a cor, que devem ser utilizados na notificação.
 
-* Ainda dentro da tag ```<application>``` configure o BroadcastReceiver **com.google.android.gms.gcm.GcmReceiver** ele irá monitorar a chegada de push e encaminhará para o tratador na sua aplicação.
+* Ainda na tag ```<application>``` configure o BroadcastReceiver **com.google.android.gms.gcm.GcmReceiver** ele irá monitorar a chegada de push e encaminhará para o tratador na sua aplicação.
 
 ```xml
     <receiver
@@ -132,7 +132,7 @@ Adicione os seguintes itens ao manifesto do app:
 ```
 > Não esqueça de substituir [PACOTE_SUA_APLICACAO] pelo pacote correto da sua aplicação.
 
-* Ainda dentro da tag ```<application>``` configure o Service **SmartpushIDListenerService**  para processar a criação, a rotação e a atualização dos tokens de registro.
+* Ainda na tag ```<application>``` configure o Service **SmartpushIDListenerService**  para processar a criação, a rotação e a atualização dos tokens de registro.
 
 ```xml
     <service
@@ -144,4 +144,40 @@ Adicione os seguintes itens ao manifesto do app:
     </service>
 ```
 
-* Ainda dentro da tag ```<application>``` configure
+* Ainda na tag ```<application>``` configure o Service **SmartpushService** para processar as notificações customizadas (Carrossel, banner, video, etc) e para monitorar os eventos (IMPRESSAO, CLICK, PREVIEW, REDIRECT, etc).
+
+```xml
+    <service
+        android:name="br.com.smartpush.SmartpushService"
+        android:exported="true"/>
+```
+
+* Ainda na tag ```<application>``` configure a Activity **SmartpushActivity**, está activity é a responsável por tratar do Player de Video embedado e que é executado a partir de um push.
+
+```xml
+    <activity
+        android:name="br.com.smartpush.SmartpushActivity"
+        android:hardwareAccelerated="true"
+        android:launchMode="singleTask"
+        android:taskAffinity=""
+        android:excludeFromRecents="true" >
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.DEFAULT" />
+        </intent-filter>
+    </activity>
+```
+
+* A última configuração necessária dentro da tag ```<application>``` é de um Service que estenda a classe **SmartpushListenerService** para tratar a criação das notificações, ou outro comportamento desejado, a partir da chegada de um push.
+
+```xml
+    <service
+        android:name=".MySmartpushListenerService"
+        android:exported="false" >
+        <intent-filter>
+            <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+        </intent-filter>
+    </service>
+```
+
+> O nome da classe pode ser alterada de acordo com sua própria politica de nomeação. O importante é que ela estenda a classe **SmartpushListenerService**.
