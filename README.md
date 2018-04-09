@@ -277,7 +277,8 @@ Pronto, com isso terminamos a configuração básica para ativar o push.
 
 Agora, compile seu projeto, instale em um dispositivo, abra a aplicação para que o registro seja efetivado. Vamos dar uma olhada no LOGCAT para ver o que aconteceu.
 
->04-08 21:40:56.961 13209-13209/? D/LOG: checkSmartpush() : begin - Configurations tests : br.com.buscape.MainPack
+```
+04-08 21:40:56.961 13209-13209/? D/LOG: checkSmartpush() : begin - Configurations tests : br.com.buscape.MainPack
 04-08 21:40:56.971 13209-13209/? D/LOG: checkSmartpush() : Metadata, pass!
 04-08 21:40:56.971 13209-13209/? D/LOG: checkSmartpush() : Activity, pass!
 04-08 21:40:56.971 13209-13209/? D/LOG: checkSmartpush() : end - Configurations tests : br.com.buscape.MainPack
@@ -292,6 +293,7 @@ Agora, compile seu projeto, instale em um dispositivo, abra a aplicação para q
                                             "alias": "E1E18049",
                                             "hwid": "702E265C2321AC0E"
                                         }
+```
 
 A informação importante aqui é o "alias" ele é um identificador gerado pela plataforma Smartpush que permite localizar o seu dispositivo na base de dispositivos. Você pode criar seus próprios identificados, veremos isso mais adiante quando falarmos em **TAGs**. Por hora copie esse código e vamos testar o envio de push.
 
