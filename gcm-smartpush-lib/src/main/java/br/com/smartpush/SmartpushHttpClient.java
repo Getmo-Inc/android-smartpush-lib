@@ -34,7 +34,7 @@ import static br.com.smartpush.Utils.TAG;
 
 public final class SmartpushHttpClient {
 
-    public static final String HOST = "http://api.getmo.com.br/";
+    public static final String HOST = "https://api.getmo.com.br/";
 
 //    private static final int MAX_ATTEMPTS = 5;
 //    private static final int BACKOFF_MILLI_SECONDS = 2000;
@@ -325,8 +325,11 @@ public final class SmartpushHttpClient {
                             }
 
                             if ( item.has( "extra" ) ) {
-                                JSONObject extra = item.getJSONObject( "extra" );
-                                newData.putString( Utils.Constants.PUSH_EXTRAS, extra.toString() );
+                                Object extras = item.get("extra");
+                                if ( extras instanceof JSONObject ) {
+                                    JSONObject extra = (JSONObject) extras;
+                                    newData.putString( Utils.Constants.PUSH_EXTRAS, extra.toString() );
+                                }
                             }
 
                             if ( item.has( "status" ) ) {

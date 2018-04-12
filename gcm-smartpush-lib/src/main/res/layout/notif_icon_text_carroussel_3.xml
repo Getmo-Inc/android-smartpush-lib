@@ -57,28 +57,45 @@
         </LinearLayout>
     </LinearLayout>
 
-    <LinearLayout
+    <!--LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:gravity="center">
+        android:gravity="center"-->
 
-        <ImageButton
-            android:id="@+id/btnPrevious"
-            android:layout_width="30dp"
-            android:layout_height="match_parent"
-            android:background="@drawable/background_navigation_control_rect"
-            android:src="@drawable/ic_arrow_left" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+    <!--ImageButton
+        android:id="@+id/btnPrevious"
+        android:layout_width="30dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/background_navigation_control_rect"
+        android:src="@drawable/ic_arrow_left" /-->
+
+    <!--
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+    -->
 
         <ViewFlipper
             android:id="@+id/carroussel_next"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_marginStart="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="5dp"
             android:measureAllChildren="true"
+            android:flipInterval="500"
             android:inAnimation="@anim/slide_in_right"
             android:outAnimation="@anim/slide_out_left"
             android:animateFirstView="true"
+            android:layout_centerInParent="true"
             android:background="@android:color/transparent">
 
             <ImageView
@@ -95,18 +112,30 @@
                 android:scaleType="centerCrop"
                 android:adjustViewBounds="true"/>
 
+            <ImageView
+                android:id="@+id/frame_3_next"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scaleType="centerCrop"
+                android:adjustViewBounds="true"/>
+
         </ViewFlipper>
 
         <ViewFlipper
             android:id="@+id/carroussel_previous"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_marginStart="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="5dp"
             android:measureAllChildren="true"
             android:flipInterval="500"
             android:inAnimation="@android:anim/slide_in_left"
             android:outAnimation="@android:anim/slide_out_right"
             android:animateFirstView="true"
+            android:layout_centerInParent="true"
             android:visibility="gone"
             android:background="@android:color/transparent">
 
@@ -124,15 +153,42 @@
                 android:scaleType="centerCrop"
                 android:adjustViewBounds="true"/>
 
+            <ImageView
+                android:id="@+id/frame_3_previous"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scaleType="centerCrop"
+                android:adjustViewBounds="true"/>
+
         </ViewFlipper>
 
-        <ImageButton
+        <!--ImageButton
             android:id="@+id/btnNext"
             android:layout_width="30dp"
             android:layout_height="match_parent"
             android:background="@drawable/background_navigation_control_rect"
-            android:src="@drawable/ic_arrow_right" />
+            android:src="@drawable/ic_arrow_right" /-->
 
-    </LinearLayout>
+        <ImageButton
+            android:id="@+id/btnPrevious"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/background_navigation_control_rect"
+            android:src="@drawable/ic_arrow_left"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="5dp"/>
+
+        <ImageButton
+            android:id="@+id/btnNext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/background_navigation_control_rect"
+            android:src="@drawable/ic_arrow_right"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="5dp"/>
+
+    </RelativeLayout>
+    <!--/LinearLayout-->
 
 </LinearLayout>

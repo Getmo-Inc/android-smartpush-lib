@@ -9,9 +9,9 @@ import android.util.Log;
 final class SmartpushLog {
 
     public static void e( String tag, String errMessage, Throwable expt ) {
-        if ( BuildConfig.DEBUG ) {
+//        if ( BuildConfig.DEBUG ) {
             Log.e( tag, errMessage, expt );
-        }
+//        }
     }
 
     public static void d( String tag, String message ) {

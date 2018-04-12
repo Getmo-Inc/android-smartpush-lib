@@ -172,9 +172,8 @@ public class SmartpushNotificationManager {
                 Arrays.asList(
                         new String[] {
                                 "PUSH", "PUSH_AD", "PUSH_BANNER_AD",
-                                "BANNER", "SLIDER", "CARROUSSEL",
-                                "SUBSCRIBE_EMAIL", "SUBSCRIBE_PHONE",
-                                "CARROUSSEL_BUSCAPE", "SLIDER_BUSCAPE"} )
+                                "BANNER", "SLIDER", "CARROUSSEL", "CARROSSEL",
+                                "SUBSCRIBE_EMAIL", "SUBSCRIBE_PHONE" } )
                         .indexOf( pushType );
 
         SmartpushLog.d( Utils.TAG, "pushTypeOrder: " + pushTypeOrder );
@@ -206,27 +205,31 @@ public class SmartpushNotificationManager {
                 break;
             case 4:
             case 5:
-                // SLIDER, CARROUSSEL
-                // TODO: RICH PUSH (SLIDER, CARROUSSEL) : implementar e revisar para proxima versao da SDK
-//                remote = setSmartpushRichNotification( extras );
-//                if ( remote != null ) {
-//                    builder.setCustomBigContentView(remote);
-//                }
-                break;
             case 6:
+                // CUSTOM - SLIDER, CARROUSSEL
+                if ( !extras.containsKey( Utils.Constants.PUSH_EXTRAS )
+                        && extras.containsKey( NOTIF_BANNER ) ) {
+
+                    if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN ) {
+                        NotificationCompat.BigPictureStyle style = createBigPictureStyle( extras );
+                        if ( style != null ) {
+                            builder.setStyle( style );                      // Set Big Banner
+                        }
+                    }
+
+                } else if ( extras.containsKey( Utils.Constants.PUSH_EXTRAS ) ) {
+                    RemoteViews remote = setSmartpushRichNotification(extras);
+                    if (remote != null) {
+                        builder.setCustomBigContentView(remote);
+                    }
+                }
+                break;
             case 7:
+            case 8:
                 // SUBSCRIBE_EMAIL, SUBSCRIBE_PHONE
                 // TODO: RICH PUSH (SUBSCRIBE_EMAIL, SUBSCRIBE_PHONE) : implementar e revisar para proxima versao da SDK
                 // builder.setCustomContentView( )        // small
                 // builder.setCustomBigContentView( )    // big
-                break;
-            case 8:
-            case 9:
-                // CUSTOM_BUSCAPE
-                RemoteViews remote = setSmartpushRichNotification( extras );
-                if ( remote != null ) {
-                    builder.setCustomBigContentView( remote );
-                }
                 break;
             default:
                 SmartpushLog.d( Utils.TAG, "Push Type unknow" );
@@ -238,7 +241,6 @@ public class SmartpushNotificationManager {
     }
 
 //    private RemoteViews setSmartpushBannerNotification( Bundle data ) {
-//
 //        return null;
 //    }
 
@@ -297,27 +299,27 @@ public class SmartpushNotificationManager {
                     case 1:
                         remoteViews =
                                 new RemoteViews(
-                                        mContext.getPackageName(), R.layout.notif_icon_text_carroussel_buscape_1);
+                                        mContext.getPackageName(), R.layout.notif_icon_text_carroussel_1);
                         break;
                     case 2:
                         remoteViews =
                                 new RemoteViews(
-                                        mContext.getPackageName(), R.layout.notif_icon_text_carroussel_buscape_2);
+                                        mContext.getPackageName(), R.layout.notif_icon_text_carroussel_2);
                         break;
                     case 3:
                         remoteViews =
                                 new RemoteViews(
-                                        mContext.getPackageName(), R.layout.notif_icon_text_carroussel_buscape_3);
+                                        mContext.getPackageName(), R.layout.notif_icon_text_carroussel_3);
                         break;
                     case 4:
                         remoteViews =
                                 new RemoteViews(
-                                        mContext.getPackageName(), R.layout.notif_icon_text_carroussel_buscape_4);
+                                        mContext.getPackageName(), R.layout.notif_icon_text_carroussel_4);
                         break;
                     case 5:
                         remoteViews =
                                 new RemoteViews(
-                                        mContext.getPackageName(), R.layout.notif_icon_text_carroussel_buscape_5);
+                                        mContext.getPackageName(), R.layout.notif_icon_text_carroussel_5);
                         break;
                     default:
                         return null;

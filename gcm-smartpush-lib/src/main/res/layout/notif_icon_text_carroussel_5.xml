@@ -2,29 +2,36 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
+    android:clickable="true"
+    android:focusableInTouchMode="true"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:background="@drawable/background_notification">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="56dp"
         android:orientation="horizontal"
-        android:layout_margin="5dp">
+        android:layout_marginTop="4dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="10dp"
+        android:gravity="center_vertical">
 
         <ImageView
             android:id="@+id/thumb_icon"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:src="@drawable/ic_getmo"
             tools:ignore="ContentDescription" />
 
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
+            android:layout_marginLeft="12dp"
             android:orientation="vertical">
 
             <TextView
@@ -32,7 +39,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:maxLines="1"
-                android:textStyle="bold"
                 android:textSize="16sp"
                 android:ellipsize="end"
                 android:textColor="#000"
@@ -40,9 +46,10 @@
 
             <TextView
                 android:id="@+id/subtitle"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:maxLines="2"
+                android:maxLines="1"
+                android:textSize="14sp"
                 android:ellipsize="end"
                 android:text="Escolhemos algumas ofertas para você! Dá um busca!"
                 android:textColor="#666"/>
@@ -50,10 +57,29 @@
         </LinearLayout>
     </LinearLayout>
 
+    <!--LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"-->
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
+
+    <!--ImageButton
+        android:id="@+id/btnPrevious"
+        android:layout_width="30dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/background_navigation_control_rect"
+        android:src="@drawable/ic_arrow_left" /-->
+
+    <!--
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+    -->
 
         <ViewFlipper
             android:id="@+id/carroussel_next"
@@ -65,6 +91,7 @@
             android:layout_marginRight="20dp"
             android:layout_marginBottom="5dp"
             android:measureAllChildren="true"
+            android:flipInterval="500"
             android:inAnimation="@anim/slide_in_right"
             android:outAnimation="@anim/slide_out_left"
             android:animateFirstView="true"
@@ -72,35 +99,35 @@
             android:background="@android:color/transparent">
 
             <ImageView
-                android:id="@+id/banner1a"
+                android:id="@+id/frame_1_next"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:scaleType="centerCrop"
                 android:adjustViewBounds="true"/>
 
             <ImageView
-                android:id="@+id/banner2a"
+                android:id="@+id/frame_2_next"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:scaleType="centerCrop"
                 android:adjustViewBounds="true"/>
 
             <ImageView
-                android:id="@+id/banner3a"
+                android:id="@+id/frame_3_next"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:scaleType="centerCrop"
                 android:adjustViewBounds="true"/>
 
             <ImageView
-                android:id="@+id/banner4a"
+                android:id="@+id/frame_4_next"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:scaleType="centerCrop"
                 android:adjustViewBounds="true"/>
 
             <ImageView
-                android:id="@+id/banner5a"
+                android:id="@+id/frame_5_next"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:scaleType="centerCrop"
@@ -126,41 +153,48 @@
             android:background="@android:color/transparent">
 
             <ImageView
-                android:id="@+id/banner1b"
+                android:id="@+id/frame_1_previous"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:scaleType="centerCrop"
                 android:adjustViewBounds="true"/>
 
             <ImageView
-                android:id="@+id/banner2b"
+                android:id="@+id/frame_2_previous"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:scaleType="centerCrop"
                 android:adjustViewBounds="true"/>
 
             <ImageView
-                android:id="@+id/banner3b"
+                android:id="@+id/frame_3_previous"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:scaleType="centerCrop"
                 android:adjustViewBounds="true"/>
 
             <ImageView
-                android:id="@+id/banner4b"
+                android:id="@+id/frame_4_previous"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:scaleType="centerCrop"
                 android:adjustViewBounds="true"/>
 
             <ImageView
-                android:id="@+id/banner5b"
+                android:id="@+id/frame_5_previous"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:scaleType="centerCrop"
                 android:adjustViewBounds="true"/>
 
         </ViewFlipper>
+
+        <!--ImageButton
+            android:id="@+id/btnNext"
+            android:layout_width="30dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/background_navigation_control_rect"
+            android:src="@drawable/ic_arrow_right" /-->
 
         <ImageButton
             android:id="@+id/btnPrevious"
@@ -182,5 +216,6 @@
             android:layout_marginRight="5dp"/>
 
     </RelativeLayout>
+    <!--/LinearLayout-->
 
 </LinearLayout>

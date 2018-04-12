@@ -936,7 +936,7 @@ public class SmartpushService extends IntentService {
                         "&cid=" +
                         Utils.PreferenceUtils.readFromPreferences( context, Utils.Constants.SMARTP_REGID ) +
                         "&t=pageview" +
-                        "&dp=%2Fhits%2F" + pushId + "%2F" +
+                        "&dp=%2Fhits%2Fmobile%2F" + pushId + "%2F" +
                         Utils.Smartpush.getMetadata(context, Utils.Constants.SMARTP_APP_ID) + "%2F" + action;
 
 
@@ -945,8 +945,9 @@ public class SmartpushService extends IntentService {
         try {
             URL targetUrl = new URL(urlUA);
             HttpURLConnection conn = (HttpURLConnection) targetUrl.openConnection();
-            conn.setRequestMethod("HEAD");
-
+            int responseCode = conn.getResponseCode();
+            SmartpushLog.d( Utils.TAG, "[" + responseCode + "]" );
+            conn.disconnect();
         } catch ( Exception e ) {
             SmartpushLog.e( Utils.TAG, e.getMessage(), e );
         }
