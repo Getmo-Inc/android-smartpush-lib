@@ -2,6 +2,8 @@ package br.com.smartpush;
 
 import android.Manifest;
 import android.app.AlarmManager;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -100,7 +102,7 @@ import static br.com.smartpush.Utils.TAG;
  */
 
 public class SmartpushNotificationManager {
-
+    public static final String NOTIFICATION_CHANNEL_ID = "10001";
     private Context mContext;
 
     public SmartpushNotificationManager( Context context ) {
@@ -235,9 +237,23 @@ public class SmartpushNotificationManager {
                 SmartpushLog.d( Utils.TAG, "Push Type unknow" );
         }
 
-        NotificationManagerCompat nm = NotificationManagerCompat.from( mContext );
-//        nm.cancel( PUSH_INTERNAL_ID );
-        nm.notify( PUSH_INTERNAL_ID, builder.build() );
+        NotificationManager mNotificationManager =
+                ( NotificationManager ) mContext.getSystemService( Context.NOTIFICATION_SERVICE );
+
+        if ( android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O ) {
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel notificationChannel
+                    = new NotificationChannel( NOTIFICATION_CHANNEL_ID, "ALERT", importance );
+            notificationChannel.enableLights(true);
+            notificationChannel.setLightColor(Color.RED);
+            notificationChannel.enableVibration(true);
+            notificationChannel.setVibrationPattern(
+                    new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+            builder.setChannelId( NOTIFICATION_CHANNEL_ID );
+            mNotificationManager.createNotificationChannel(notificationChannel);
+        }
+
+        mNotificationManager.notify( PUSH_INTERNAL_ID, builder.build() );
     }
 
 //    private RemoteViews setSmartpushBannerNotification( Bundle data ) {

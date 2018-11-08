@@ -85,6 +85,10 @@ public class SmartpushService extends IntentService {
         context.startService(intent);
     }
 
+    private void createDefaultChannel() {
+
+    }
+
     /**
      * Starts this service to perform action check msisdn with no parameters. If
      * the service is already performing a task this action will be queued.

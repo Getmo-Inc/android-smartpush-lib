@@ -1,10 +1,10 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 'android-P'
-    buildToolsVersion '28.0.0 rc1'
+    compileSdkVersion 28
+    buildToolsVersion '28.0.3'
     defaultConfig {
-        minSdkVersion 14
+        minSdkVersion 21
         versionCode 100
         versionName "4.1"
     }
@@ -20,7 +20,8 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    testCompile 'junit:junit:4.12'
-    implementation 'com.google.android.gms:play-services-gcm:12.0.0'
-    implementation 'com.android.support:appcompat-v7:28.0.0-alpha1'
+    //testCompile 'junit:junit:4.12'
+    //noinspection GradleCompatible
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.google.android.gms:play-services-gcm:16.0.0'
 }
