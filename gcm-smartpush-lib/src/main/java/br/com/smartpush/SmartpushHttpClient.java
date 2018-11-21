@@ -347,4 +347,29 @@ public final class SmartpushHttpClient {
 
         return newData;
     }
+
+    public static void sendToAnalytics( Context context, String pushId, String action ) {
+        // SEND HIT TO GOOGLE ANALYTICS
+        String urlUA =
+                "https://www.google-analytics.com/collect?v=1&tid=UA-108900354-1" +
+                        "&cid=" +
+                        Utils.PreferenceUtils.readFromPreferences( context, Utils.Constants.SMARTP_REGID ) +
+                        "&t=pageview" +
+                        "&dp=%2Fhits%2Fmobile%2F" + pushId + "%2F" +
+                        Utils.Smartpush.getMetadata(context, Utils.Constants.SMARTP_APP_ID) + "%2F" + action;
+
+
+        SmartpushLog.d( Utils.TAG, urlUA );
+
+        try {
+            URL targetUrl = new URL(urlUA);
+            HttpURLConnection conn = (HttpURLConnection) targetUrl.openConnection();
+            int responseCode = conn.getResponseCode();
+            SmartpushLog.d( Utils.TAG, "[" + responseCode + "]" );
+            conn.disconnect();
+        } catch ( Exception e ) {
+            SmartpushLog.e( Utils.TAG, e.getMessage(), e );
+        }
+    }
+
 }

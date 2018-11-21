@@ -558,7 +558,7 @@ public class SmartpushService extends IntentService {
 
 //        startActionTrackAction( this, pushId, null, null, SmartpushHitUtils.Action.CLICKED.name(), label );
         // TODO workaround android Oreo, pre-Black Friday 2018 ... repensar isso!!
-        sendToAnalytics( this, pushId,  SmartpushHitUtils.Action.CLICKED.name() );
+        SmartpushHttpClient.sendToAnalytics( this, pushId,  SmartpushHitUtils.Action.CLICKED.name() );
 
         SmartpushLog.d( TAG,
                 "-------------------> APP OPENED FROM NOTIFICATION. - " + pushId );
@@ -933,32 +933,9 @@ public class SmartpushService extends IntentService {
 //            SmartpushHttpClient.post("hit", fields, this, false);
 //        }
 
-        sendToAnalytics( this, pushId, action );
+        SmartpushHttpClient.sendToAnalytics( this, pushId, action );
     }
 
-    private static void sendToAnalytics( Context context, String pushId, String action ) {
-        // SEND HIT TO GOOGLE ANALYTICS
-        String urlUA =
-                "https://www.google-analytics.com/collect?v=1&tid=UA-108900354-1" +
-                        "&cid=" +
-                        Utils.PreferenceUtils.readFromPreferences( context, Utils.Constants.SMARTP_REGID ) +
-                        "&t=pageview" +
-                        "&dp=%2Fhits%2Fmobile%2F" + pushId + "%2F" +
-                        Utils.Smartpush.getMetadata(context, Utils.Constants.SMARTP_APP_ID) + "%2F" + action;
-
-
-        SmartpushLog.d( Utils.TAG, urlUA );
-
-        try {
-            URL targetUrl = new URL(urlUA);
-            HttpURLConnection conn = (HttpURLConnection) targetUrl.openConnection();
-            int responseCode = conn.getResponseCode();
-            SmartpushLog.d( Utils.TAG, "[" + responseCode + "]" );
-            conn.disconnect();
-        } catch ( Exception e ) {
-            SmartpushLog.e( Utils.TAG, e.getMessage(), e );
-        }
-    }
 
     // TODO implementar LIST APPS na forma de broadcast!
 //    private void handleActionSaveAppsListState() {

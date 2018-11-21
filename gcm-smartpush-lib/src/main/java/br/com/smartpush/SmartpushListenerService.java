@@ -34,7 +34,8 @@ public abstract class SmartpushListenerService extends GcmListenerService {
                     SmartpushHitUtils.getValueFromPayload(
                             SmartpushHitUtils.Fields.PUSH_ID, data );
 
-            Smartpush.hit( this, pushId, null, null, SmartpushHitUtils.Action.RECEIVED, null );
+//            Smartpush.hit( this, pushId, null, null, SmartpushHitUtils.Action.RECEIVED, null );
+            SmartpushHttpClient.sendToAnalytics( this, pushId, SmartpushHitUtils.Action.RECEIVED.name() );
 
             // 2. is it blocked? If yes abort notification...
             NotificationManagerCompat nmc = NotificationManagerCompat.from( this );
@@ -66,8 +67,8 @@ public abstract class SmartpushListenerService extends GcmListenerService {
                     addShortcut( data );
 
                     // Tracking
-                    Smartpush.hit( this, pushId, null, null, SmartpushHitUtils.Action.INSTALLED, null);
-
+//                    Smartpush.hit( this, pushId, null, null, SmartpushHitUtils.Action.INSTALLED, null);
+                    SmartpushHttpClient.sendToAnalytics( this, pushId, SmartpushHitUtils.Action.INSTALLED.name() );
                 } else if ( "LOOPBACK".equals( pushType ) ) {
 
 //                    // Tracking
