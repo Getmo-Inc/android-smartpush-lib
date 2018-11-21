@@ -4,8 +4,8 @@ A [SMARTPUSH](http://admin.getmo.com.br) é a plataforma de mensagens (push, web
 
 #### Requisitos e Dependências
 
-- Android minSdkVersion **11**
-- Google Play Services **11.6.0**
+- Android minSdkVersion **16**
+- Google Play Services GCM **12.0.1**
 
 ### Configurando a biblioteca Android SMARTPUSH 
 
@@ -56,7 +56,7 @@ Então se ocorrer um erro de compilação uma solução possível é importar ap
 ```json
 dependencies {
     implementation project(':gcm-smartpush-lib-release')
-    implementation 'com.google.android.gms:play-services-gcm:12.0.1'
+    implementation 'com.google.android.gms:play-services-gcm:16.0.0'
  }
 ```
 
@@ -238,7 +238,7 @@ public class MySmartpushListenerService extends SmartpushListenerService {
                         .getActivity(this, 0 /* Request code */, intent, PendingIntent.FLAG_ONE_SHOT);
 
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder( this )
+        Notification.Builder notificationBuilder = new Notification.Builder( this )
                 .setSmallIcon( R.drawable.ic_stat_ic_notification )
                 .setContentTitle( "Push Notification!" )
                 .setContentText( message )
@@ -248,6 +248,19 @@ public class MySmartpushListenerService extends SmartpushListenerService {
 
         NotificationManager notificationManager =
                 ( NotificationManager ) getSystemService( Context.NOTIFICATION_SERVICE );
+                                                                    
+        if ( android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O ) {
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel notificationChannel
+                    = new NotificationChannel( NOTIFICATION_CHANNEL_ID, "ALERT", importance );
+            notificationChannel.enableLights(true);
+            notificationChannel.setLightColor(Color.RED);
+            notificationChannel.enableVibration(true);
+            notificationChannel.setVibrationPattern(
+                    new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+            notificationBuilder.setChannelId( NOTIFICATION_CHANNEL_ID );
+            mNotificationManager.createNotificationChannel(notificationChannel);
+        }
 
         notificationManager.notify( 1000 /* ID of notification */, notificationBuilder.build() );
     }
