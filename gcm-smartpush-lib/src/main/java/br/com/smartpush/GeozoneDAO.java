@@ -48,6 +48,32 @@ final class GeozoneDAO {
         return list;
     }
 
+    public static String listAllToJSONString( SQLiteDatabase db ) {
+        ArrayList<Geozone> list = new ArrayList<>();
+        Cursor cursor = db.query(
+                TABLENAME, new String[]{
+                        Geozone.ALIAS,
+                        Geozone.LAT,
+                        Geozone.LNG,
+                        Geozone.RADIUS }, null, null, null, null, null );
+
+        StringBuilder builder = new StringBuilder();
+        builder.append( "[" );
+        int loop = 0;
+        while ( cursor != null && cursor.moveToNext() ) {
+            if ( loop == 0 ) {
+                builder.append( ( new Geozone( cursor ) ).toString() );
+            } else {
+                builder.append( ", " );
+                builder.append( ( new Geozone( cursor ) ).toString() );
+            }
+            loop++;
+        }
+        builder.append( "]" );
+
+        return builder.toString();
+    }
+
     private static ContentValues getContentValue( Geozone geozone ) {
         ContentValues row = new ContentValues();
         row.put( Geozone.ALIAS, geozone.alias );

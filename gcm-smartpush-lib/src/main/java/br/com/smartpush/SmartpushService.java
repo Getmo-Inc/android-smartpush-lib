@@ -1,5 +1,7 @@
 package br.com.smartpush;
 
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.IntentService;
 import android.app.NotificationManager;
 import android.content.Context;
@@ -10,6 +12,9 @@ import android.location.Geocoder;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
+import android.telephony.SubscriptionInfo;
+import android.telephony.SubscriptionManager;
+import android.telephony.TelephonyManager;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
@@ -18,14 +23,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 
+import static android.Manifest.permission.READ_PHONE_STATE;
 import static br.com.smartpush.Utils.Constants.NOTIF_PACKAGENAME;
 import static br.com.smartpush.Utils.Constants.NOTIF_URL;
 import static br.com.smartpush.Utils.Constants.PUSH_INTERNAL_ID;
@@ -45,23 +51,45 @@ public class SmartpushService extends IntentService {
     public static final int SERVICE_ID = 456123;
 
     // IntentService can perform, e.g. ACTION_FETCH_NEW_ITEMS
-    private static final String ACTION_REGISTRATION = "action.REGISTRATION";
-    private static final String ACTION_SET_TAG = "action.SET_TAG";
-    private static final String ACTION_BLOCK_PUSH = "action.BLOCK_PUSH";
-    private static final String ACTION_NEARESTZONE = "action.NEARESTZONE";
-    private static final String ACTION_TRACK_ACTION = "action.TRACK_ACTION";
-    private static final String ACTION_GET_MSISDN = "action.GET_MSISDN";
 //    private static final String ACTION_GET_CARRIER = "action.GET_CARRIER";
 //    public  static final String ACTION_GET_APP_LIST = "action.GET_APP_LIST";
+    private static final String ACTION_REGISTRATION = "action.REGISTRATION";
+
+    // TAGs
+    private static final String ACTION_SET_TAG = "action.SET_TAG";
+
+    // (UN)BLOCK PUSH
+    private static final String ACTION_BLOCK_PUSH = "action.BLOCK_PUSH";
+
+    // GEOZONE
+    private static final String ACTION_NEARESTZONE = "action.NEARESTZONE";
+
+    // TRACKING/ANALYTICS
+    private static final String ACTION_TRACK_ACTION = "action.TRACK_ACTION";
+
+    // MSISDN
+    private static final String ACTION_GET_MSISDN = "action.GET_MSISDN";
+
+    // RICH NOTIFICATION
     public  static final String ACTION_NOTIF_UPDATABLE = "action.UPDATABLE";
     public  static final String ACTION_NOTIF_UPDATABLE_NEXT = "action.UPDATABLE_NEXT";
     public  static final String ACTION_NOTIF_UPDATABLE_PREV = "action.UPDATABLE_PREV";
     public  static final String ACTION_NOTIF_CANCEL = "action.CANCEL";
     public  static final String ACTION_NOTIF_REDIRECT = "action.REDIRECT";
 
+    // INBOX
+    public  static final String ACTION_LAST_10_UNREAD_NOTIF = "action.LAST_10_UNREAD_NOTIF";
+    public  static final String ACTION_LAST_10_NOTIF = "action.LAST_10_NOTIF";
+    public  static final String ACTION_MARK_NOTIF_AS_READ = "action.MARK_NOTIF_AS_READ";
+    public  static final String ACTION_MARK_ALL_NOTIF_AS_READ = "action.MARK_ALL_NOTIF_AS_READ";
+    public  static final String ACTION_GET_NOTIF_EXTRA_PAYLOAD = "action.GET_NOTIF_EXTRA_PAYLOAD";
+
+    // BROADCAST
     public static final String ACTION_REGISTRATION_RESULT = "action.REGISTRATION_RESULT";
     public static final String ACTION_GET_DEVICE_USER_INFO = "action.GET_DEVICE_USER_INFO";
+    public static final String ACTION_GEOZONES_UPDATED = "action.GEOZONES_UPDATED";
 
+    // PARAMS
     private static final String EXTRA_KEY    = "extra.KEY";
     private static final String EXTRA_TYPE   = "extra.KEY_TYPE";
     private static final String EXTRA_VALUE  = "extra.VALUE";
@@ -83,10 +111,6 @@ public class SmartpushService extends IntentService {
         Intent intent = new Intent( context, SmartpushService.class ) ;
         intent.setAction(ACTION_REGISTRATION);
         context.startService(intent);
-    }
-
-    private void createDefaultChannel() {
-
     }
 
     /**
@@ -113,57 +137,58 @@ public class SmartpushService extends IntentService {
 //        context.startService(intent);
 //    }
 
-//    /**
-//     * Starts this service to perform action check msisdn with no parameters. If
-//     * the service is already performing a task this action will be queued.
-//     *
-//     * @see IntentService
-//     */
-//    @TargetApi(Build.VERSION_CODES.LOLLIPOP_MR1)
-//    static void getMccMnc(Context context ) {
-//        ArrayList<String> values = new ArrayList<>();
-//        boolean supportMultiSim =
-//                Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1;
-//
-//        boolean hasPermissions  =
-//                Utils.DeviceUtils.hasPermissions(
-//                        context, android.Manifest.permission.READ_PHONE_STATE );
-//
-//        if ( supportMultiSim && hasPermissions ) {
-//
-//            //new way - gives access to all SIMs
-//            SubscriptionManager subscriptionManager =
-//                    ( SubscriptionManager ) context.getSystemService(
-//                            Context.TELEPHONY_SUBSCRIPTION_SERVICE );
-//
-//            List<SubscriptionInfo> subInfoList =
-//                    subscriptionManager.getActiveSubscriptionInfoList();
-//
-//            for( SubscriptionInfo info : subInfoList ) {
-//                int mcc = info.getMcc();
-//                int mnc = info.getMnc();
-//
-//                values.add( String.valueOf( mcc ) + String.valueOf( mnc ) );
-//            }
-//
-//        } else {
-//            TelephonyManager telephonyManager =
-//                    ( TelephonyManager ) context.getSystemService( Context.TELEPHONY_SERVICE );
-//
-//            if ( telephonyManager != null ) {
-//                String carrier = telephonyManager.getSimOperator();
-//                if ( carrier != null
-//                        && !"".equals( carrier.trim() )
-//                        && !"NULL".equals( carrier.trim().toUpperCase() ) ) {
-//
-//                    values.add( carrier.toUpperCase() );
-//                }
-//            }
-//        }
-//
-//        SmartpushLog.d( TAG, new JSONArray( values ).toString() );
-//        startActionSetTag( context, "__CARRIER__", values );
-//    }
+    /**
+     * Starts this service to perform action check msisdn with no parameters. If
+     * the service is already performing a task this action will be queued.
+     *
+     * @see IntentService
+     */
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP_MR1)
+    static void getMccMnc(Context context ) {
+        ArrayList<String> values = new ArrayList<>();
+        boolean supportMultiSim =
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1;
+
+        boolean hasPermissions  =
+                Utils.DeviceUtils.hasPermissions(
+                        context, READ_PHONE_STATE );
+
+        if ( supportMultiSim && hasPermissions ) {
+
+            //new way - gives access to all SIMs
+            SubscriptionManager subscriptionManager =
+                    ( SubscriptionManager ) context.getSystemService(
+                            Context.TELEPHONY_SUBSCRIPTION_SERVICE );
+
+            @SuppressLint("MissingPermission")
+            List<SubscriptionInfo> subInfoList =
+                    subscriptionManager.getActiveSubscriptionInfoList();
+
+            for( SubscriptionInfo info : subInfoList ) {
+                int mcc = info.getMcc();
+                int mnc = info.getMnc();
+
+                values.add( String.valueOf( mcc ) + String.valueOf( mnc ) );
+            }
+
+        } else {
+            TelephonyManager telephonyManager =
+                    (TelephonyManager) context.getSystemService( Context.TELEPHONY_SERVICE );
+
+            if ( telephonyManager != null ) {
+                String carrier = telephonyManager.getSimOperator();
+                if ( carrier != null
+                        && !"".equals( carrier.trim() )
+                        && !"NULL".equals( carrier.trim().toUpperCase() ) ) {
+
+                    values.add( carrier.toUpperCase() );
+                }
+            }
+        }
+
+        SmartpushLog.d( TAG, new JSONArray( values ).toString() );
+        startActionSetTag( context, "__CARRIER__", values );
+    }
 
     /**
      * Starts this service to perform action setTAG with the given parameters. If
@@ -411,6 +436,58 @@ public class SmartpushService extends IntentService {
         context.startService( intent );
     }
 
+    public static void startActionLastMessages(Context context, Date startingDate ) {
+        Intent intent = new Intent( context, SmartpushService.class ) ;
+        intent.setAction( ACTION_LAST_10_NOTIF ) ;
+
+        if ( startingDate != null ) {
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            // This line converts the given date into UTC time zone
+            formatter.setTimeZone( TimeZone.getTimeZone( "UTC" ) );
+            intent.putExtra( EXTRA_VALUE, formatter.format( startingDate ) );
+        }
+
+        context.startService( intent );
+    }
+
+    public static void startActionLastUnreadMessage( Context context, Date startingDate ) {
+        Intent intent = new Intent( context, SmartpushService.class ) ;
+        intent.setAction( ACTION_LAST_10_UNREAD_NOTIF ) ;
+
+        if ( startingDate != null ) {
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            // This line converts the given date into UTC time zone
+            formatter.setTimeZone( TimeZone.getTimeZone( "UTC" ) );
+            intent.putExtra( EXTRA_VALUE, formatter.format( startingDate ) );
+        }
+
+        context.startService( intent );
+    }
+
+    public static void startActionMarkMessageAsRead(Context context, String pushId ) {
+        if ( pushId == null ) return;
+
+        Intent intent = new Intent( context, SmartpushService.class ) ;
+        intent.setAction( ACTION_MARK_NOTIF_AS_READ ) ;
+        intent.putExtra( EXTRA_VALUE, pushId );
+        context.startService( intent );
+    }
+
+    public static void startActionMarkAllMessagesAsRead(Context context ) {
+        Intent intent = new Intent( context, SmartpushService.class ) ;
+        intent.setAction( ACTION_MARK_ALL_NOTIF_AS_READ ) ;
+        context.startService( intent );
+    }
+
+    public static void startActionGetMessageExtraPayload(Context context, String pushId ) {
+        if ( pushId == null ) return;
+
+        Intent intent = new Intent( context, SmartpushService.class ) ;
+        intent.setAction( ACTION_GET_NOTIF_EXTRA_PAYLOAD ) ;
+        intent.putExtra( EXTRA_VALUE, pushId );
+        context.startService( intent );
+    }
+
     @Override
     protected void onHandleIntent( Intent intent ) {
         if ( intent != null ) {
@@ -453,6 +530,16 @@ public class SmartpushService extends IntentService {
                 sendBroadcast( new Intent( Intent.ACTION_CLOSE_SYSTEM_DIALOGS ) );
 
                 handleActionRedirectNotification( data );
+            } else if ( ACTION_LAST_10_NOTIF.equals( action ) ) {
+                handleActionLastMessages( intent );
+            } else if ( ACTION_LAST_10_UNREAD_NOTIF.equals( action ) ) {
+                handleActionLastUnreadMessages( intent );
+            } else if ( ACTION_MARK_NOTIF_AS_READ.equals( action ) ) {
+                handleActionMarkMessageAsRead( intent );
+            } else if ( ACTION_MARK_ALL_NOTIF_AS_READ.equals( action ) ) {
+                handleActionMarkAllMessagesAsRead( intent );
+            } else if ( ACTION_GET_NOTIF_EXTRA_PAYLOAD.equals( action ) ) {
+                handleActionGetMessageExtraPayload( intent );
             }
 //            else if ( ACTION_GET_APP_LIST.equals( action ) ) {
 //                handleActionSaveAppsListState();
@@ -823,6 +910,10 @@ public class SmartpushService extends IntentService {
 
                         // Salva as novas geozones
                         GeozoneDAO.saveAll( db, resp.geozones );
+
+                        LocalBroadcastManager
+                                .getInstance( this )
+                                .sendBroadcast( new Intent( ACTION_GEOZONES_UPDATED ) );
                     }
                 }
 
@@ -1020,4 +1111,103 @@ public class SmartpushService extends IntentService {
 //        // Release
 //        db.close();
 //    }
+
+    private void handleActionLastMessages(Intent data ) {
+        HashMap<String, String> params = new HashMap<String, String>();
+
+        params.put( "devid", Utils.Smartpush.getMetadata( this, Utils.Constants.SMARTP_API_KEY ) );
+        params.put( "appid", Utils.Smartpush.getMetadata( this, Utils.Constants.SMARTP_APP_ID ) );
+        params.put( "hwid",  Utils.PreferenceUtils.readFromPreferences ( this, Utils.Constants.SMARTP_HWID ) );
+        params.put( "regid", Utils.PreferenceUtils.readFromPreferences( this, Utils.Constants.SMARTP_REGID ) );
+        params.put( "platform", "ANDROID" );
+
+        if ( data.hasExtra( EXTRA_VALUE ) ) {
+            // Add value
+            params.put( "startingDate", data.getStringExtra( EXTRA_VALUE ) );
+        }
+
+        params.put( "dateFormat", "d/m/Y H:i:s" );
+
+        LocalBroadcastManager
+                .getInstance( this )
+                .sendBroadcast(
+                        new Intent( ACTION_LAST_10_NOTIF )
+                                .putExtra( EXTRA_VALUE, SmartpushHttpClient
+                                        .post( "notifications/last", params, this, false ) ) );
+    }
+
+    private void handleActionLastUnreadMessages(Intent data ) {
+        HashMap<String, String> params = new HashMap<String, String>();
+
+        params.put( "devid", Utils.Smartpush.getMetadata( this, Utils.Constants.SMARTP_API_KEY ) );
+        params.put( "appid", Utils.Smartpush.getMetadata( this, Utils.Constants.SMARTP_APP_ID ) );
+        params.put( "hwid",  Utils.PreferenceUtils.readFromPreferences ( this, Utils.Constants.SMARTP_HWID ) );
+        params.put( "regid", Utils.PreferenceUtils.readFromPreferences( this, Utils.Constants.SMARTP_REGID ) );
+        params.put( "platform", "ANDROID" );
+
+        if ( data.hasExtra( EXTRA_VALUE ) ) {
+            // Add value
+            params.put( "startingDate", data.getStringExtra( EXTRA_VALUE ) );
+        }
+
+        params.put( "dateFormat", "d/m/Y H:i:s" );
+
+        LocalBroadcastManager
+                .getInstance( this )
+                .sendBroadcast(
+                        new Intent( ACTION_LAST_10_UNREAD_NOTIF )
+                                .putExtra( EXTRA_VALUE, SmartpushHttpClient
+                                        .post( "notifications/unread", params, this, false ) ) );
+    }
+
+    private void handleActionGetMessageExtraPayload(Intent data ) {
+        HashMap<String, String> params = new HashMap<String, String>();
+
+        params.put( "devid", Utils.Smartpush.getMetadata( this, Utils.Constants.SMARTP_API_KEY ) );
+        params.put( "appid", Utils.Smartpush.getMetadata( this, Utils.Constants.SMARTP_APP_ID ) );
+        params.put( "pushid",  data.getStringExtra( EXTRA_VALUE ) );
+        params.put( "regid", Utils.PreferenceUtils.readFromPreferences( this, Utils.Constants.SMARTP_REGID ) );
+
+        LocalBroadcastManager
+                .getInstance( this )
+                .sendBroadcast(
+                        new Intent( ACTION_GET_NOTIF_EXTRA_PAYLOAD )
+                                .putExtra( EXTRA_VALUE, SmartpushHttpClient
+                                        .post( "notifications/extra", params, this, false ) ) );
+    }
+
+    private void handleActionMarkMessageAsRead(Intent data ) {
+        HashMap<String, String> params = new HashMap<String, String>();
+
+        params.put( "devid", Utils.Smartpush.getMetadata( this, Utils.Constants.SMARTP_API_KEY ) );
+        params.put( "appid", Utils.Smartpush.getMetadata( this, Utils.Constants.SMARTP_APP_ID ) );
+        params.put( "hwid",  Utils.PreferenceUtils.readFromPreferences ( this, Utils.Constants.SMARTP_HWID ) );
+        params.put( "pushid",  data.getStringExtra( EXTRA_VALUE ) );
+        params.put( "regid", Utils.PreferenceUtils.readFromPreferences( this, Utils.Constants.SMARTP_REGID ) );
+        params.put( "_method", "DELETE");
+
+        LocalBroadcastManager
+                .getInstance( this )
+                .sendBroadcast(
+                        new Intent( ACTION_MARK_NOTIF_AS_READ )
+                                .putExtra( EXTRA_VALUE, SmartpushHttpClient
+                                        .post( "notifications/read-one", params, this, false ) ) );
+    }
+
+    private void handleActionMarkAllMessagesAsRead(Intent data ) {
+        HashMap<String, String> params = new HashMap<String, String>();
+
+        params.put( "devid", Utils.Smartpush.getMetadata( this, Utils.Constants.SMARTP_API_KEY ) );
+        params.put( "appid", Utils.Smartpush.getMetadata( this, Utils.Constants.SMARTP_APP_ID ) );
+        params.put( "hwid",  Utils.PreferenceUtils.readFromPreferences ( this, Utils.Constants.SMARTP_HWID ) );
+        params.put( "regid", Utils.PreferenceUtils.readFromPreferences( this, Utils.Constants.SMARTP_REGID ) );
+        params.put( "_method", "DELETE");
+
+        LocalBroadcastManager
+                .getInstance( this )
+                .sendBroadcast(
+                        new Intent( ACTION_MARK_ALL_NOTIF_AS_READ )
+                                .putExtra( EXTRA_VALUE, SmartpushHttpClient
+                                        .post( "notifications/read-all", params, this, false ) ) );
+    }
 }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.v4.app.NotificationManagerCompat;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -149,8 +150,49 @@ public final class Smartpush {
         }
     }
 
+    public static void getLastMessages( final Context context, Date startingDate ) {
+        if ( isRegistered(context) ) {
+            SmartpushService.startActionLastMessages( context, startingDate );
+        }
+    }
+
+    public static void getLastUnreadMessages( final Context context, Date startingDate ) {
+        if ( isRegistered(context) ) {
+            SmartpushService.startActionLastUnreadMessage( context, startingDate );
+        }
+    }
+
+    public static void markMessageAsRead( final Context context, String pushId ) {
+        if ( isRegistered(context) ) {
+            SmartpushService.startActionMarkMessageAsRead( context, pushId );
+        }
+    }
+
+    public static void markAllMessagesAsRead( final Context context ) {
+        if ( isRegistered(context) ) {
+            SmartpushService.startActionMarkAllMessagesAsRead( context );
+        }
+    }
+
+    public static void getMessageExtraPayload( final Context context, String pushId ) {
+        if ( isRegistered(context) ) {
+            SmartpushService.startActionGetMessageExtraPayload( context, pushId );
+        }
+    }
+
     public static void subscribe( final Context context, String yourGooglePlayServiceProjectId ) {
         subscribe( context );
+    }
+
+    public static String getGeozones( final Context context ) {
+        SQLiteDatabase db =
+                new DatabaseManager( context ).getWritableDatabase();
+
+        String jsonArray = ( String ) GeozoneDAO.listAllToJSONString( db );
+
+        db.close();
+
+        return jsonArray;
     }
 
     public static void subscribe( final Context context ) {
@@ -158,7 +200,7 @@ public final class Smartpush {
             if ( checkSmartpush( context ) ) {
                 SmartpushService.subscrive( context );
                 SmartpushService.getMsisdn( context );
-//                SmartpushService.getMccMnc( context );
+                SmartpushService.getMccMnc( context );
 //                SmartpushService.getAppList( context );
             }
         }
