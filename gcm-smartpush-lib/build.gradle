@@ -9,8 +9,8 @@ android {
     buildToolsVersion '28.0.3'
     defaultConfig {
         minSdkVersion 16
-        versionCode 514
-        versionName "5.1.4"
+        versionCode 516
+        versionName "5.1.6"
     }
     buildTypes {
         release {

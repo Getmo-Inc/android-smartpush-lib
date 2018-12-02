@@ -22,7 +22,7 @@ allprojects {
         maven {
             url "https://jitpack.io"
             credentials {
-                username project.property("authToken")
+                username authToken
             }
         }
     }
@@ -30,4 +30,8 @@ allprojects {
 
 task clean(type: Delete) {
     delete rootProject.buildDir
+}
+
+task dumpJitpackAuthToken << {
+    println authToken
 }
