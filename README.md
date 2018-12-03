@@ -7,43 +7,45 @@ A [SMARTPUSH](http://admin.getmo.com.br) é a plataforma de mensagens (push, web
 - Android minSdkVersion **16**
 - Google Play Services GCM **12.0.1**
 
-### Configurando a biblioteca Android SMARTPUSH 
+### Removendo a biblioteca SMARTPUSH como módulo
+Se você já conhece e implementa a biblioteca android do **SMARTPUSH** como um módulo, siga os passos a seguir para remove-la e readiciona-la como uma dependência, mas se você é novo por aqui, apenas siga para o próximo tópico.
 
-A biblioteca android do **SMARTPUSH** é responsável por integrar sua aplicação mobile ao backend do **SMARTPUSH** para a gestão do cadastro de dispositivos, tags, geofences, processamento e monitoramento de mensagens push. 
+1. Abra seu arquivo build.gradle a nível de app e apague a linha de dependência
+```json
+dependencies {
+        implementation project(':gcm-smartpush-lib-release')
+ }
+```
+2. Clique com o botão direito em cima do seu módulo gcm-smartpush-lib-release e abra o local do arquivo
+![Step2](images/remove_module_1.png)
+3. Identifique e exclua a pasta do módulo
+![Step3](images/remove_module_2.png)
+4. Volte ao AndroidStudio e abra o arquivo settings.gradle e apague o módulo ':gcm-smartpush-lib-release'
+
+Agora você está pronto para seguir para a próxima etapa e adicionar nossa biblioteca como uma dependência
+
+### Adicionando a biblioteca Android SMARTPUSH 
+
+A biblioteca android do **SMARTPUSH** é responsável por integrar sua aplicação mobile ao backend do **SMARTPUSH** para a gestão do cadastro de dispositivos, tags, geofences, processamento e monitoramento de mensagens push.   
 
 Para adicionar suporte a push em sua aplicação android siga as instruções a seguir.
 
-1. Acesse o [GITHUB](https://github.com/Getmo-Inc/android-smartpush-lib) da GETMO e clone o projeto ou faça o download do arquivo **gcm-smartpush-lib-release.aar**.
+1. Adicione ao seu arquivo build.gradle a nível de projeto, dentro de allprojects repositories
+```
+allprojects {
+    repositories {
+        maven { url 'https://jitpack.io' }
+    }
+}
+```
+2. Adicione nossa biblioteca à suas dependências ao arquivo build.gradle a nível de módulo
+```json
+dependencies {
+    implementation 'org.bitbucket.smartpush:android-smartpush-lib:5.1.6'
+ }
+```
 
-2. Abra o seu projeto de aplicação no _Android Studio_ e selecione adicionar um novo _módulo_.
-
-![Step1](images/add_new_module.png)
-
-Selecione a opção "Import JAR/AAR Package" conforme a figura abaixo. 
-
-![Step2](images/add_new_module_2.png)
-
-Na próxima tela, clique no botão para navegar pelo seu sistema de arquivos ...
-
-![Step3](images/add_new_module_3.png)
-
-... e encontre o local onde você baixou a biblioteca, selecione o arquivo .aar, pressione OK e então FINISH. 
-
-![Step4](images/add_new_module_4.png)
-
-Agora no "_Project explorer_" selecione sua app, clique com o botão direito do mouse, e
-selecione a ação "_open module settings_". Conforme a figura a seguir:
-
-![Step5](images/add_new_module_5.png)
-
-Agora, vamos adicionar a biblioteca Smartpush como uma "_Module Dependency_" do seu projeto. Clique no + dentro da aba "_Dependencies_", então na janela que irá abrir selecione o module :gcm-smartpush-lib-release
-e pressione ok. 
-
-![Step6](images/add_new_module_6.png)
-
-Aproveite e também adicione a Google Play Service como uma "_Library Dependency_" do seu projeto. Ela é necessária em conjunto com a biblioteca do Smartpush para ativar o uso de push em sua aplicação.
-
-![Step7](images/add_new_module_7.png)
+3. Sincronize o projeto apertando o botão "Sync Now" para baixar a biblioteca para seu projeto.
 
 > **Importante** 
 >
@@ -316,4 +318,4 @@ Copie o valor do código "**alias**" e teste o envio de push. Para saber como en
 
 Para explorar os demais recursos da plataforma Smartpush como criação de **TAGs**, **GEOFENCE**, entre outros acesse os projetos de exemplo disponiveis no [Github](https://github.com/Getmo-Inc/android-smartpush-samples).
 
-Bom era isso! Esperamos que otutorial seja útil e se tiver qualquer dúvida, ou dica, envie um email a nossa equipe **developer@getmo.com.br**, teremos o maior prazer em te auxiliar.
+Bom era isso! Esperamos que o tutorial seja útil e se tiver qualquer dúvida ou dica envie um email a nossa equipe **developer@getmo.com.br**, teremos o maior prazer em te auxiliar.
