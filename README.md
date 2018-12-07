@@ -1,4 +1,4 @@
-# android-smartpush-lib
+﻿# android-smartpush-lib
 
 A [SMARTPUSH](http://admin.getmo.com.br) é a plataforma de mensagens (push, webpush, sms, email, redes sociais, e chatbots) da [GETMO](http://novo.getmo.com.br). 
 
@@ -41,7 +41,7 @@ allprojects {
 2. Adicione nossa biblioteca à suas dependências ao arquivo build.gradle a nível de módulo
 ```json
 dependencies {
-    implementation 'org.bitbucket.smartpush:android-smartpush-lib:5.1.6'
+    implementation 'org.bitbucket.getmo:android-smartpush-lib:5.1.7'
  }
 ```
 
