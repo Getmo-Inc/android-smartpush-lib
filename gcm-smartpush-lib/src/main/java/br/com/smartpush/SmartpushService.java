@@ -643,7 +643,7 @@ public class SmartpushService extends IntentService {
             }
         }
 
-//        startActionTrackAction( this, pushId, null, null, SmartpushHitUtils.Action.CLICKED.name(), label );
+        startActionTrackAction( this, pushId, null, null, SmartpushHitUtils.Action.CLICKED.name(), label );
         // TODO workaround android Oreo, pre-Black Friday 2018 ... repensar isso!!
         SmartpushHttpClient.sendToAnalytics( this, pushId,  SmartpushHitUtils.Action.CLICKED.name() );
 
