@@ -113,6 +113,12 @@ public final class Smartpush {
         }
     }
 
+    public static void getTagValues(final Context context, final String key){
+        if (isRegistered( context ) ) {
+            SmartpushService.startActionGetTagValues(context, key);
+        }
+    }
+
     public static void hit( final Context context, String pushId, String screenName, String category, String action, String label ) {
         if ( isRegistered( context ) ) {
             SmartpushService.startActionTrackAction(context, pushId, screenName, category, action, label);
