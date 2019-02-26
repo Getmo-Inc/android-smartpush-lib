@@ -142,7 +142,7 @@ public class SmartpushNotificationManager {
     }
 
     // Build Notification
-    private void createNotification( Bundle extras ) {
+    void createNotification( Bundle extras ) {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder( mContext )
                 .setAutoCancel   ( isAutoCancel( extras ) )          // Set Auto Cancel Action

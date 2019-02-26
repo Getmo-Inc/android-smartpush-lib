@@ -28,7 +28,7 @@ public class MySmartpushListenerService extends SmartpushListenerService {
          */
 
         /**
-         * In some cases it may be useful to show a notification indicating to the user
+         * In some cases it may be useful to createNotification a notification indicating to the user
          * that a message was received.
          */
 
@@ -36,7 +36,7 @@ public class MySmartpushListenerService extends SmartpushListenerService {
     }
 
     /**
-     * Create and show a simple notification containing the received GCM message.
+     * Create and createNotification a simple notification containing the received GCM message.
      *
      * @param message GCM message received.
      */

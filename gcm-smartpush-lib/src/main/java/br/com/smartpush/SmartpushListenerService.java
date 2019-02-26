@@ -177,8 +177,8 @@ public abstract class SmartpushListenerService extends FirebaseMessagingService 
          *     - Update UI.
          *//*
 
-        *//**
-         * In some cases it may be useful to show a notification indicating to the user
+        /**
+         * In some cases it may be useful to createNotification a notification indicating to the user
          * that a message was received.
          *//*
         // sendNotification(message);
