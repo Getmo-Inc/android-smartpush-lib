@@ -57,6 +57,7 @@ public class SmartpushService extends IntentService {
 
     // TAGs
     private static final String ACTION_SET_TAG = "action.SET_TAG";
+    private static final String ACTION_GET_TAG = "action.GET_TAG";
 
     // (UN)BLOCK PUSH
     private static final String ACTION_BLOCK_PUSH = "action.BLOCK_PUSH";
@@ -88,6 +89,7 @@ public class SmartpushService extends IntentService {
     public static final String ACTION_REGISTRATION_RESULT = "action.REGISTRATION_RESULT";
     public static final String ACTION_GET_DEVICE_USER_INFO = "action.GET_DEVICE_USER_INFO";
     public static final String ACTION_GEOZONES_UPDATED = "action.GEOZONES_UPDATED";
+    public static final String ACTION_GET_TAG_VALUES = "action.GET_TAG_VALUES";
 
     // PARAMS
     private static final String EXTRA_KEY    = "extra.KEY";
@@ -376,6 +378,14 @@ public class SmartpushService extends IntentService {
         context.startService( intent );
     }
 
+    public static void startActionGetTagValues(Context context, String tag) {
+        Intent intent = new Intent(context, SmartpushService.class);
+        intent.setAction(ACTION_GET_TAG);
+        intent.putExtra(EXTRA_KEY, tag);
+
+        context.startService(intent);
+    }
+
     /**
      * Starts this service to perform action setTAG with the given parameters. If
      * the service is already performing a task this action will be queued.
@@ -496,6 +506,8 @@ public class SmartpushService extends IntentService {
                 handleActionSubscribe( );
             } else if ( ACTION_SET_TAG.equals( action ) ) {
                 handleActionSetOrDeleteTag( intent );
+            } else if ( ACTION_GET_TAG.equals( action ) ) {
+                handleActionGetTagValues( intent );
             } else if ( ACTION_BLOCK_PUSH.equals( action ) ) {
                 handleActionBlockPush( intent );
             } else if ( ACTION_GET_DEVICE_USER_INFO.equals( action ) ) {
@@ -643,7 +655,7 @@ public class SmartpushService extends IntentService {
             }
         }
 
-//        startActionTrackAction( this, pushId, null, null, SmartpushHitUtils.Action.CLICKED.name(), label );
+        startActionTrackAction( this, pushId, null, null, SmartpushHitUtils.Action.CLICKED.name(), label );
         // TODO workaround android Oreo, pre-Black Friday 2018 ... repensar isso!!
         SmartpushHttpClient.sendToAnalytics( this, pushId,  SmartpushHitUtils.Action.CLICKED.name() );
 
@@ -735,6 +747,30 @@ public class SmartpushService extends IntentService {
                     || data.getStringExtra( EXTRA_KEY ).equals( "__CARRIER__" ) ) ? true : false;
 
         SmartpushHttpClient.post( "tag", params, this, silent );
+    }
+
+    /**
+     * Handle action getTag in the provided background thread with the provided
+     * parameters.
+     */
+    private void handleActionGetTagValues(Intent data ){
+        HashMap<String, String> params = new HashMap<>();
+
+        String hwid = Utils.PreferenceUtils.readFromPreferences(this, Utils.Constants.SMARTP_HWID);
+
+        params.put( "appid", Utils.Smartpush.getMetadata( this, Utils.Constants.SMARTP_APP_ID ) );
+        params.put( "devid", Utils.Smartpush.getMetadata( this, Utils.Constants.SMARTP_API_KEY ) );
+        params.put( "regid", Utils.PreferenceUtils.readFromPreferences( this, Utils.Constants.SMARTP_REGID) );
+
+        // tag info
+        params.put( "key", data.getStringExtra(EXTRA_KEY ) );
+
+        LocalBroadcastManager
+                .getInstance( this )
+                .sendBroadcast(
+                        new Intent( ACTION_GET_TAG_VALUES )
+                                .putExtra( EXTRA_VALUE, SmartpushHttpClient
+                                        .post( "tag/"+hwid, params, this, false ) ) );
     }
 
     /**
@@ -1029,88 +1065,88 @@ public class SmartpushService extends IntentService {
 
 
     // TODO implementar LIST APPS na forma de broadcast!
-//    private void handleActionSaveAppsListState() {
-//        SQLiteDatabase db = new DatabaseManager( this ).getWritableDatabase();
-//
-//        // Active apps list
-//        List<String> installedAppsList =
-//                Utils.DeviceUtils.getInstalledApps( this );
-//
-//        // List with last state sinc to SMARTPUSH
-//        List<AppInfo> savedList =
-//                AppInfoDAO.listAll( db );
-//
-//        Log.d( TAG, "savedList: " + savedList.size() );
-//        Log.d( TAG, "installedAppsList: " + installedAppsList.size() );
-//
-//        // insert/update packages installed state
-//        for ( String packageName : installedAppsList ) {
-//            boolean found = false;
-//            for( AppInfo saved : savedList ) {
-//                if ( packageName.equals( saved.getPackageName() ) ) {
-//                    Log.d( TAG, "savedList.contains: " + packageName );
-//                    if ( saved != null && saved.getState() == AppInfo.UNINSTALLED ) {
-//                        saved.setState( AppInfo.INSTALLED );
-//                        saved.setSinc( false );
-//                        AppInfoDAO.save( db, saved );
-//                    }
-//
-//                    found = true;
-//                    saved.setMatch( found );
-//                    break;
-//                }
-//            }
-//
-//            if ( !found ) {
-//                Log.d( TAG, "savedList.not.contains: " + packageName );
-//                AppInfo newApp = new AppInfo();
-//                newApp.setPackageName( packageName );
-//                newApp.setState( AppInfo.INSTALLED );
-//                newApp.setSinc( false );
-//                newApp.setMatch( true );
-//
-//                AppInfoDAO.save( db, newApp );
-//            }
-//        }
-//
-//        // mark packages were uninstalled
-//        for ( AppInfo item : savedList ) {
-//            if ( !item.isMatch() ) {
-//                Log.d( TAG, "savedList.contains.uninstalled.app: " + item.getPackageName() );
-//                item.setState( AppInfo.UNINSTALLED );
-//                item.setSinc( false );
-//
+/*    private void handleActionSaveAppsListState() {
+        SQLiteDatabase db = new DatabaseManager( this ).getWritableDatabase();
+
+        // Active apps list
+        List<String> installedAppsList =
+                Utils.DeviceUtils.getInstalledApps( this );
+
+        // List with last state sinc to SMARTPUSH
+        List<AppInfo> savedList =
+                AppInfoDAO.listAll( db );
+
+        Log.d( TAG, "savedList: " + savedList.size() );
+        Log.d( TAG, "installedAppsList: " + installedAppsList.size() );
+
+        // insert/update packages installed state
+        for ( String packageName : installedAppsList ) {
+            boolean found = false;
+            for( AppInfo saved : savedList ) {
+                if ( packageName.equals( saved.getPackageName() ) ) {
+                    Log.d( TAG, "savedList.contains: " + packageName );
+                    if ( saved != null && saved.getState() == AppInfo.UNINSTALLED ) {
+                        saved.setState( AppInfo.INSTALLED );
+                        saved.setSinc( false );
+                        AppInfoDAO.save( db, saved );
+                    }
+
+                    found = true;
+                    saved.setMatch( found );
+                    break;
+                }
+            }
+
+            if ( !found ) {
+                Log.d( TAG, "savedList.not.contains: " + packageName );
+                AppInfo newApp = new AppInfo();
+                newApp.setPackageName( packageName );
+                newApp.setState( AppInfo.INSTALLED );
+                newApp.setSinc( false );
+                newApp.setMatch( true );
+
+                AppInfoDAO.save( db, newApp );
+            }
+        }
+
+        // mark packages were uninstalled
+        for ( AppInfo item : savedList ) {
+            if ( !item.isMatch() ) {
+                Log.d( TAG, "savedList.contains.uninstalled.app: " + item.getPackageName() );
+                item.setState( AppInfo.UNINSTALLED );
+                item.setSinc( false );
+
+                AppInfoDAO.save( db, item );
+            }
+        }
+
+        // renew list with last state
+        savedList = AppInfoDAO.listAll( db );
+
+        List<String> uninstalled = new ArrayList<>();
+        List<String> installed   = new ArrayList<>();
+
+        for ( AppInfo item : savedList ) {
+            if ( !item.isSinc() ) {
+                if ( item.getState() == AppInfo.INSTALLED ) {
+                    Log.d( TAG, "INSTALLED: " + item.toString() );
+                    installed.add( item.getPackageName() );
+                }
+
+                if ( item.getState() == AppInfo.UNINSTALLED ) {
+                    Log.d( TAG, "UNINSTALLED: " + item.toString() );
+                    uninstalled.add( item.getPackageName() );
+                }
+
+                // LIST APPS - revisar para proxima versao da SDK, completar a operacao de persistencia
+//                item.setSinc( SmartpushConnectivityUtil.isConnected( this ) );
 //                AppInfoDAO.save( db, item );
-//            }
-//        }
-//
-//        // renew list with last state
-//        savedList = AppInfoDAO.listAll( db );
-//
-//        List<String> uninstalled = new ArrayList<>();
-//        List<String> installed   = new ArrayList<>();
-//
-//        for ( AppInfo item : savedList ) {
-//            if ( !item.isSinc() ) {
-//                if ( item.getState() == AppInfo.INSTALLED ) {
-//                    Log.d( TAG, "INSTALLED: " + item.toString() );
-//                    installed.add( item.getPackageName() );
-//                }
-//
-//                if ( item.getState() == AppInfo.UNINSTALLED ) {
-//                    Log.d( TAG, "UNINSTALLED: " + item.toString() );
-//                    uninstalled.add( item.getPackageName() );
-//                }
-//
-//                // LIST APPS - revisar para proxima versao da SDK, completar a operacao de persistencia
-////                item.setSinc( SmartpushConnectivityUtil.isConnected( this ) );
-////                AppInfoDAO.save( db, item );
-//            }
-//        }
-//
-//        // Release
-//        db.close();
-//    }
+            }
+        }
+
+        // Release
+        db.close();
+    }*/
 
     private void handleActionLastMessages(Intent data ) {
         HashMap<String, String> params = new HashMap<String, String>();
