@@ -10,6 +10,9 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.ArrayList;
 
 import java.util.ArrayList;
 
@@ -27,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
 
 //        // Register at Smartpush!
         Smartpush.subscribe( this );
+        Smartpush.getTagValues(MainActivity.this, "SMARTPUSH_ID");
 //        Smartpush.setSmallPushIcon(  );
 
         /*
@@ -80,6 +84,12 @@ public class MainActivity extends AppCompatActivity {
                 .registerReceiver(mRegistrationBroadcastReceiver,
                         new IntentFilter(
                                 SmartpushService.ACTION_REGISTRATION_RESULT));
+
+        LocalBroadcastManager
+                .getInstance( this )
+                .registerReceiver(mGetTagValuesBroadcastReceiver,
+                        new IntentFilter(
+                                SmartpushService.ACTION_GET_TAG_VALUES));
     }
 
     @Override
@@ -88,6 +98,10 @@ public class MainActivity extends AppCompatActivity {
         LocalBroadcastManager
                 .getInstance( this )
                 .unregisterReceiver(mRegistrationBroadcastReceiver);
+
+        LocalBroadcastManager
+                .getInstance( this )
+                .unregisterReceiver(mGetTagValuesBroadcastReceiver);
     }
 
 //    public void onClick( View v ) {
@@ -98,10 +112,19 @@ public class MainActivity extends AppCompatActivity {
 //        Smartpush.blockPush( this, false );
 //    }
 
+    private BroadcastReceiver mGetTagValuesBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent data) {
+
+            String dados = data.getStringExtra("extra.VALUE");
+
+            Log.d("LOG_TESTE","Dados: "+dados);
+        }
+    } ;
+
     private BroadcastReceiver mRegistrationBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive( Context context, Intent data ) {
-
             if ( data.getAction().equals( SmartpushService.ACTION_REGISTRATION_RESULT) ) {
                 SmartpushDeviceInfo device =
                         data.getParcelableExtra(SmartpushDeviceInfo.EXTRA_DEVICE_INFO);
@@ -131,7 +154,10 @@ public class MainActivity extends AppCompatActivity {
 //                list.add("ESPORTE");
 //                list.add("ECONOMIA");
 //                Smartpush.setTag( MainActivity.this, "NEWS_FEED", list );
-//
+
+                // GET TAG VALUE
+
+
 //                // Testing insertion of a empty list
 //                Smartpush.setTag( MainActivity.this, "APPS_LIST", new ArrayList<String>() );
 //
