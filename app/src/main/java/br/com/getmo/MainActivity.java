@@ -33,8 +33,8 @@ public class MainActivity extends AppCompatActivity {
         Smartpush.getTagValues(MainActivity.this, "SMARTPUSH_ID");
 //        Smartpush.setSmallPushIcon(  );
 
-        /*
-        ArrayList imageList = new ArrayList<String>();
+
+        /*ArrayList imageList = new ArrayList<String>();
         imageList.add("https://movietvtechgeeks.com/wp-content/uploads/2017/06/xbox-one-vs-ps4-long-battle-images.jpg");
         imageList.add("https://i.pinimg.com/originals/fe/63/26/fe6326895705f9f34f250fe274ca9bf3.png");
 
@@ -42,16 +42,30 @@ public class MainActivity extends AppCompatActivity {
         productList.add("buscape://search?productId=27062&site_origem=23708552");
         productList.add("buscape://search?productId=606585&utm_source=alertadepreco&utm_medium=push&utm_campaign=606585");
 
-         new SmartpushNotificationBuilder(this)
-                 .title("GO GETMO !")
-                 .detail("Getmo Offline Notifications!")
-                 .type("CARROUSSEL")
-                 .banner("https://pplware.sapo.pt/wp-content/uploads/2018/07/navigation-go.jpg")
-                 .url("getmo://home")
-                 .video("lW4pUQdRo3g")
-                 .carousel(imageList, productList)
-                 .build();
-         */
+        new SmartpushNotificationBuilder(this)
+                .title("GO GETMO !")
+                .detail("Getmo Offline Notifications!")
+                .type("CARROUSSEL")
+                .banner("https://pplware.sapo.pt/wp-content/uploads/2018/07/navigation-go.jpg")
+                .url("getmo://home")
+                .video("lW4pUQdRo3g")
+                .carousel(imageList, productList)
+                .build()
+                .createNotification();*/
+
+
+        /* Offline Notification Sample */
+
+        // Notification
+//        new SmartpushNotificationBuilder(this).notificationSample();
+
+        // Banner Notification
+//        new SmartpushNotificationBuilder(this).bannerNotificataionSample();
+
+        // Carousel Notification
+//        new SmartpushNotificationBuilder(this).carouselNotificationSample();
+
+        /* End Offline Sample */
 
         // optional - Tracking :: Call this method always! if app was opened by push one event will
         // be saved, if no nothing will happen.
