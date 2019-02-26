@@ -6,7 +6,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NotificationManagerCompat;
 
-import com.google.android.gms.gcm.GcmListenerService;
+import com.google.firebase.messaging.FirebaseMessagingService;
+import com.google.firebase.messaging.RemoteMessage;
+
+import java.util.Map;
 
 import static br.com.smartpush.Utils.Constants.LAUNCH_ICON;
 import static br.com.smartpush.Utils.Constants.NOTIF_TITLE;
@@ -16,16 +19,79 @@ import static br.com.smartpush.Utils.Constants.NOTIF_VIDEO_URI;
 /**
  * Created by fabio.licks on 10/02/16.
  */
-public abstract class SmartpushListenerService extends GcmListenerService {
+public abstract class SmartpushListenerService extends FirebaseMessagingService {
     /**
      * Called when message is received.
      *
-     * @param from SenderID of the sender.
-     * @param data Data bundle containing message data as key/value pairs.
+     * @param 'from' SenderID of the sender.
+     * @param 'data' Data bundle containing message data as key/value pairs.
      *             For Set of keys use data.keySet().
-     */
-    // [START receive_message]
+*/
+
+    Bundle mapToBundle(Map<String, String> mapData){
+        Bundle bundle = new Bundle();
+        for (Map.Entry<String, String> entry : mapData.entrySet()) {
+            bundle.putString(entry.getKey(), entry.getValue());
+        }
+        return bundle;
+    }
+
     @Override
+    public void onMessageReceived(RemoteMessage remoteMessage) {
+
+        Bundle data = mapToBundle(remoteMessage.getData());
+
+        if(remoteMessage.getData() != null && !remoteMessage.getData().isEmpty()){
+            String pushId = SmartpushHitUtils.getValueFromPayload(SmartpushHitUtils.Fields.PUSH_ID, data);
+            SmartpushHttpClient.sendToAnalytics(this, pushId, SmartpushHitUtils.Action.RECEIVED.name());
+
+            NotificationManagerCompat nmc = NotificationManagerCompat.from(this);
+            if( nmc != null ) {
+                if( !nmc.areNotificationsEnabled() ) {
+                    return ;
+                }
+            }
+
+            String provider = data.containsKey("provider") ? data.getString("provider") : data.getString("adnetwork");
+            String pushType = data.containsKey("type") ? data.getString("type") : data.getString("adtype");
+
+            if("smartpush".equals(provider)){
+                if("ICON_AD".equals(pushType)){
+                    if(!Utils.DeviceUtils.hasPermissions(this,"com.android.launcher.permission.INSTALL_SHORTCUT")){
+                        return;
+                    }
+
+                    addShortcut(data);
+                }
+            } /*else if ( "LOOPBACK".equals( pushType ) ) {
+
+                 //Tracking
+                    Smartpush.hit( this, pushId, null, null, SmartpushHitUtils.Action.ONLINE, null );
+                 //2. Update status - optin/optout
+                    if ( nmc != null ) {
+                        Smartpush.blockPush( this, !nmc.areNotificationsEnabled() );
+                    }
+
+            }*/ else {
+                data = SmartpushHttpClient.getPushPayload(this, pushId, data);
+
+                if (data.containsKey(NOTIF_VIDEO_URI)){
+                    String midiaId =
+                            data.getString( NOTIF_VIDEO_URI, null );
+                    CacheManager
+                            .getInstance( this )
+                            .prefetchVideo( midiaId, CacheManager.ExpirationTime.NONE );
+                }
+                new SmartpushNotificationManager( this ).onMessageReceived(remoteMessage.getFrom(), data );
+            }
+        } else {
+            handleMessage( data );
+        }
+    }
+
+
+    // [START receive_message]
+/*    @Override
     public void onMessageReceived( String from, Bundle data ) {
 
         if ( data != null && !data.isEmpty() ) {
@@ -104,20 +170,20 @@ public abstract class SmartpushListenerService extends GcmListenerService {
         }
 
         // [START_EXCLUDE]
-        /**
+        *//**
          * Production applications would usually process the message here.
          * Eg: - Syncing with server.
          *     - Store message in local database.
          *     - Update UI.
-         */
+         *//*
 
-        /**
+        *//**
          * In some cases it may be useful to show a notification indicating to the user
          * that a message was received.
-         */
+         *//*
         // sendNotification(message);
         // [END_EXCLUDE]
-    }
+    }*/
 
     protected abstract void handleMessage( Bundle data );
 

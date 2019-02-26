@@ -11,13 +11,20 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
 import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
 import android.telephony.TelephonyManager;
 
-import com.google.android.gms.gcm.GoogleCloudMessaging;
-import com.google.android.gms.iid.InstanceID;
+//import com.google.android.gms.gcm.GoogleCloudMessaging;
+//import com.google.android.gms.iid.InstanceID;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -109,9 +116,10 @@ public class SmartpushService extends IntentService {
      *
      * @see IntentService
      */
-    public static void subscrive( Context context ) {
+    public static void subscrive( Context context, String token ) {
         Intent intent = new Intent( context, SmartpushService.class ) ;
         intent.setAction(ACTION_REGISTRATION);
+        intent.putExtra(ACTION_REGISTRATION, token);
         context.startService(intent);
     }
 
@@ -503,7 +511,7 @@ public class SmartpushService extends IntentService {
         if ( intent != null ) {
             final String action = intent.getAction();
             if ( ACTION_REGISTRATION.equals( action ) ) {
-                handleActionSubscribe( );
+                handleActionSubscribe( intent );
             } else if ( ACTION_SET_TAG.equals( action ) ) {
                 handleActionSetOrDeleteTag( intent );
             } else if ( ACTION_GET_TAG.equals( action ) ) {
@@ -563,7 +571,7 @@ public class SmartpushService extends IntentService {
      * Handle action Subscribe in the provided background thread with no
      * parameters.
      */
-    private void handleActionSubscribe( ) {
+    private void handleActionSubscribe( Intent intent ) {
         SmartpushDeviceInfo result = null;
 
         try {
@@ -573,11 +581,13 @@ public class SmartpushService extends IntentService {
             // R.string.gcm_defaultSenderId (the Sender ID) is typically derived from google-services.json.
             // See https://developers.google.com/cloud-messaging/android/start for details on this file.
             // [START get_token]
-            InstanceID instanceID = InstanceID.getInstance( this );
-            String token = instanceID.getToken(
-                    PLAY_SERVICE_INTERNAL_PROJECT_ID, GoogleCloudMessaging.INSTANCE_ID_SCOPE, null );
+
+//            InstanceID instanceID = InstanceID.getInstance( this );
+//            String token = instanceID.getToken(
+//                    PLAY_SERVICE_INTERNAL_PROJECT_ID, GoogleCloudMessaging.INSTANCE_ID_SCOPE, null );
             // [END get_token]
-            SmartpushLog.d( TAG, "GCM Registration Token: " + token );
+
+            String token = intent.getStringExtra(ACTION_REGISTRATION);
 
             result = sendRegistrationToServer( token );
 
