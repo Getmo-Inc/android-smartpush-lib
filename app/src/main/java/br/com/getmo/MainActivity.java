@@ -6,15 +6,23 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.util.Strings;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
+
 import java.util.ArrayList;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import br.com.smartpush.Smartpush;
 import br.com.smartpush.SmartpushDeviceInfo;
@@ -23,15 +31,14 @@ import br.com.smartpush.SmartpushService;
 
 public class MainActivity extends AppCompatActivity {
 
+    private final static String TAG = "LOG";
+
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.main );
 
-//        // Register at Smartpush!
-        Smartpush.subscribe( this );
-        Smartpush.getTagValues(MainActivity.this, "SMARTPUSH_ID");
-//        Smartpush.setSmallPushIcon(  );
+       Smartpush.subscribe( this );
 
 
         /*ArrayList imageList = new ArrayList<String>();
@@ -77,7 +84,6 @@ public class MainActivity extends AppCompatActivity {
 //        // Nearestzone
 //        Smartpush.nearestZone( this, -30.13265805301679, -51.229606855819725 );
 //        Smartpush.nearestZone( this, -30.132658053017, -51.22960685582 );
-//        Smartpush.setTag( this, "CARRIER", "CRAZY_CARRIER" );
 
 //        new SmartpushNotificationManager( this ).scheduleNotificationRefreshTime();
 
@@ -87,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
         String action = intent.getAction();
         Uri data      = intent.getData();
 
-        Log.d( "LOG", "[" + action + "] : " + ( data != null ? data.toString() : "NO DATA! " ) );
+        Log.d( TAG, "[" + action + "] : " + ( data != null ? data.toString() : "NO DATA! " ) );
     }
 
     @Override
@@ -97,13 +103,13 @@ public class MainActivity extends AppCompatActivity {
                 .getInstance( this )
                 .registerReceiver(mRegistrationBroadcastReceiver,
                         new IntentFilter(
-                                SmartpushService.ACTION_REGISTRATION_RESULT));
+                                Smartpush.ACTION_REGISTRATION_RESULT));
 
         LocalBroadcastManager
                 .getInstance( this )
                 .registerReceiver(mGetTagValuesBroadcastReceiver,
                         new IntentFilter(
-                                SmartpushService.ACTION_GET_TAG_VALUES));
+                                Smartpush.ACTION_GET_TAG_VALUES));
     }
 
     @Override
@@ -130,69 +136,77 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent data) {
 
-            String dados = data.getStringExtra("extra.VALUE");
-
-            Log.d("LOG_TESTE","Dados: "+dados);
+            String dados = data.getStringExtra( Smartpush.EXTRA_VALUE );
+            Log.d( TAG,"TAG.DATA: " + dados );
         }
     } ;
 
     private BroadcastReceiver mRegistrationBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive( Context context, Intent data ) {
-            if ( data.getAction().equals( SmartpushService.ACTION_REGISTRATION_RESULT) ) {
+            if ( data.getAction().equals( Smartpush.ACTION_REGISTRATION_RESULT) ) {
                 SmartpushDeviceInfo device =
-                        data.getParcelableExtra(SmartpushDeviceInfo.EXTRA_DEVICE_INFO);
+                        data.getParcelableExtra( Smartpush.EXTRA_DEVICE_INFO );
 
-                TextView alias = (TextView) findViewById(R.id.alias);
-                String message = (device != null) ? device.alias : "Fail :(";
+                boolean registered = ( device != null && !Strings.isEmptyOrWhitespace( device.alias ) );
+
+                TextView alias = findViewById( R.id.alias );
+                String message = ( registered ) ? device.alias : "Fail :(";
                 alias.setText( message );
 
                 // set your custom TAG here!
+                if ( registered ) {
+                    Smartpush.setTag(MainActivity.this, "SMARTPUSH_ID", device.alias );
+                }
 
-//                // Samples:
-//                // TAG type of STRING
-//                Smartpush.setTag(MainActivity.this, "CARRIER", "SMARTPUSH");
-//
-//                // TAG type of BOOLEAN
-//                Smartpush.setTag(MainActivity.this, "SHOW_ALERT_STATUS", true );
-//
-//                // TAG type of NUMERIC
-//                Smartpush.setTag(MainActivity.this, "LAST_ORDER_VALUE", 159.88 );
-//
-//                // TAG type of TIMESTAMP
-//                Smartpush.setTag(MainActivity.this, "LAST_ORDER_DATE", new Date( 0 ) );
-//
-//                // TAG type of LIST
-//                ArrayList<String> list = new ArrayList<>();
-//                list.add("POLITICA");
-//                list.add("ESPORTE");
-//                list.add("ECONOMIA");
-//                Smartpush.setTag( MainActivity.this, "NEWS_FEED", list );
+                // TAG type of LIST
+                ArrayList<String> list = new ArrayList<>();
+                list.add("POLITICA");
+                list.add("ESPORTE");
+                list.add("ECONOMIA");
+                list.add("MODA");
+
+                /**
+                // Samples:
+                // TAG type of STRING
+                Smartpush.setTag(MainActivity.this, "CARRIER", "UNDEFINED");
+
+                // TAG type of BOOLEAN
+                Smartpush.setTag(MainActivity.this, "SHOW_ALERT_STATUS", true );
+
+                // TAG type of NUMERIC
+                Smartpush.setTag(MainActivity.this, "LAST_ORDER_VALUE", 159.88 );
+
+                // TAG type of TIMESTAMP
+                Smartpush.setTag(MainActivity.this, "LAST_ORDER_DATE", new Date( 0 ) );
+
+                Smartpush.setTag( MainActivity.this, "NEWS_FEED", list );
 
                 // GET TAG VALUE
+                // Testing insertion of a empty list
+                Smartpush.setTag( MainActivity.this, "APPS_LIST", new ArrayList<String>() );
 
+                // Testing insertion of a null list
+                Smartpush.setTag( MainActivity.this, "tagList", (ArrayList<String>) null );
+                **/
 
-//                // Testing insertion of a empty list
-//                Smartpush.setTag( MainActivity.this, "APPS_LIST", new ArrayList<String>() );
-//
-//                // Testing insertion of a null list
-//                Smartpush.setTag( MainActivity.this, "tagList", (ArrayList<String>) null );
-//
-//                // DELETE TAG type of STRING
-//                Smartpush.delTagOrValue(MainActivity.this, "CARRIER", (String) null);
-//
-//                // DELETE TAG type of BOOLEAN
-//                Smartpush.delTagOrValue(MainActivity.this, "SHOW_ALERT_STATUS", (Boolean) null);
-//
-//                // DELETE TAG type of NUMERIC
-//                Smartpush.delTagOrValue(MainActivity.this, "LAST_ORDER_VALUE", (Double) null);
-//
-//                // DELETE TAG type of TIMESTAMP
-//                Smartpush.delTagOrValue(MainActivity.this, "LAST_ORDER_DATE", (Date) null);
-//
-//                // DELETE TAG type of LIST
-//                list.remove(0);
-//                Smartpush.delTagOrValue(MainActivity.this, "NEWS_FEED", list);
+                // DELETE TAG type of STRING
+                Smartpush.delTagOrValue(MainActivity.this, "CARRIER", (String) null);
+
+                // DELETE TAG type of BOOLEAN
+                Smartpush.delTagOrValue(MainActivity.this, "SHOW_ALERT_STATUS", (Boolean) null);
+
+                // DELETE TAG type of NUMERIC
+                Smartpush.delTagOrValue(MainActivity.this, "LAST_ORDER_VALUE", (Double) null);
+
+                // DELETE TAG type of TIMESTAMP
+                Smartpush.delTagOrValue(MainActivity.this, "LAST_ORDER_DATE", (Date) null);
+
+                // DELETE TAG type of LIST
+                list.remove(0);
+                Smartpush.delTagOrValue(MainActivity.this, "NEWS_FEED", list);
+
+                Smartpush.getTagValues( MainActivity.this, "NEWS_FEED" );
             }
         }
     };

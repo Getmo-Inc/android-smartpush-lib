@@ -13,7 +13,6 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.WindowManager;
@@ -27,11 +26,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
-import static br.com.smartpush.SmartpushService.ACTION_NOTIF_CANCEL;
-import static br.com.smartpush.SmartpushService.ACTION_NOTIF_REDIRECT;
-import static br.com.smartpush.SmartpushService.ACTION_NOTIF_UPDATABLE;
-import static br.com.smartpush.SmartpushService.ACTION_NOTIF_UPDATABLE_NEXT;
-import static br.com.smartpush.SmartpushService.ACTION_NOTIF_UPDATABLE_PREV;
 import static br.com.smartpush.Utils.Constants.NOTIF_AUTO_CANCEL;
 import static br.com.smartpush.Utils.Constants.NOTIF_BANNER;
 import static br.com.smartpush.Utils.Constants.NOTIF_DETAIL;
@@ -101,7 +95,7 @@ import static br.com.smartpush.Utils.TAG;
     Atributo "package" foi removido dos frames!
  */
 
-public class SmartpushNotificationManager {
+class SmartpushNotificationManager {
     public static final String NOTIFICATION_CHANNEL_ID = "10001";
     private Context mContext;
 
@@ -110,6 +104,8 @@ public class SmartpushNotificationManager {
     }
 
     public void onMessageReceived( String from, Bundle data ) {
+        SmartpushLog.d( Utils.TAG, "----------> " + Utils.ArrayUtils.bundle2string( data ) );
+
 //        // TODO Excluir apos testes...
 //        SmartpushLog.d( Utils.TAG, "PACKAGE_NAME: " + mContext.getApplicationContext().getPackageName() );
 
@@ -368,8 +364,8 @@ public class SmartpushNotificationManager {
 
                     // config navigate buttons
                     Intent itNext = new Intent(mContext, SmartpushService.class)
-                            .setAction(ACTION_NOTIF_UPDATABLE_NEXT)
-                            .putExtras(data)
+                            .setAction( ActionPushManager.ACTION_NOTIF_UPDATABLE_NEXT )
+                            .putExtras( data )
                             .putExtra("flip.next", true)
                             .putExtra("flip.previous", false)
                             .putExtra("frame.current", next );
@@ -380,7 +376,7 @@ public class SmartpushNotificationManager {
                                     PendingIntent.getService( mContext, 0, itNext, PendingIntent.FLAG_UPDATE_CURRENT ) );
 
                     Intent itPrevious = new Intent(mContext, SmartpushService.class)
-                            .setAction(ACTION_NOTIF_UPDATABLE_PREV)
+                            .setAction( ActionPushManager.ACTION_NOTIF_UPDATABLE_PREV )
                             .putExtras(data)
                             .putExtra("flip.next", false)
                             .putExtra("flip.previous", true)
@@ -427,7 +423,7 @@ public class SmartpushNotificationManager {
                 data.putString( NOTIF_URL, slides.get( pos ).url );
 
                 Intent actionIntent = new Intent( mContext, SmartpushService.class )
-                        .setAction( ACTION_NOTIF_REDIRECT )
+                        .setAction( ActionPushManager.ACTION_NOTIF_REDIRECT )
                         .putExtras( data )
                         .putExtra("frame.current", pos );
 
@@ -493,7 +489,7 @@ public class SmartpushNotificationManager {
 
     public PendingIntent addMainAction( Bundle extras ) {
         Intent serviceIntent = new Intent( mContext, SmartpushService.class);
-        serviceIntent.setAction( ACTION_NOTIF_REDIRECT );
+        serviceIntent.setAction( ActionPushManager.ACTION_NOTIF_REDIRECT );
         serviceIntent.putExtras( extras );
 
         PendingIntent servicePendingIntent =
@@ -510,7 +506,7 @@ public class SmartpushNotificationManager {
 
     public PendingIntent addDeleteAction( Bundle extras ) {
         Intent serviceIntent = new Intent( mContext, SmartpushService.class);
-        serviceIntent.setAction( ACTION_NOTIF_CANCEL );
+        serviceIntent.setAction( ActionPushManager.ACTION_NOTIF_CANCEL );
         serviceIntent.putExtras( extras );
 
         PendingIntent servicePendingIntent =
@@ -532,7 +528,7 @@ public class SmartpushNotificationManager {
 
             String act = extras.getString( "CALL" );
             if ( act != null ) {
-                builder.addAction( R.drawable.ic_call, mContext.getString( R.string.call ),
+                builder.addAction( R.drawable.ic_call_white_24dp, mContext.getString( R.string.call ),
                         PendingIntent.getActivity( mContext, 0, SmartpushIntentUtils.dialPhone( act ), 0 ) );
                 count++;
             }
@@ -541,7 +537,7 @@ public class SmartpushNotificationManager {
             if ( act != null ) {
                 String[] params = act.split( ";" );
                 if ( params.length == 2 ) {
-                    builder.addAction( R.drawable.ic_sms, mContext.getString( R.string.sms ),
+                    builder.addAction( R.drawable.ic_sms_white_24dp, mContext.getString( R.string.sms ),
                             PendingIntent
                                     .getActivity(
                                             mContext, 0, SmartpushIntentUtils.sendSms(
@@ -554,7 +550,7 @@ public class SmartpushNotificationManager {
             if ( act != null ) {
                 String[] params = act.split( ";" );
                 if ( params.length == 3 ) {
-                    builder.addAction( R.drawable.ic_email, mContext.getString( R.string.email ),
+                    builder.addAction( R.drawable.ic_email_white_24dp, mContext.getString( R.string.email ),
                             PendingIntent
                                     .getActivity(
                                             mContext, 0, SmartpushIntentUtils.sendEmail(
@@ -567,7 +563,7 @@ public class SmartpushNotificationManager {
             if ( act != null && count < 3 ) {
                 String[] params = act.split( ";" );
                 if ( params.length == 2 ) {
-                    builder.addAction( R.drawable.ic_mapas, mContext.getString( R.string.map ),
+                    builder.addAction( R.drawable.ic_map_white_24dp, mContext.getString( R.string.map ),
                             PendingIntent
                                     .getActivity(
                                             mContext, 0, SmartpushIntentUtils.showLocation(
@@ -581,7 +577,7 @@ public class SmartpushNotificationManager {
             if ( act != null && count < 3 ) {
                 String[] params = act.split( ";" );
                 if ( params.length == 2 ) {
-                    builder.addAction( R.drawable.ic_compartilhar, mContext.getString( R.string.share ),
+                    builder.addAction( R.drawable.ic_share_white_24dp, mContext.getString( R.string.share ),
                             PendingIntent.getActivity( mContext, 0,
                                     SmartpushIntentUtils.shareText( params[ 0 ], params[ 1 ] ), 0 ) );
                 }
@@ -642,7 +638,7 @@ public class SmartpushNotificationManager {
 
         Intent serviceIntent =
                 new Intent( mContext, SmartpushService.class)
-                        .setAction( ACTION_NOTIF_UPDATABLE );
+                        .setAction( ActionPushManager.ACTION_NOTIF_UPDATABLE );
 
         serviceIntent.putExtras( data );
 

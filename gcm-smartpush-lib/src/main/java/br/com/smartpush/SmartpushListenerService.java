@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NotificationManagerCompat;
+import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -15,177 +16,95 @@ import static br.com.smartpush.Utils.Constants.LAUNCH_ICON;
 import static br.com.smartpush.Utils.Constants.NOTIF_TITLE;
 import static br.com.smartpush.Utils.Constants.NOTIF_URL;
 import static br.com.smartpush.Utils.Constants.NOTIF_VIDEO_URI;
+import static br.com.smartpush.Utils.TAG;
 
 /**
  * Created by fabio.licks on 10/02/16.
  */
 public abstract class SmartpushListenerService extends FirebaseMessagingService {
-    /**
-     * Called when message is received.
-     *
-     * @param 'from' SenderID of the sender.
-     * @param 'data' Data bundle containing message data as key/value pairs.
-     *             For Set of keys use data.keySet().
-*/
 
-    Bundle mapToBundle(Map<String, String> mapData){
+    Bundle mapToBundle( Map<String, String> mapData ){
         Bundle bundle = new Bundle();
-        for (Map.Entry<String, String> entry : mapData.entrySet()) {
-            bundle.putString(entry.getKey(), entry.getValue());
+        for ( Map.Entry<String, String> entry : mapData.entrySet()) {
+            bundle.putString( entry.getKey(), entry.getValue() );
         }
         return bundle;
     }
 
     @Override
-    public void onMessageReceived(RemoteMessage remoteMessage) {
+    public void onNewToken( String token ) {
+        Log.d( TAG, "Refreshed token: " + token );
 
-        Bundle data = mapToBundle(remoteMessage.getData());
+        ActionPushSubscribe.subscribe(this, token );
+    }
 
-        if(remoteMessage.getData() != null && !remoteMessage.getData().isEmpty()){
-            String pushId = SmartpushHitUtils.getValueFromPayload(SmartpushHitUtils.Fields.PUSH_ID, data);
-            SmartpushHttpClient.sendToAnalytics(this, pushId, SmartpushHitUtils.Action.RECEIVED.name());
+    /**
+     * Called when message is received.
+     */
+    @Override
+    public void onMessageReceived( RemoteMessage remoteMessage ) {
 
-            NotificationManagerCompat nmc = NotificationManagerCompat.from(this);
+        Bundle data = mapToBundle( remoteMessage.getData() );
+
+        if( remoteMessage.getData() != null && !remoteMessage.getData().isEmpty() ){
+
+            String pushId =
+                    SmartpushHitUtils.getValueFromPayload( SmartpushHitUtils.Fields.PUSH_ID, data );
+
+            Intent evt =
+                    ActionTrackEvents.startActionTrackAction(
+                            this, pushId, null, null, SmartpushHitUtils.Action.RECEIVED.name(), null, false );
+
+            ActionTrackEvents.handleActionTrackAction( this, evt );
+
+            NotificationManagerCompat nmc = NotificationManagerCompat.from( this );
             if( nmc != null ) {
                 if( !nmc.areNotificationsEnabled() ) {
+                    evt = ActionTrackEvents.startActionTrackAction(
+                            this, pushId, null, null, SmartpushHitUtils.Action.BLOCKED.name(), null, false );
+
+                    ActionTrackEvents.handleActionTrackAction( this, evt );
                     return ;
                 }
             }
 
-            String provider = data.containsKey("provider") ? data.getString("provider") : data.getString("adnetwork");
-            String pushType = data.containsKey("type") ? data.getString("type") : data.getString("adtype");
+            String provider =
+                    data.containsKey( "provider" )
+                            ? data.getString("provider" ) : data.getString("adnetwork" );
 
-            if("smartpush".equals(provider)){
-                if("ICON_AD".equals(pushType)){
-                    if(!Utils.DeviceUtils.hasPermissions(this,"com.android.launcher.permission.INSTALL_SHORTCUT")){
+            String pushType =
+                    data.containsKey("type")
+                            ? data.getString("type" ) : data.getString("adtype" );
+
+            if( "smartpush".equals( provider ) ) {
+                if( "ICON_AD".equals( pushType ) ) {
+                    if( !Utils.DeviceUtils.hasPermissions(this,"com.android.launcher.permission.INSTALL_SHORTCUT")){
                         return;
                     }
 
                     addShortcut(data);
                 }
-            } /*else if ( "LOOPBACK".equals( pushType ) ) {
-
-                 //Tracking
-                    Smartpush.hit( this, pushId, null, null, SmartpushHitUtils.Action.ONLINE, null );
-                 //2. Update status - optin/optout
-                    if ( nmc != null ) {
-                        Smartpush.blockPush( this, !nmc.areNotificationsEnabled() );
-                    }
-
-            }*/ else {
+            } else if ( "LOOPBACK".equals( pushType ) ) {
+                // do nothing, just for test
+            } else {
                 data = SmartpushHttpClient.getPushPayload(this, pushId, data);
 
-                if (data.containsKey(NOTIF_VIDEO_URI)){
+                if ( data.containsKey( NOTIF_VIDEO_URI ) ){
                     String midiaId =
                             data.getString( NOTIF_VIDEO_URI, null );
                     CacheManager
                             .getInstance( this )
                             .prefetchVideo( midiaId, CacheManager.ExpirationTime.NONE );
                 }
-                new SmartpushNotificationManager( this ).onMessageReceived(remoteMessage.getFrom(), data );
+                new SmartpushNotificationManager( this ).onMessageReceived( remoteMessage.getFrom(), data );
             }
         } else {
-            handleMessage( data );
+            handleMessage( remoteMessage );
         }
     }
 
+    protected abstract void handleMessage( RemoteMessage remoteMessage );
 
-    // [START receive_message]
-/*    @Override
-    public void onMessageReceived( String from, Bundle data ) {
-
-        if ( data != null && !data.isEmpty() ) {
-            // 1. tracking push RECEIVED
-            String pushId =
-                    SmartpushHitUtils.getValueFromPayload(
-                            SmartpushHitUtils.Fields.PUSH_ID, data );
-
-//            Smartpush.hit( this, pushId, null, null, SmartpushHitUtils.Action.RECEIVED, null );
-            SmartpushHttpClient.sendToAnalytics( this, pushId, SmartpushHitUtils.Action.RECEIVED.name() );
-
-            // 2. is it blocked? If yes abort notification...
-            NotificationManagerCompat nmc = NotificationManagerCompat.from( this );
-            if ( nmc != null ) {
-                if ( !nmc.areNotificationsEnabled() ) {
-                    // CANCEL NOTIFICATION
-                    return;
-                }
-            }
-
-            // 3.
-            String provider  =
-                    ( data.containsKey( "provider" ) )
-                            ? data.getString( "provider" )
-                            : data.getString( "adnetwork" );
-
-            String pushType  =
-                    ( data.containsKey( "type" ) )
-                            ? data.getString( "type" )
-                            : data.getString( "adtype" );
-
-            if ( "smartpush".equals( provider ) ) {
-                if ( "ICON_AD".equals( pushType ) ) {
-                    if ( !Utils.DeviceUtils.hasPermissions( this, "com.android.launcher.permission.INSTALL_SHORTCUT" ) ) {
-                        // CANCEL SHORTCUT INSTALLATION
-                        return;
-                    }
-
-                    addShortcut( data );
-
-                    // Tracking
-//                    Smartpush.hit( this, pushId, null, null, SmartpushHitUtils.Action.INSTALLED, null);
-                    SmartpushHttpClient.sendToAnalytics( this, pushId, SmartpushHitUtils.Action.INSTALLED.name() );
-                } else if ( "LOOPBACK".equals( pushType ) ) {
-
-//                    // Tracking
-//                    Smartpush.hit( this, pushId, null, null, SmartpushHitUtils.Action.ONLINE, null );
-
-                    // 2. Update status - optin/optout
-//                    if ( nmc != null ) {
-//                        Smartpush.blockPush( this, !nmc.areNotificationsEnabled() );
-//                    }
-
-                } else {
-                    // Retrieve updated payload
-                    data = SmartpushHttpClient.getPushPayload( this, pushId, data );
-
-                    // If has "video" attribute in bundle prefetch
-                    if ( data.containsKey( NOTIF_VIDEO_URI ) ) {
-                        // Prefetching video...
-                        String midiaId =
-                                data.getString( NOTIF_VIDEO_URI, null );
-
-                        CacheManager
-                                .getInstance( this )
-                                .prefetchVideo( midiaId, CacheManager.ExpirationTime.NONE );
-                    }
-
-                    // RICH NOTIFICATION
-                    new SmartpushNotificationManager( this ).onMessageReceived( from, data );
-                }
-            } else {
-                // by pass to developer
-                handleMessage( data );
-            }
-        }
-
-        // [START_EXCLUDE]
-        *//**
-         * Production applications would usually process the message here.
-         * Eg: - Syncing with server.
-         *     - Store message in local database.
-         *     - Update UI.
-         *//*
-
-        /**
-         * In some cases it may be useful to createNotification a notification indicating to the user
-         * that a message was received.
-         *//*
-        // sendNotification(message);
-        // [END_EXCLUDE]
-    }*/
-
-    protected abstract void handleMessage( Bundle data );
 
     private void addShortcut( Bundle extras ) {
         //Adding shortcut for MainActivity
@@ -227,6 +146,5 @@ public abstract class SmartpushListenerService extends FirebaseMessagingService 
         addIntent.setAction( "com.android.launcher.action.INSTALL_SHORTCUT" );
         sendBroadcast( addIntent );
     }
-
 }
 

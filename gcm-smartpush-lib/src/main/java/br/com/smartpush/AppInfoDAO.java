@@ -23,14 +23,14 @@ class AppInfoDAO {
 
     public static int save( SQLiteDatabase db, AppInfo data ) {
         if ( data != null ) {
-            if ( data.getId() == 0 ) {
+            if ( data._id == 0 ) {
                 db.insert( TABLENAME, null, getContentValue( data ) );
                 // fetch ID
-                data = findByPackageName( db, data.getPackageName() );
+                data = findByPackageName( db, data.packageName );
                 return 1;
             } else {
                 String query = "ID = ?";
-                db.update( TABLENAME, getContentValue(data), query, new String[]{ String.valueOf( data.getId() ) } );
+                db.update( TABLENAME, getContentValue(data), query, new String[]{ String.valueOf( data._id ) } );
                 return 1;
             }
         }
@@ -101,9 +101,9 @@ class AppInfoDAO {
 
     private static ContentValues getContentValue( AppInfo appInfo ) {
         ContentValues row = new ContentValues();
-        row.put( AppInfo.PACKAGE_NAME, appInfo.getPackageName() );
-        row.put( AppInfo.SINC_STATE, ( appInfo.isSinc() ? 1 : 0 ) );
-        row.put( AppInfo.STATE, appInfo.getState() );
+        row.put( AppInfo.PACKAGE_NAME, appInfo.packageName );
+        row.put( AppInfo.SINC_STATE, ( appInfo.sinc ? 1 : 0 ) );
+        row.put( AppInfo.STATE, appInfo.state );
 
         return row;
     }
@@ -111,13 +111,10 @@ class AppInfoDAO {
     private static AppInfo bindAppInfo( Cursor cursor ) {
         AppInfo item = new AppInfo();
 
-        boolean sincState =
-                ( ( cursor.getInt( cursor.getColumnIndex( AppInfo.SINC_STATE ) ) ) == 1 ) ? true : false;
-
-        item.setId( cursor.getInt( cursor.getColumnIndex( AppInfo.ID ) ) );
-        item.setPackageName( cursor.getString( cursor.getColumnIndex( AppInfo.PACKAGE_NAME ) ) );
-        item.setSinc( sincState );
-        item.setState( cursor.getInt( cursor.getColumnIndex( AppInfo.STATE ) ) );
+        item._id = cursor.getInt( cursor.getColumnIndex( AppInfo.ID ) );
+        item.packageName = cursor.getString( cursor.getColumnIndex( AppInfo.PACKAGE_NAME ) );
+        item.sinc = ( ( cursor.getInt( cursor.getColumnIndex( AppInfo.SINC_STATE ) ) ) == 1 );
+        item.state = cursor.getInt( cursor.getColumnIndex( AppInfo.STATE ) );
 
         return item;
     }

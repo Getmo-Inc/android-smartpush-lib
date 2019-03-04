@@ -5,7 +5,7 @@ import static br.com.smartpush.Utils.TAG;
 /**
  * Created by fabio.licks on 09/02/16.
  */
-final class GeoAddress {
+class GeoAddress {
 
     public String countryCode;
     public String country;

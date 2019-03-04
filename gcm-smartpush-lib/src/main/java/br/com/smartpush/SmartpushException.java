@@ -12,11 +12,11 @@ final class SmartpushException extends RuntimeException {
 		super( detailMessage, throwable );
 	}
 
-	public SmartpushException(String detailMessage ) {
+	public SmartpushException( String detailMessage ) {
 		super( detailMessage );
 	}
 
-	public SmartpushException(Throwable throwable ) {
+	public SmartpushException( Throwable throwable ) {
 		super( throwable );
 	}
 }

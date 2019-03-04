@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/root"
     android:clickable="true"
     android:focusableInTouchMode="true"
@@ -188,7 +188,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/background_navigation_control_rect"
-            android:src="@drawable/ic_arrow_left"
+            app:srcCompat="@drawable/ic_chevron_left_white_36dp"
             android:layout_centerVertical="true"
             android:layout_marginLeft="5dp"/>
 
@@ -197,7 +197,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/background_navigation_control_rect"
-            android:src="@drawable/ic_arrow_right"
+            app:srcCompat="@drawable/ic_chevron_right_white_36dp"
             android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
             android:layout_marginRight="5dp"/>

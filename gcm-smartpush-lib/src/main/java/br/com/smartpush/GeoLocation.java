@@ -20,9 +20,9 @@ class GeoLocation {
     public static final String LNG   = "LNG";
     public static final String TIME  = "TIME";
 
-    private double lat;
-    private double lng;
-    private long  time; // timezone UTC (0)
+    public double lat;
+    public double lng;
+    public long  time; // timezone UTC (0)
 
     public GeoLocation(double lat, double lng ) {
         TimeZone timeZone = TimeZone.getTimeZone( "UTC" );
@@ -57,28 +57,4 @@ class GeoLocation {
     public String toString() {
         return "{ \"lat\":" + lat + ", \"lng\":" + lng + ", \"time\":" + time + '}';
     }
-
-    public double getLat() {
-        return lat;
-    }
-
-//    public void setLat( double lat ) {
-//        this.lat = lat;
-//    }
-
-    public double getLng() {
-        return lng;
-    }
-
-//    public void setLng( double lng ) {
-//        this.lng = lng;
-//    }
-
-    public long getTime() {
-        return time;
-    }
-
-//    public void setTime( long time ) {
-//        this.time = time;
-//    }
 }

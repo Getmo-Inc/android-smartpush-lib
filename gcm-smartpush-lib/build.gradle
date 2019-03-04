@@ -7,17 +7,21 @@ group = 'com.github.fabiolicks'
 android {
     compileSdkVersion 28
     buildToolsVersion '28.0.3'
+
     defaultConfig {
         minSdkVersion 16
-        versionCode 800
-        versionName "8.0.0"
+        versionCode 900
+        versionName "9.0.0"
+        vectorDrawables.useSupportLibrary = true
     }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
     productFlavors {
     }
 }

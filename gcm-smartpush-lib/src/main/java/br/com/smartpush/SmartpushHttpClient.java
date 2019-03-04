@@ -40,15 +40,11 @@ public final class SmartpushHttpClient {
 //    private static final int BACKOFF_MILLI_SECONDS = 2000;
 
     private static String genURL( Context _c, String op, boolean silent ) {
-        // Hack for Buscape Inc. - Adjust proxy for all request
         String urlStr = Utils.Smartpush.getMetadata( _c, Utils.Constants.SMARTP_PROXY );
         urlStr = ( urlStr == null ) ? HOST : validateURL( urlStr );
-        // Hack for Buscape Inc.
-
         urlStr += op;
 
-        if ( !silent )
-            SmartpushLog.d( TAG, "url : " + urlStr );
+        if ( !silent ) SmartpushLog.d( TAG, "url : " + urlStr );
 
         return urlStr;
     }
@@ -371,5 +367,4 @@ public final class SmartpushHttpClient {
             SmartpushLog.e( Utils.TAG, e.getMessage(), e );
         }
     }
-
 }

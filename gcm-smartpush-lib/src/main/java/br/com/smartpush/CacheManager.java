@@ -24,7 +24,7 @@ import static br.com.smartpush.Utils.TAG;
  * Created by fabio.licks on 24/07/17.
  */
 
-public class CacheManager {
+class CacheManager {
 
     public enum ExpirationTime {
         DAY( 1000 * 60 * 60 * 24 ), NONE( Long.MAX_VALUE );
@@ -211,4 +211,5 @@ public class CacheManager {
         Bitmap bitmap = BitmapFactory.decodeFile( filePath );
         return bitmap;
     }
+
 }

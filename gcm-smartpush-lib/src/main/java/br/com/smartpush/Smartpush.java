@@ -5,10 +5,18 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationManagerCompat;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.common.util.Strings;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,6 +28,22 @@ import static br.com.smartpush.Utils.TAG;
  * Created by fabio.licks on 12/02/16.
  */
 public final class Smartpush {
+
+    public static final String ACTION_REGISTRATION_RESULT = "action.REGISTRATION_RESULT";
+    public static final String ACTION_GET_TAG_VALUES = "action.GET_TAG_VALUES";
+    public static final String ACTION_GEOZONES_UPDATED = "action.GEOZONES_UPDATED";
+    public static final String ACTION_GET_DEVICE_USER_INFO = "action.GET_DEVICE_USER_INFO";
+
+    // params
+    public static final String EXTRA_VALUE  = "extra.VALUE";
+    public static final String EXTRA_DEVICE_INFO = "extra.EXTRA_DEVICE_INFO";
+
+    // INBOX
+    public  static final String ACTION_LAST_10_UNREAD_NOTIF = "action.LAST_10_UNREAD_NOTIF";
+    public  static final String ACTION_LAST_10_NOTIF = "action.LAST_10_NOTIF";
+    public  static final String ACTION_MARK_NOTIF_AS_READ = "action.MARK_NOTIF_AS_READ";
+    public  static final String ACTION_MARK_ALL_NOTIF_AS_READ = "action.MARK_ALL_NOTIF_AS_READ";
+    public  static final String ACTION_GET_NOTIF_EXTRA_PAYLOAD = "action.GET_NOTIF_EXTRA_PAYLOAD";
 
     public static boolean areNotificationsEnabled( final Context context ) {
         NotificationManagerCompat nmc = NotificationManagerCompat.from( context );
@@ -35,7 +59,7 @@ public final class Smartpush {
             NotificationManagerCompat nmc = NotificationManagerCompat.from( context );
             if ( nmc != null ) {
                 if ( nmc.areNotificationsEnabled() ) {
-                    SmartpushService.startActionBlockPush(context, block);
+                    ActionPushBlock.startActionBlockPush( context, block );
                     return !block;
                 } else {
                     SmartpushLog.d( TAG, "The Notification has been blocked by the S.O." );
@@ -48,127 +72,123 @@ public final class Smartpush {
 
     public static void getUserInfo( final Context context ) {
         if ( isRegistered( context ) ) {
-            SmartpushService.startActionGetDeviceUserInfo(context);
+            ActionGetDeviceInfo.startActionGetDeviceUserInfo( context );
         }
     }
 
     public static void nearestZone(final Context context, final double lat, final double lng) {
         if ( isRegistered( context ) ) {
-            SmartpushService.startActionNearestZone(context, lat, lng);
+            ActionNearestzone.startActionNearestZone( context, lat, lng );
         }
     }
 
     public static void setTag(final Context context, final String key, final Boolean value) {
         if ( isRegistered( context ) && value != null )
-            SmartpushService.startActionSetTag(context, key, value);
+            ActionTagManager.startActionSetTag( context, key, value );
     }
 
     public static void setTag(final Context context, final String key, final Double value) {
         if ( isRegistered( context ) && value != null )
-            SmartpushService.startActionSetTag(context, key, value);
+            ActionTagManager.startActionSetTag( context, key, value );
     }
 
     public static void setTag(final Context context, final String key, final ArrayList<String> values) {
         if ( isRegistered( context ) && values != null && values.size() > 0 )
-            SmartpushService.startActionSetTag(context, key, values);
+            ActionTagManager.startActionSetTag( context, key, values );
     }
 
     public static void setTag( final Context context, final String key, final String value ) {
         if ( isRegistered( context ) && value != null )
-            SmartpushService.startActionSetTag(context, key, value);
+            ActionTagManager.startActionSetTag( context, key, value );
     }
 
     public static void setTag( final Context context, final String key, final Date value ) {
         if ( isRegistered( context ) && value != null )
-            SmartpushService.startActionSetTag(context, key, value);
+            ActionTagManager.startActionSetTag( context, key, value );
     }
 
     public static void delTagOrValue(final Context context, final String key, final Boolean value) {
         if ( isRegistered( context ) ) {
-            SmartpushService.startActionDelTagOrValue(context, key, value);
+            ActionTagManager.startActionDelTagOrValue( context, key, value );
         }
     }
 
     public static void delTagOrValue(final Context context, final String key, final Double value) {
         if ( isRegistered( context ) ) {
-            SmartpushService.startActionDelTagOrValue(context, key, value);
+            ActionTagManager.startActionDelTagOrValue( context, key, value );
         }
     }
 
     public static void delTagOrValue(final Context context, final String key, final ArrayList<String> values) {
         if ( isRegistered( context ) ) {
-            SmartpushService.startActionDelTagOrValue(context, key, values);
+            ActionTagManager.startActionDelTagOrValue( context, key, values );
         }
     }
 
     public static void delTagOrValue( final Context context, final String key, final String value ) {
         if ( isRegistered( context ) ) {
-            SmartpushService.startActionDelTagOrValue(context, key, value);
+            ActionTagManager.startActionDelTagOrValue( context, key, value );
         }
     }
 
     public static void delTagOrValue( final Context context, final String key, final Date value ) {
         if ( isRegistered( context ) ) {
-            SmartpushService.startActionDelTagOrValue(context, key, value);
+            ActionTagManager.startActionDelTagOrValue( context, key, value );
         }
     }
 
     public static void getTagValues(final Context context, final String key){
         if (isRegistered( context ) ) {
-            SmartpushService.startActionGetTagValues(context, key);
+            ActionTagManager.startActionGetTagValues( context, key );
         }
     }
 
     public static void hit( final Context context, String pushId, String screenName, String category, String action, String label ) {
         if ( isRegistered( context ) ) {
-            SmartpushService.startActionTrackAction(context, pushId, screenName, category, action, label);
+            ActionTrackEvents.startActionTrackAction( context, pushId, screenName, category, action, label, true );
         }
     }
 
     public static void hit( final Context context, String pushId, String screenName, String category, SmartpushHitUtils.Action action, String label ) {
         if ( isRegistered( context ) ) {
-            SmartpushService.startActionTrackAction( context, pushId, screenName, category, action.name(), label );
+            ActionTrackEvents.startActionTrackAction( context, pushId, screenName, category, action.name(), label, true );
         }
     }
 
     public static void hit( final Context context, String screenName, String category, String action, String label ) {
         if ( isRegistered(context) ) {
-            SmartpushService.startActionTrackAction(context, null, screenName, category, action, label);
+            ActionTrackEvents.startActionTrackAction( context, null, screenName, category, action, label, true );
         }
     }
 
     public static void getLastMessages( final Context context, Date startingDate ) {
         if ( isRegistered(context) ) {
-            SmartpushService.startActionLastMessages( context, startingDate );
+            ActionPushInbox.startActionLastMessages( context, startingDate );
         }
     }
 
     public static void getLastUnreadMessages( final Context context, Date startingDate ) {
         if ( isRegistered(context) ) {
-            SmartpushService.startActionLastUnreadMessage( context, startingDate );
+            ActionPushInbox.startActionLastUnreadMessage( context, startingDate );
         }
     }
 
     public static void markMessageAsRead( final Context context, String pushId ) {
         if ( isRegistered(context) ) {
-            SmartpushService.startActionMarkMessageAsRead( context, pushId );
+            ActionPushInbox.startActionMarkMessageAsRead( context, pushId );
         }
     }
 
     public static void markAllMessagesAsRead( final Context context ) {
         if ( isRegistered(context) ) {
-            SmartpushService.startActionMarkAllMessagesAsRead( context );
+            ActionPushInbox.startActionMarkAllMessagesAsRead( context );
         }
     }
 
     public static void getMessageExtraPayload( final Context context, String pushId ) {
         if ( isRegistered(context) ) {
-            SmartpushService.startActionGetMessageExtraPayload( context, pushId );
+            ActionPushInbox.startActionGetMessageExtraPayload( context, pushId );
         }
-    }
-
-    public static void subscribe( final Context context, String yourGooglePlayServiceProjectId ) {
-        subscribe( context );
     }
 
     public static String getGeozones( final Context context ) {
@@ -182,25 +202,46 @@ public final class Smartpush {
         return jsonArray;
     }
 
+// TODO revisar e remover ...
     public static void subscribe( final Context context ) {
-        if ( Smartpush.checkPlayServices( context ) ) {
-            if ( checkSmartpush( context ) ) {
-                SmartpushService.subscrive( context );
-                SmartpushService.getMsisdn( context );
-                SmartpushService.getMccMnc( context );
-//                SmartpushService.getAppList( context );
-            }
-        }
-    }
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener( new OnCompleteListener<InstanceIdResult>() {
+                    @Override
+                    public void onComplete( @NonNull Task<InstanceIdResult> task ) {
+                        if ( !task.isSuccessful() ) {
+                            Log.w( TAG, "getInstanceId failed", task.getException() );
+                            return;
+                        }
 
-    /**
-     * Check the device to make sure it has the Google Play Services APK.
-     */
-    private static boolean checkPlayServices( Context _c ) {
-        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
-        int resultCode = apiAvailability.isGooglePlayServicesAvailable( _c );
-        return ( resultCode == ConnectionResult.SUCCESS );
+                        // Get new Instance ID token
+                        String token = task.getResult().getToken();
+
+                        // Log and toast
+                        Log.d( TAG, "------------------> " + token );
+                        ActionPushSubscribe.subscribeByService( context, token );
+                    }
+                });
     }
+//
+//    public static void subscribe( final Context context ) {
+//        if ( Smartpush.checkPlayServices( context ) ) {
+//            if ( checkSmartpush( context ) ) {
+//                SmartpushService.subscrive( context );
+//                SmartpushService.getMsisdn( context );
+//                SmartpushService.getMccMnc( context );
+////                SmartpushService.getAppList( context );
+//            }
+//        }
+//    }
+//
+//    /**
+//     * Check the device to make sure it has the Google Play Services APK.
+//     */
+//    private static boolean checkPlayServices( Context _c ) {
+//        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
+//        int resultCode = apiAvailability.isGooglePlayServicesAvailable( _c );
+//        return ( resultCode == ConnectionResult.SUCCESS );
+//    }
 
     private static boolean checkSmartpush(Context context) {
         SmartpushLog.d( TAG, "Smartpush SDK : " + printVersion() );
@@ -272,9 +313,9 @@ public final class Smartpush {
     }
 
     private static boolean isRegistered( Context context ) {
-        return  (  Utils.PreferenceUtils.readFromPreferences( context, Utils.Constants.SMARTP_REGID ) != null
-                && Utils.PreferenceUtils.readFromPreferences( context, Utils.Constants.SMARTP_ALIAS ) != null
-                && Utils.PreferenceUtils.readFromPreferences( context, Utils.Constants.SMARTP_HWID  ) != null );
+        return !Strings.isEmptyOrWhitespace( Utils.PreferenceUtils.readFromPreferences( context, Utils.Constants.SMARTP_REGID ) )
+                && !Strings.isEmptyOrWhitespace( Utils.PreferenceUtils.readFromPreferences( context, Utils.Constants.SMARTP_ALIAS ) )
+                && !Strings.isEmptyOrWhitespace( Utils.PreferenceUtils.readFromPreferences( context, Utils.Constants.SMARTP_HWID ) );
     }
 
     public static String printVersion() {

@@ -5,8 +5,6 @@ import android.os.Parcelable;
 
 public final class SmartpushDeviceInfo implements Parcelable {
 
-    public static final String EXTRA_DEVICE_INFO = "br.com.smartpush.extra.EXTRA_DEVICE_INFO";
-
     public String alias;
 	public String regId;
     public String hwId;

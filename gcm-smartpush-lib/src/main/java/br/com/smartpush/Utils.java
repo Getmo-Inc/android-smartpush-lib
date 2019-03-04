@@ -71,7 +71,7 @@ final public class Utils {
     public static class PreferenceUtils {
         private final static String APP_PREFERENCES = "br.com.smartpush.PREFS";
 
-        public static String readFromPreferences(Context context, String key ) {
+        public static String readFromPreferences( Context context, String key ) {
             return getSmartpushPreferences( context ).getString( key, null );
         }
 
@@ -144,46 +144,6 @@ final public class Utils {
         public static String getDeviceManufacturer() {
             return ( Build.MANUFACTURER != null ) ? Build.MANUFACTURER.toUpperCase() : "";
         }
-
-//        public static ArrayList<String> getInstalledApps( Context _c ) {
-//            PackageManager packageManager = _c.getPackageManager();
-//            List<ApplicationInfo> list =
-//                    checkForLaunchIntent( packageManager,
-//                            packageManager.getInstalledApplications( PackageManager.GET_META_DATA ) );
-//
-//            ArrayList<String> out = new ArrayList<>();
-//            for ( ApplicationInfo info : list ) {
-//                if ( ( info.flags & ApplicationInfo.FLAG_SYSTEM ) == 1 ) {
-//                    // System application just ignore!
-//                    continue;
-//                } else {
-//                    // Application installed by user
-//                    //			info.loadLabel(packageManager)
-//                    //			info.packageName;
-//                    //			info.loadIcon(packageManager)
-//
-//                    out.add( info.packageName );
-//                }
-//            }
-//
-//            // return ( new JSONArray( out ) ).toString();
-//            return out;
-//        }
-//
-//        private static List<ApplicationInfo> checkForLaunchIntent( PackageManager packageManager, List<ApplicationInfo> list ) {
-//            ArrayList<ApplicationInfo> applist = new ArrayList<ApplicationInfo>();
-//            for ( ApplicationInfo info : list ) {
-//                try {
-//                    if ( null != packageManager.getLaunchIntentForPackage( info.packageName ) ) {
-//                        applist.add( info );
-//                    }
-//                } catch ( Exception e ) {
-//                    SmartpushLog.e( TAG, e.getMessage(), e );
-//                }
-//            }
-//
-//            return applist;
-//        }
 
         public static boolean hasPermissions( Context context, String... permissions ) {
 //            if ( android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && context != null && permissions != null ) {

@@ -42,9 +42,9 @@ final class GeoLocationDAO {
 
     private static ContentValues getContentValue( GeoLocation location ) {
         ContentValues row = new ContentValues();
-        row.put( GeoLocation.LAT, location.getLat() );
-        row.put( GeoLocation.LNG, location.getLng() );
-        row.put( GeoLocation.TIME, location.getTime() );
+        row.put( GeoLocation.LAT, location.lat );
+        row.put( GeoLocation.LNG, location.lng );
+        row.put( GeoLocation.TIME, location.time );
 
         return row;
     }

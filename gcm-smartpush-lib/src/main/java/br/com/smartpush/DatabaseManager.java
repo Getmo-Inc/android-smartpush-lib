@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 /**
  * Created by fabio.licks on 09/02/16.
  */
-final class DatabaseManager extends SQLiteOpenHelper {
+class DatabaseManager extends SQLiteOpenHelper {
 
     private static final int VERSION = 2;
     private static final String DATABASE_NAME = "SMARTPUSH";
