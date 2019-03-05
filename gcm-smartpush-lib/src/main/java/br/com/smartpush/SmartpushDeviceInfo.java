@@ -1,7 +1,11 @@
 package br.com.smartpush;
 
+import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public final class SmartpushDeviceInfo implements Parcelable {
 
@@ -57,4 +61,17 @@ public final class SmartpushDeviceInfo implements Parcelable {
 			return new SmartpushDeviceInfo[size];
 		}
 	};
+
+	public static SmartpushDeviceInfo bind( Context context, JSONObject json ) throws JSONException {
+		SmartpushDeviceInfo deviceInfo =
+				new SmartpushDeviceInfo(
+						Utils.PreferenceUtils.readFromPreferences(
+								context, Utils.Constants.SMARTP_REGID ) );
+
+		deviceInfo.alias  = json.getString( "alias" );
+		deviceInfo.regId  = json.getString( "regid" );
+		deviceInfo.optout = json.getString( "optout" );
+
+		return deviceInfo;
+	}
 }

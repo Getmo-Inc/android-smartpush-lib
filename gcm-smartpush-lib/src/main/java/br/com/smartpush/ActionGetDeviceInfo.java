@@ -16,7 +16,7 @@ class ActionGetDeviceInfo {
 
     public static void startActionGetDeviceUserInfo( Context context ) {
         Intent intent = new Intent( context, SmartpushService.class ) ;
-        intent.setAction(ACTION_GET_DEVICE_USER_INFO) ;
+        intent.setAction( ACTION_GET_DEVICE_USER_INFO ) ;
         context.startService( intent );
     }
 
@@ -43,26 +43,23 @@ class ActionGetDeviceInfo {
                 Utils.PreferenceUtils.readFromPreferences(
                         context, Utils.Constants.SMARTP_REGID ) );
 
-        String resp  = SmartpushHttpClient.get( "device", params, context );
+        String resp =
+                SmartpushHttpClient.get( "device", params, context );
 
         Intent it = new Intent( ACTION_GET_DEVICE_USER_INFO );
+
         try {
-            JSONObject json = new JSONObject( resp );
-            int code = json.has( "code" ) ? json.getInt( "code" ) : 0;
-            if ( code == 200 ) {
-                SmartpushDeviceInfo info = new SmartpushDeviceInfo( "" );
-                info.alias  = json.getString( "alias" );
-                info.regId  = json.getString( "regid" );
-                info.optout = json.getString( "optout" );
-
-                it.putExtra( Smartpush.EXTRA_DEVICE_INFO, info );
+            if ( resp != null ) {
+                JSONObject json = new JSONObject( resp );
+                int code = json.has( "code" ) ? json.getInt( "code" ) : 0;
+                if ( code == 200 ) {
+                    it.putExtra( Smartpush.EXTRA_DEVICE_INFO, SmartpushDeviceInfo.bind( context, json ) );
+                }
             }
-
         } catch ( JSONException e ) {
             SmartpushLog.e( TAG, e.getMessage(), e) ;
         }
 
         LocalBroadcastManager.getInstance( context ).sendBroadcast( it );
     }
-
 }

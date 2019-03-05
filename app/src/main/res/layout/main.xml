@@ -8,34 +8,104 @@
     android:background="@drawable/elegant_android_background"
     tools:context="br.com.getmo.MainActivity">
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <Switch
-            android:id="@+id/switch1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Push Notification ON "
-            android:textColor="#FFF"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=" OFF"
-            android:textColor="#FFF"/>
-
-    </LinearLayout>
-
     <TextView
         android:id="@+id/alias"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
+        android:layout_marginTop="3dp"
         android:gravity="center"
         android:background="#AACCCCCC"
         android:text="@string/wait"
         android:textSize="36sp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnGetDeviceInfo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="onClick"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="Get Device Info"/>
+
+        <Button
+            android:id="@+id/btnNotifStatus"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="onClick"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="Status Notificacoes"/>
+
+        <Button
+            android:id="@+id/btnBlockPush"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="onClick"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="(un)block push"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnSetTag"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="onClick"
+            android:text="Set Tag"/>
+
+        <Button
+            android:id="@+id/btnDelTag"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="onClick"
+            android:text="Del Tag"/>
+
+        <Button
+            android:id="@+id/btnGetTag"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="onClick"
+            android:text="Get Tag"/>
+
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_margin="10dp"
+        android:fillViewport="true">
+
+        <TextView
+            android:id="@+id/log"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="3dp"
+            android:textColor="#FFF"
+            android:background="#22E1E1E1"/>
+
+    </ScrollView>
 
 </LinearLayout>
