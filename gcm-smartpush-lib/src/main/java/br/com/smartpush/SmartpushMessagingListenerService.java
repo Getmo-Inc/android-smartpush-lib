@@ -21,7 +21,7 @@ import static br.com.smartpush.Utils.TAG;
 /**
  * Created by fabio.licks on 10/02/16.
  */
-public abstract class SmartpushListenerService extends FirebaseMessagingService {
+public abstract class SmartpushMessagingListenerService extends FirebaseMessagingService {
 
     Bundle mapToBundle( Map<String, String> mapData ){
         Bundle bundle = new Bundle();

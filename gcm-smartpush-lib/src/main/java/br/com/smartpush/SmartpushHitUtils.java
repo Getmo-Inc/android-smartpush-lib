@@ -6,7 +6,7 @@ import android.os.Bundle;
 /**
  * Created by fabio.licks on 09/02/16.
  */
-final class SmartpushHitUtils {
+class SmartpushHitUtils {
 
     private Context context;
 

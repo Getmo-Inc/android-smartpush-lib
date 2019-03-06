@@ -6,7 +6,7 @@ import static br.com.smartpush.Utils.TAG;
 /**
  * Created by fabio.licks on 09/02/2016.
  */
-final class GeoOverpass {
+class GeoOverpass {
 
     public String alias;
     public double lat;

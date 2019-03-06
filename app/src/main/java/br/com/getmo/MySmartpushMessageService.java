@@ -4,9 +4,9 @@ import android.util.Log;
 
 import com.google.firebase.messaging.RemoteMessage;
 
-import br.com.smartpush.SmartpushListenerService;
+import br.com.smartpush.SmartpushMessagingListenerService;
 
-public class MySmartpushMessageService extends SmartpushListenerService {
+public class MySmartpushMessageService extends SmartpushMessagingListenerService {
 
     @Override
     protected void handleMessage( RemoteMessage remoteMessage ) {

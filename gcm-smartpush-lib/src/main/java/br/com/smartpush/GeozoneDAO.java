@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Created by fabio.licks on 09/02/16.
  */
-final class GeozoneDAO {
+class GeozoneDAO {
 
     public static final String TABLENAME = "GEOZONE";
 

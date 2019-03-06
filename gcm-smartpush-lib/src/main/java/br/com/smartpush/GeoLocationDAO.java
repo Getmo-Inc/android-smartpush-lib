@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Created by fabio.licks on 09/02/16.
  */
-final class GeoLocationDAO {
+class GeoLocationDAO {
     public static final String TABLENAME = "LOCATION";
 
     public static int deleteAll( SQLiteDatabase db ) {

@@ -18,7 +18,7 @@ import java.util.List;
 import static android.Manifest.permission.READ_PHONE_STATE;
 import static br.com.smartpush.Utils.TAG;
 
-public class ActionGetCarrier {
+class ActionGetCarrier {
     public static final String ACTION_GET_CARRIER = "action.GET_CARRIER";
 
     /**

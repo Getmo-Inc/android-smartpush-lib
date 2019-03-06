@@ -11,7 +11,7 @@ import android.telephony.TelephonyManager;
  * https://gist.github.com/emil2k/5130324
  **/
 
-final class SmartpushConnectivityUtil {
+class SmartpushConnectivityUtil {
 
     /**
      * Get the network info

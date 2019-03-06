@@ -32,7 +32,7 @@ import static br.com.smartpush.Utils.TAG;
  * Created by fabio.licks on 09/02/16.
  */
 
-public final class SmartpushHttpClient {
+class SmartpushHttpClient {
 
     public static final String HOST = "https://api.getmo.com.br/";
 
