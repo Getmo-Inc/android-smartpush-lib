@@ -6,35 +6,38 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.view.ScrollingView;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.common.util.Strings;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.InstanceIdResult;
+import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.Date;
 
+import br.com.getmo.inbox.Notification;
 import br.com.smartpush.Smartpush;
 import br.com.smartpush.SmartpushDeviceInfo;
 import br.com.smartpush.SmartpushNotificationBuilder;
-import br.com.smartpush.SmartpushService;
-import br.com.smartpush.Utils;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -47,6 +50,8 @@ public class MainActivity extends AppCompatActivity {
     // TODO ajustar a inicializacao desta variavel...
     private boolean pushStatus;
 
+    private int lastBroadcast = 0;
+
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
         super.onCreate( savedInstanceState );
@@ -55,6 +60,8 @@ public class MainActivity extends AppCompatActivity {
         log = findViewById( R.id.log );
 
         initSpinner();
+
+//        initInbox();
 
         Smartpush.subscribe( this );
 
@@ -131,6 +138,11 @@ public class MainActivity extends AppCompatActivity {
         arrayAdapter.add("SIMPLE OFFLINE NOTIFICATION");
         arrayAdapter.add("BANNER OFFLINE NOTIFICATION");
         arrayAdapter.add("CAROUSEL OFFLINE NOTIFICATION");
+        arrayAdapter.add("GET GEOZONES");
+        arrayAdapter.add("MARK ALL MESSAGES AS READ");
+        arrayAdapter.add("GET LAST UNREAD MESSAGES");
+        arrayAdapter.add("MARK MESSAGE AS READ");
+        arrayAdapter.add("GET LAST MESSAGES");
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
 
@@ -183,7 +195,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClick( View v ) {
+
+        String pushid = "61b352e47c910884ac0d82fbd46e9ebf";
+
         if (v.getId() == R.id.btn_execute_spinner_action) {
+
             switch (spinnerOption){
                 case 0: Smartpush.getUserInfo(this);
                     break;
@@ -216,7 +232,103 @@ public class MainActivity extends AppCompatActivity {
 
                 case 8: new SmartpushNotificationBuilder(this).carouselNotificationSample();
                     break;
+
+                case 9: String geo = Smartpush.getGeozones(this);
+                    Log.d(TAG, "GEOZONES: "+ geo);
+                    log.setText("GEOZONES: \n"+geo);
+                    break;
+
+                case 10: Smartpush.markAllMessagesAsRead(this);
+                    //Broadcast 1
+                    broadcastRegister(1);
+                    break;
+
+                case 11: Smartpush.getLastUnreadMessages(this, null);
+                    //Broadcast 2
+                    broadcastRegister(2);
+                    break;
+
+                case 12: Smartpush.markMessageAsRead(this, pushid);
+                    //Broadcast 3
+                    broadcastRegister(3);
+                    break;
+
+                case 13: Smartpush.getLastMessages(this, null);
+                    //Broadcast 4
+                    broadcastRegister(4);
+                    break;
+
+                case 14: Smartpush.getMessageExtraPayload(this, pushid);
+                    break;
+
             }
+        }
+    }
+
+    private void broadcastRegister(int broadcast){
+        broadcastUnregister();
+
+        switch (broadcast){
+
+            case 1:
+                LocalBroadcastManager
+                        .getInstance(this)
+                        .registerReceiver(receiverMarkAllRead,
+                                new IntentFilter(Smartpush.ACTION_MARK_ALL_NOTIF_AS_READ));
+                break;
+
+            case 2:
+                LocalBroadcastManager
+                        .getInstance(this)
+                        .registerReceiver(receiverLast10Unread,
+                                new IntentFilter(Smartpush.ACTION_LAST_10_UNREAD_NOTIF));
+                break;
+
+            case 3:
+                LocalBroadcastManager
+                        .getInstance(this)
+                        .registerReceiver(receiverMarkRead,
+                                new IntentFilter(Smartpush.ACTION_MARK_NOTIF_AS_READ));
+                break;
+
+            case 4:
+                LocalBroadcastManager
+                        .getInstance( this )
+                        .registerReceiver(receiverLast10,
+                                new IntentFilter( Smartpush.ACTION_LAST_10_NOTIF ) );
+                lastBroadcast = 4;
+                break;
+        }
+    }
+
+    private void broadcastUnregister(){
+        switch (lastBroadcast) {
+            case 0: Log.d(TAG, "Não há broadcast registrado");
+                break;
+
+            case 1:
+                LocalBroadcastManager
+                        .getInstance(this)
+                        .unregisterReceiver(receiverMarkAllRead);
+                break;
+
+            case 2:
+                LocalBroadcastManager
+                        .getInstance(this)
+                        .unregisterReceiver(receiverLast10Unread);
+                break;
+
+            case 3:
+                LocalBroadcastManager
+                        .getInstance(this)
+                        .unregisterReceiver(receiverMarkRead);
+                break;
+
+            case 4:
+                LocalBroadcastManager
+                    .getInstance( this )
+                    .unregisterReceiver(receiverLast10);
+                break;
         }
     }
 
@@ -330,4 +442,130 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     };
+
+    //START INBOX AREA
+    private BroadcastReceiver receiverLast10 = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent data ) {
+            if ( data.getAction().equals( Smartpush.ACTION_LAST_10_NOTIF ) ) {
+
+                String json = data.getStringExtra( "extra.VALUE" );
+                JSONArray array = null;
+
+                try {
+                    array = new JSONArray( json );
+                } catch ( JSONException e ) {
+                    Log.e( "DEBUG", e.getMessage(), e );
+                    log.setVisibility( View.VISIBLE );
+                }
+
+                ArrayList<Notification> dataset = new ArrayList<>();
+                if ( array != null ) {
+                    for ( int i = 0; i < array.length(); i++ ) {
+                        try {
+                            dataset.add( new Notification( array.getJSONObject( i ) ) );
+                        } catch ( JSONException e ) {
+                            Log.e( "DEBUG", e.getMessage(), e );
+                        }
+                    }
+                }
+
+                log.setText("GET LAST MESSAGES: \n"+dataset.toString());
+            }
+        }
+    };
+
+    private BroadcastReceiver receiverMarkAllRead = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent data) {
+            if ( data.getAction().equals( Smartpush.ACTION_MARK_ALL_NOTIF_AS_READ ) ) {
+
+                String json = data.getStringExtra( "extra.VALUE" );
+                JSONArray array = null;
+
+                try {
+                    array = new JSONArray( json );
+                } catch ( JSONException e ) {
+                    Log.e( "DEBUG", e.getMessage(), e );
+                    log.setVisibility( View.VISIBLE );
+                }
+
+                ArrayList<Notification> dataset = new ArrayList<>();
+                if ( array != null ) {
+                    for ( int i = 0; i < array.length(); i++ ) {
+                        try {
+                            dataset.add( new Notification( array.getJSONObject( i ) ) );
+                        } catch ( JSONException e ) {
+                            Log.e( "DEBUG", e.getMessage(), e );
+                        }
+                    }
+                }
+
+                log.setText("MARK ALL NOTIF AS READ: \n"+dataset.toString());
+            }
+        }
+    };
+
+    private BroadcastReceiver receiverLast10Unread = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent data) {
+            if ( data.getAction().equals( Smartpush.ACTION_LAST_10_UNREAD_NOTIF ) ) {
+
+                String json = data.getStringExtra( "extra.VALUE" );
+                JSONArray array = null;
+
+                try {
+                    array = new JSONArray( json );
+                } catch ( JSONException e ) {
+                    Log.e( "DEBUG", e.getMessage(), e );
+                    log.setVisibility( View.VISIBLE );
+                }
+
+                ArrayList<Notification> dataset = new ArrayList<>();
+                if ( array != null ) {
+                    for ( int i = 0; i < array.length(); i++ ) {
+                        try {
+                            dataset.add( new Notification( array.getJSONObject( i ) ) );
+                        } catch ( JSONException e ) {
+                            Log.e( "DEBUG", e.getMessage(), e );
+                        }
+                    }
+                }
+
+                log.setText("GET LAST UNREAD MESSAGES: \n"+dataset.toString());
+            }
+        }
+    };
+
+    private BroadcastReceiver receiverMarkRead = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent data ) {
+            if ( data.getAction().equals( Smartpush.ACTION_MARK_NOTIF_AS_READ) ) {
+
+                String json = data.getStringExtra( "extra.VALUE" );
+                JSONArray array = null;
+
+                try {
+                    array = new JSONArray( json );
+                } catch ( JSONException e ) {
+                    Log.e( "DEBUG", e.getMessage(), e );
+                    log.setVisibility( View.VISIBLE );
+                }
+
+                ArrayList<Notification> dataset = new ArrayList<>();
+                if ( array != null ) {
+                    for ( int i = 0; i < array.length(); i++ ) {
+                        try {
+                            dataset.add( new Notification( array.getJSONObject( i ) ) );
+                        } catch ( JSONException e ) {
+                            Log.e( "DEBUG", e.getMessage(), e );
+                        }
+                    }
+                }
+
+                log.setText("MARK NOTIF AS READ: \n"+dataset.toString());
+            }
+        }
+    };
+    //END INBOX AREA
 }
