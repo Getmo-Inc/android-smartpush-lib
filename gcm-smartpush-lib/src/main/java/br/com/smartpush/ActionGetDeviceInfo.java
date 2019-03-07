@@ -53,8 +53,8 @@ class ActionGetDeviceInfo {
         try {
             if ( resp != null ) {
                 JSONObject json = new JSONObject( resp );
-                int code = json.has( "code" ) ? json.getInt( "code" ) : 0;
-                if ( code == 200 ) {
+                boolean success = json.has( "status" ) ? json.getBoolean( "status" ) : false;
+                if ( success ) {
                     it.putExtra(
                             Smartpush.EXTRA_DEVICE_INFO,
                             SmartpushDeviceInfo.bind( context, json ) );
