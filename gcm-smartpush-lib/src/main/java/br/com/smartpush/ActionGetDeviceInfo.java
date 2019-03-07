@@ -27,9 +27,9 @@ class ActionGetDeviceInfo {
     public static void handleActionGetDeviceUserInfo( Context context, Intent data ) {
         HashMap<String, String> params = new HashMap<String, String>();
 
-        params.put( "uuid",
-                Utils.PreferenceUtils.readFromPreferences (
-                        context, Utils.Constants.SMARTP_HWID ) );
+//        params.put( "uuid",
+//                Utils.PreferenceUtils.readFromPreferences (
+//                        context, Utils.Constants.SMARTP_HWID ) );
 
         params.put( "appid",
                 Utils.Smartpush.getMetadata(
@@ -43,8 +43,10 @@ class ActionGetDeviceInfo {
                 Utils.PreferenceUtils.readFromPreferences(
                         context, Utils.Constants.SMARTP_REGID ) );
 
+        String uuid = Utils.PreferenceUtils.readFromPreferences ( context, Utils.Constants.SMARTP_HWID );
+
         String resp =
-                SmartpushHttpClient.get( "device", params, context );
+                SmartpushHttpClient.get( "device/" + uuid, params, context );
 
         Intent it = new Intent( ACTION_GET_DEVICE_USER_INFO );
 
@@ -53,7 +55,9 @@ class ActionGetDeviceInfo {
                 JSONObject json = new JSONObject( resp );
                 int code = json.has( "code" ) ? json.getInt( "code" ) : 0;
                 if ( code == 200 ) {
-                    it.putExtra( Smartpush.EXTRA_DEVICE_INFO, SmartpushDeviceInfo.bind( context, json ) );
+                    it.putExtra(
+                            Smartpush.EXTRA_DEVICE_INFO,
+                            SmartpushDeviceInfo.bind( context, json ) );
                 }
             }
         } catch ( JSONException e ) {

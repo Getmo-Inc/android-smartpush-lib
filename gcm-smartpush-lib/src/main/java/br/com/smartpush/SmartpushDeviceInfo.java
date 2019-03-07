@@ -68,9 +68,25 @@ public final class SmartpushDeviceInfo implements Parcelable {
 						Utils.PreferenceUtils.readFromPreferences(
 								context, Utils.Constants.SMARTP_REGID ) );
 
-		deviceInfo.alias  = json.getString( "alias" );
-		deviceInfo.regId  = json.getString( "regid" );
-		deviceInfo.optout = json.getString( "optout" );
+		if ( json.has( "alias" ) ) {
+			deviceInfo.alias  = json.getString( "alias" );
+		}
+
+		if ( json.has( "regid" ) ) {
+			deviceInfo.regId  = json.getString( "regid" );
+		}
+
+		if ( json.has( "optout" ) ) {
+			deviceInfo.optout = json.getString( "optout" );
+		}
+
+		if ( json.has( "created_at" ) ) {
+			JSONObject creation = json.getJSONObject( "created_at" );
+			if ( creation != null && creation.has( "date" ) ) {
+				deviceInfo.createdAt =
+						creation.getString("date" );
+			}
+		}
 
 		return deviceInfo;
 	}
