@@ -7,26 +7,16 @@ import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.view.ScrollingView;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.android.gms.common.util.Strings;
-import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -49,8 +39,9 @@ public class MainActivity extends AppCompatActivity {
 
     // TODO ajustar a inicializacao desta variavel...
     private boolean pushStatus;
-
     private int lastBroadcast = 0;
+
+    private String pushid = "";
 
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
@@ -195,8 +186,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClick( View v ) {
-
-        String pushid = "61b352e47c910884ac0d82fbd46e9ebf";
 
         if (v.getId() == R.id.btn_execute_spinner_action) {
 
@@ -443,7 +432,6 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    //START INBOX AREA
     private BroadcastReceiver receiverLast10 = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent data ) {
@@ -468,9 +456,10 @@ public class MainActivity extends AppCompatActivity {
                             Log.e( "DEBUG", e.getMessage(), e );
                         }
                     }
+                    log.setText("GET LAST MESSAGES: \n"+dataset.toString());
+                } else {
+                    log.setText("Não há mensagens.");
                 }
-
-                log.setText("GET LAST MESSAGES: \n"+dataset.toString());
             }
         }
     };
@@ -499,9 +488,11 @@ public class MainActivity extends AppCompatActivity {
                             Log.e( "DEBUG", e.getMessage(), e );
                         }
                     }
+                    log.setText("MARK ALL NOTIF AS READ: \n"+dataset.toString());
+                } else {
+                    log.setText("Não há mensagens.");
                 }
 
-                log.setText("MARK ALL NOTIF AS READ: \n"+dataset.toString());
             }
         }
     };
@@ -526,13 +517,16 @@ public class MainActivity extends AppCompatActivity {
                     for ( int i = 0; i < array.length(); i++ ) {
                         try {
                             dataset.add( new Notification( array.getJSONObject( i ) ) );
+                            pushid = dataset.get(0).pushId;
                         } catch ( JSONException e ) {
                             Log.e( "DEBUG", e.getMessage(), e );
                         }
                     }
+                    log.setText("GET LAST UNREAD MESSAGES: \n"+dataset.toString());
+                } else {
+                    log.setText("Não há mensagens.");
                 }
 
-                log.setText("GET LAST UNREAD MESSAGES: \n"+dataset.toString());
             }
         }
     };
@@ -561,11 +555,12 @@ public class MainActivity extends AppCompatActivity {
                             Log.e( "DEBUG", e.getMessage(), e );
                         }
                     }
+                    log.setText("MARK NOTIF AS READ: \n"+dataset.toString());
+                } else {
+                    log.setText("Não há mensagens.");
                 }
 
-                log.setText("MARK NOTIF AS READ: \n"+dataset.toString());
             }
         }
     };
-    //END INBOX AREA
 }
