@@ -77,7 +77,13 @@ public class SmartpushNotificationBuilder {
     }
 
     public void createNotification(){
-        new SmartpushNotificationManager(mContext).createNotification(notification);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                new SmartpushNotificationManager(mContext).createNotification(notification);
+            }
+        }).start();
+
     }
 
     String selfToString() {
@@ -128,7 +134,7 @@ public class SmartpushNotificationBuilder {
     /* SAMPLE */
     // Simple
     public void notificationSample(){
-        String notification =
+        final String notification =
                 "{\n" +
                 "        \"type\": \"PUSH\",\n" +
                 "        \"provider\": \"smartpush\",\n" +
@@ -138,12 +144,17 @@ public class SmartpushNotificationBuilder {
                 "        \"video\": \"lW4pUQdRo3g\"\n" +
                 "}";
 
-        new SmartpushNotificationManager(mContext).createNotification(jsonStringToBundle(notification));
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                new SmartpushNotificationManager(mContext).createNotification(jsonStringToBundle(notification));
+            }
+        }).start();
     }
 
     // Banner
     public void bannerNotificataionSample(){
-        String banner =
+        final String banner =
                 "{\n" +
                 "        \"type\": \"PUSH\",\n" +
                 "        \"provider\": \"smartpush\",\n" +
@@ -154,12 +165,17 @@ public class SmartpushNotificationBuilder {
                 "        \"video\": \"lW4pUQdRo3g\"\n" +
                 "}";
 
-        new SmartpushNotificationManager(mContext).createNotification(jsonStringToBundle(banner));
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                new SmartpushNotificationManager(mContext).createNotification(jsonStringToBundle(banner));
+            }
+        }).start();
     }
 
     // Carousel
     public void carouselNotificationSample() {
-        String carousel =
+        final String carousel =
                 "{\n" +
                     "\"banner\":\"https://movietvtechgeeks.com/wp-content/uploads/2017/06/xbox-one-vs-ps4-long-battle-images.jpg\",\n" +
                     "\"detail\":\"Escolhemos ofertas especiais para você!\",\n" +
@@ -170,17 +186,19 @@ public class SmartpushNotificationBuilder {
                         "\"frame:2:banner\":\"https:\\/\\/i.pinimg.com\\/originals\\/fe\\/63\\/26\\/fe6326895705f9f34f250fe274ca9bf3.png\",\n" +
                         "\"frame:2:url\":\"buscape:\\/\\/search?productId=606585&utm_source=alertadepreco&utm_medium=push&utm_campaign=606585\",\n" +
                         "\"frame:3:banner\":\"https:\\/\\/www.digiseller.ru\\/preview\\/115936\\/p1_2179893_ef9d38d0.jpg\",\n" +
-                        "\"frame:3:url\":\"buscape:\\/\\/search?productId=623321&utm_source=alertadepreco&utm_medium=push&utm_campaign=623321\",\n" +
-                        "\"frame:4:banner\":\"https:\\/\\/www.digiseller.ru\\/preview\\/115936\\/p1_2179893_ef9d38d0.jpg\",\n" +
-                        "\"frame:4:url\":\"buscape:\\/\\/search?productId=623321&utm_source=alertadepreco&utm_medium=push&utm_campaign=623321\",\n" +
-                        "\"frame:5:banner\":\"https:\\/\\/www.digiseller.ru\\/preview\\/115936\\/p1_2179893_ef9d38d0.jpg\",\n" +
-                        "\"frame:5:url\":\"buscape:\\/\\/search?productId=623321&utm_source=alertadepreco&utm_medium=push&utm_campaign=623321\"\n" +
+                        "\"frame:3:url\":\"buscape:\\/\\/search?productId=623321&utm_source=alertadepreco&utm_medium=push&utm_campaign=623321\"\n" +
                     "},\n" +
                     "\"url\":\"buscape://search?productId=27062&site_origem=23708552\", \n" +
                     "\"type\":\"CARROUSSEL\", \n" +
                     "\"title\":\"Buscape\" \n" +
                 "}";
 
-        new SmartpushNotificationManager(mContext).createNotification(jsonStringToBundle(carousel));
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                new SmartpushNotificationManager(mContext).createNotification(jsonStringToBundle(carousel));
+            }
+        }).start();
+
     }
 }

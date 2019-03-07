@@ -12,6 +12,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,6 +40,9 @@ public class MainActivity extends AppCompatActivity {
 
     private final static String TAG = "LOG";
     private TextView log;
+    private Spinner spinner;
+
+    private int spinnerOption = 0;
 
     // TODO ajustar a inicializacao desta variavel...
     private boolean pushStatus;
@@ -46,6 +53,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView( R.layout.main );
 
         log = findViewById( R.id.log );
+
+        initSpinner();
 
         Smartpush.subscribe( this );
 
@@ -96,11 +105,42 @@ public class MainActivity extends AppCompatActivity {
 
 //        SmartpushService.getAppList( this );
 
+        /*Smartpush.getLastMessages(this, new Date(0));
+        Smartpush.getLastUnreadMessages(this, new Date(0));
+        Smartpush.getGeozones(this);*/
+
         Intent intent = getIntent();
         String action = intent.getAction();
         Uri data      = intent.getData();
 
         Log.d( TAG, "[" + action + "] : " + ( data != null ? data.toString() : "NO DATA! " ) );
+    }
+
+    private void initSpinner() {
+        spinner = findViewById(R.id.spinner_lib_functions);
+
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
+        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(arrayAdapter);
+        arrayAdapter.add("GET DEVICE INFO");
+        arrayAdapter.add("STATUS NOTIFICATION");
+        arrayAdapter.add("(UN)BLOCK PUSH");
+        arrayAdapter.add("SET TAG");
+        arrayAdapter.add("DEL TAG");
+        arrayAdapter.add("GET TAG");
+        arrayAdapter.add("SIMPLE OFFLINE NOTIFICATION");
+        arrayAdapter.add("BANNER OFFLINE NOTIFICATION");
+        arrayAdapter.add("CAROUSEL OFFLINE NOTIFICATION");
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
+
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) { spinnerOption = position; }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) { spinnerOption = 0; }
+
+        });
     }
 
     @Override
@@ -143,23 +183,40 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClick( View v ) {
-        if ( v.getId() == R.id.btnGetDeviceInfo ) {
-            Smartpush.getUserInfo( this );
-        } else if ( v.getId() == R.id.btnSetTag ) {
-            setTags();
-        } else if ( v.getId() == R.id.btnDelTag ) {
-            delTags();
-        } else if ( v.getId() == R.id.btnGetTag ) {
-            Smartpush.getTagValues( this, "NEWS_FEED" );
-        } else if ( v.getId() == R.id.btnNotifStatus ) {
-            boolean status = Smartpush.areNotificationsEnabled( this );
-            Log.d( TAG, "Notification State: " + status );
-            log.setText( "NOTIFICATION STATUS: " + ( status ? "ENABLE" : "DISABLE" ) );
-        } else if ( v.getId() == R.id.btnBlockPush ) {
-            pushStatus = !pushStatus;
-            Smartpush.blockPush(this, pushStatus );
-            Log.d( TAG, "PUSH Status: " + ( !pushStatus ? "ENABLE" : "DISABLE" ) );
-            log.setText( "PUSH Status: " + ( !pushStatus ? "ENABLE" : "DISABLE" ) );
+        if (v.getId() == R.id.btn_execute_spinner_action) {
+            switch (spinnerOption){
+                case 0: Smartpush.getUserInfo(this);
+                    break;
+
+                case 1: boolean status = Smartpush.areNotificationsEnabled(this);
+                    Log.d( TAG, "Notification State: " + status );
+                    log.setText( "NOTIFICATION STATUS: " + ( status ? "ENABLE" : "DISABLE" ) );
+                    break;
+
+                case 2: pushStatus = !pushStatus;
+                    Smartpush.blockPush(this, pushStatus );
+                    Log.d( TAG, "PUSH Status: " + ( !pushStatus ? "ENABLE" : "DISABLE" ) );
+                    log.setText( "PUSH Status: " + ( !pushStatus ? "ENABLE" : "DISABLE" ) );
+                    break;
+
+                case 3: setTags();
+                    break;
+
+                case 4: delTags();
+                    break;
+
+                case 5: Smartpush.getTagValues(this, "NEWS_FEED");
+                    break;
+
+                case 6: new SmartpushNotificationBuilder(this).notificationSample();
+                    break;
+
+                case 7: new SmartpushNotificationBuilder(this).bannerNotificataionSample();
+                    break;
+
+                case 8: new SmartpushNotificationBuilder(this).carouselNotificationSample();
+                    break;
+            }
         }
     }
 
