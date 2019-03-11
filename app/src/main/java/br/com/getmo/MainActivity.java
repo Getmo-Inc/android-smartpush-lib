@@ -23,11 +23,15 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import br.com.getmo.inbox.Notification;
 import br.com.smartpush.Smartpush;
 import br.com.smartpush.SmartpushDeviceInfo;
 import br.com.smartpush.SmartpushNotificationBuilder;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -43,10 +47,47 @@ public class MainActivity extends AppCompatActivity {
 
     private String pushid = "";
 
+    ApiInterface apiInterface;
+
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.main );
+
+        Filter f = new Filter();
+        Params p = new Params();
+        Notif n = new Notif();
+
+        f.setType("TAG");
+        f.setRange("30");
+        f.setOperator("OR");
+        f.setRules(null);
+
+        p.setTitle("Title");
+        p.setDetail("Detail");
+
+        List ln = new ArrayList<Notif>();
+
+        n.setAppid("000000000000001");
+        n.setPlatform("ANDROID");
+        n.setParams(p);
+
+        ln.add(n);
+
+        apiInterface = ApiClient.getClient().create(ApiInterface.class);
+
+        Call<String> call = apiInterface.sendPushNotification("Smartpush Campaign", false, 1, "000000000000001", ln, f);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                Log.d("ABCZ", "RESPONSE: "+response.body());
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.d("ABCZ", "ERRO: "+t.getMessage());
+            }
+        });
 
         log = findViewById( R.id.log );
 
