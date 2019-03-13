@@ -45,8 +45,7 @@ public class MainActivity extends AppCompatActivity {
     private int lastBroadcast = 0;
 
     private String pushid = "";
-
-    ApiInterface apiInterface;
+    private String mAlias = "";
 
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
@@ -72,27 +71,6 @@ public class MainActivity extends AppCompatActivity {
 //        n.setParams(p);
 //
 //        ln.add(n);
-
-        String json =
-                "{   \"when\": \"now\",   \"devid\": \"CN6Z8Eka3FSQ9IA\",   \"prod\": \"1\",   \"notifications\": [{     \"appid\": \"000000000000001\",     \"platform\": \"ANDROID\",     \"params\": {       \"adtype\": \"PUSH_BANNER_AD\",       \"adnetwork\": \"smartpush\",       \"title\": \"ANITTA É COM A CABIFY!\",       \"detail\": \"Use o código promocional: CabifyeAnitta\",       \"category\": \"6\",       \"banner\": \"http://ads-smartpush.rhcloud.com/anitta_cabify.jpg\",       \"url\": \"http://bit.ly/2emk0wV\",       \"icon\": \"http://ads-smartpush.rhcloud.com/ic_cabify.png\"     }   }],   \"filter\": {     \"type\": \"ALI\",     \"alias\": \"BE386CB1\"   } }";
-
-        Call<String> call =
-                ApiClient
-                        .getClient()
-                        .create(ApiInterface.class)
-                        .sendPushNotification( json );
-
-        call.enqueue( new Callback<String>() {
-            @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                Log.d( TAG, "RESPONSE: "+response.body());
-            }
-
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-                Log.d( TAG, "ERRO: "+t.getMessage());
-            }
-        });
 
         log = findViewById( R.id.log );
 
@@ -180,6 +158,7 @@ public class MainActivity extends AppCompatActivity {
         arrayAdapter.add("GET LAST UNREAD MESSAGES");
         arrayAdapter.add("MARK MESSAGE AS READ");
         arrayAdapter.add("GET LAST MESSAGES");
+        arrayAdapter.add("PUSH");
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             @Override
@@ -228,6 +207,51 @@ public class MainActivity extends AppCompatActivity {
         LocalBroadcastManager
                 .getInstance( this )
                 .unregisterReceiver(mGetDeviceInfoBroadcastReceiver);
+    }
+
+    public void push(){
+        String json =
+                "{" +
+                        "   \"when\": \"now\"," +
+                        "   \"devid\": \"CN6Z8Eka3FSQ9IA\"," +
+                        "   \"prod\": \"1\"," +
+                        "   \"notifications\": [{" +
+                        "     \"appid\": \"000000000000001\"," +
+                        "     \"platform\": \"ANDROID\"," +
+                        "     \"params\": {" +
+                        "       \"adtype\": \"PUSH_BANNER_AD\"," +
+                        "       \"adnetwork\": \"smartpush\"," +
+                        "       \"title\": \"ANITTA É COM A CABIFY!\"," +
+                        "       \"detail\": \"Use o código promocional: CabifyeAnitta\"," +
+                        "       \"category\": \"6\"," +
+                        "       \"banner\": \"http://ads-smartpush.rhcloud.com/anitta_cabify.jpg\"," +
+                        "       \"url\": \"http://bit.ly/2emk0wV\"," +
+                        "       \"icon\": \"http://ads-smartpush.rhcloud.com/ic_cabify.png\"" +
+                        "     }" +
+                        "   }]," +
+                        "   \"filter\": {" +
+                        "     \"type\": \"ALI\"," +
+                        "     \"alias\": \""+mAlias+"\"" +
+                        "   }" +
+                        " }";
+
+        Call<String> call =
+                ApiClient
+                        .getClient()
+                        .create(ApiInterface.class)
+                        .sendPushNotification( json );
+
+        call.enqueue( new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                Log.d( TAG, "RESPONSE BODY: "+response.body());
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.d( TAG, "ERRO: "+t.getMessage());
+            }
+        });
     }
 
     public void onClick( View v ) {
@@ -292,9 +316,9 @@ public class MainActivity extends AppCompatActivity {
                     broadcastRegister(4);
                     break;
 
-                case 14: Smartpush.getMessageExtraPayload(this, pushid);
+                case 14:
+                    push();
                     break;
-
             }
         }
     }
@@ -469,7 +493,7 @@ public class MainActivity extends AppCompatActivity {
                 TextView alias = findViewById( R.id.alias );
                 String message = ( registered ) ? device.alias : "Fail :(";
                 alias.setText( message );
-
+                mAlias = device.alias;
                 // set your user id TAG here!
                 if ( registered ) {
                     Smartpush.setTag(MainActivity.this, "SMARTPUSH_ID", device.alias );
