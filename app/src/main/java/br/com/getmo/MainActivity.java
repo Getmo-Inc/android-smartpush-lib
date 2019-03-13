@@ -79,12 +79,12 @@ public class MainActivity extends AppCompatActivity {
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                Log.d("ABCZ", "RESPONSE: "+response.body());
+                Log.d( TAG, "RESPONSE: "+response.body());
             }
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                Log.d("ABCZ", "ERRO: "+t.getMessage());
+                Log.d( TAG, "ERRO: "+t.getMessage());
             }
         });
 
