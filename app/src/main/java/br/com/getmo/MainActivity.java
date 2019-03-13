@@ -37,7 +37,6 @@ public class MainActivity extends AppCompatActivity {
 
     private int spinnerOption = 0;
 
-    // TODO ajustar a inicializacao desta variavel...
     private boolean pushStatus;
     private int lastBroadcast = 0;
 
@@ -126,9 +125,9 @@ public class MainActivity extends AppCompatActivity {
         arrayAdapter.add("SET TAG");
         arrayAdapter.add("DEL TAG");
         arrayAdapter.add("GET TAG");
-        arrayAdapter.add("SIMPLE OFFLINE NOTIFICATION");
-        arrayAdapter.add("BANNER OFFLINE NOTIFICATION");
-        arrayAdapter.add("CAROUSEL OFFLINE NOTIFICATION");
+        arrayAdapter.add("OFFLINE SIMPLE NOTIFICATION");
+        arrayAdapter.add("OFFLINE BANNER NOTIFICATION");
+        arrayAdapter.add("OFFLINE CAROUSEL NOTIFICATION");
         arrayAdapter.add("GET GEOZONES");
         arrayAdapter.add("MARK ALL MESSAGES AS READ");
         arrayAdapter.add("GET LAST UNREAD MESSAGES");
@@ -136,7 +135,6 @@ public class MainActivity extends AppCompatActivity {
         arrayAdapter.add("GET LAST MESSAGES");
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
-
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) { spinnerOption = position; }
 
@@ -408,6 +406,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d( TAG,"DEVICE_INFO.DATA: " + ( deviceInfo != null ? deviceInfo.toString() : "FAIL" ) );
             log.setText( "GET DEVICE_INFO:" );
             log.append( "\nDEVICE_INFO.DATA: " + ( deviceInfo != null ? deviceInfo.toString() : "FAIL" ) );
+//            pushStatus = ( deviceInfo != null ? deviceInfo.optout : "0" );
         }
     };
 
@@ -437,29 +436,31 @@ public class MainActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent data ) {
             if ( data.getAction().equals( Smartpush.ACTION_LAST_10_NOTIF ) ) {
 
-                String json = data.getStringExtra( "extra.VALUE" );
+                String json = data.getStringExtra( Smartpush.EXTRA_VALUE );
                 JSONArray array = null;
 
                 try {
                     array = new JSONArray( json );
+                    log.setText( "GET LAST 10 MESSAGES: \n" + array.toString( 4 ) );
                 } catch ( JSONException e ) {
                     Log.e( "DEBUG", e.getMessage(), e );
                     log.setVisibility( View.VISIBLE );
+                    log.setText( "GET LAST 10 MESSAGES: \nNão há mensagens." );
                 }
 
-                ArrayList<Notification> dataset = new ArrayList<>();
-                if ( array != null ) {
-                    for ( int i = 0; i < array.length(); i++ ) {
-                        try {
-                            dataset.add( new Notification( array.getJSONObject( i ) ) );
-                        } catch ( JSONException e ) {
-                            Log.e( "DEBUG", e.getMessage(), e );
-                        }
-                    }
-                    log.setText("GET LAST MESSAGES: \n"+dataset.toString());
-                } else {
-                    log.setText("Não há mensagens.");
-                }
+//                ArrayList<Notification> dataset = new ArrayList<>();
+//                if ( array != null ) {
+//                    for ( int i = 0; i < array.length(); i++ ) {
+//                        try {
+//                            dataset.add( new Notification( array.getJSONObject( i ) ) );
+//                        } catch ( JSONException e ) {
+//                            Log.e( "DEBUG", e.getMessage(), e );
+//                        }
+//                    }
+//                    log.setText("GET LAST MESSAGES: \n"+dataset.toString());
+//                } else {
+//                    log.setText("Não há mensagens.");
+//                }
             }
         }
     };
@@ -559,7 +560,6 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     log.setText("Não há mensagens.");
                 }
-
             }
         }
     };
