@@ -39,4 +39,11 @@ public class Notif {
         this.params = params;
     }
 
+
+    @Override
+    public String toString() {
+        return "{ appid:'" + appid + '\'' +
+                ", platform:'" + platform + '\'' +
+                ", params:" + params +  '}';
+    }
 }

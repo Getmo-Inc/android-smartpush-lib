@@ -53,30 +53,36 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.main );
 
-        Filter f = new Filter();
-        Params p = new Params();
-        Notif n = new Notif();
+//        Filter f = new Filter();
+//        Params p = new Params();
+//        Notif n = new Notif();
+//
+//        f.setType("TAG");
+//        f.setRange("30");
+//        f.setOperator("OR");
+//        f.setRules(null);
+//
+//        p.setTitle("Title");
+//        p.setDetail("Detail");
+//
+//        List ln = new ArrayList<Notif>();
+//
+//        n.setAppid("000000000000001");
+//        n.setPlatform("ANDROID");
+//        n.setParams(p);
+//
+//        ln.add(n);
 
-        f.setType("TAG");
-        f.setRange("30");
-        f.setOperator("OR");
-        f.setRules(null);
+        String json =
+                "{   \"when\": \"now\",   \"devid\": \"CN6Z8Eka3FSQ9IA\",   \"prod\": \"1\",   \"notifications\": [{     \"appid\": \"000000000000001\",     \"platform\": \"ANDROID\",     \"params\": {       \"adtype\": \"PUSH_BANNER_AD\",       \"adnetwork\": \"smartpush\",       \"title\": \"ANITTA É COM A CABIFY!\",       \"detail\": \"Use o código promocional: CabifyeAnitta\",       \"category\": \"6\",       \"banner\": \"http://ads-smartpush.rhcloud.com/anitta_cabify.jpg\",       \"url\": \"http://bit.ly/2emk0wV\",       \"icon\": \"http://ads-smartpush.rhcloud.com/ic_cabify.png\"     }   }],   \"filter\": {     \"type\": \"ALI\",     \"alias\": \"BE386CB1\"   } }";
 
-        p.setTitle("Title");
-        p.setDetail("Detail");
+        Call<String> call =
+                ApiClient
+                        .getClient()
+                        .create(ApiInterface.class)
+                        .sendPushNotification( json );
 
-        List ln = new ArrayList<Notif>();
-
-        n.setAppid("000000000000001");
-        n.setPlatform("ANDROID");
-        n.setParams(p);
-
-        ln.add(n);
-
-        apiInterface = ApiClient.getClient().create(ApiInterface.class);
-
-        Call<String> call = apiInterface.sendPushNotification("Smartpush Campaign", false, 1, "000000000000001", ln, f);
-        call.enqueue(new Callback<String>() {
+        call.enqueue( new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 Log.d( TAG, "RESPONSE: "+response.body());
