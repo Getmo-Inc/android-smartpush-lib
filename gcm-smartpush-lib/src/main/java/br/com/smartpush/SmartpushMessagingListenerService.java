@@ -105,7 +105,6 @@ public abstract class SmartpushMessagingListenerService extends FirebaseMessagin
 
     protected abstract void handleMessage( RemoteMessage remoteMessage );
 
-
     private void addShortcut( Bundle extras ) {
         //Adding shortcut for MainActivity
         //on Home screen
