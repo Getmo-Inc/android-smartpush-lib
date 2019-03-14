@@ -20,7 +20,11 @@ import com.google.android.gms.common.util.Strings;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -29,6 +33,7 @@ import br.com.getmo.inbox.Notification;
 import br.com.smartpush.Smartpush;
 import br.com.smartpush.SmartpushDeviceInfo;
 import br.com.smartpush.SmartpushNotificationBuilder;
+import br.com.smartpush.Utils;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -210,30 +215,31 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void push(){
-        String json =
-                "{" +
-                        "   \"when\": \"now\"," +
-                        "   \"devid\": \"CN6Z8Eka3FSQ9IA\"," +
-                        "   \"prod\": \"1\"," +
-                        "   \"notifications\": [{" +
-                        "     \"appid\": \"000000000000001\"," +
-                        "     \"platform\": \"ANDROID\"," +
-                        "     \"params\": {" +
-                        "       \"adtype\": \"PUSH_BANNER_AD\"," +
-                        "       \"adnetwork\": \"smartpush\"," +
-                        "       \"title\": \"ANITTA É COM A CABIFY!\"," +
-                        "       \"detail\": \"Use o código promocional: CabifyeAnitta\"," +
-                        "       \"category\": \"6\"," +
-                        "       \"banner\": \"http://ads-smartpush.rhcloud.com/anitta_cabify.jpg\"," +
-                        "       \"url\": \"http://bit.ly/2emk0wV\"," +
-                        "       \"icon\": \"http://ads-smartpush.rhcloud.com/ic_cabify.png\"" +
-                        "     }" +
-                        "   }]," +
-                        "   \"filter\": {" +
-                        "     \"type\": \"ALI\"," +
-                        "     \"alias\": \""+mAlias+"\"" +
-                        "   }" +
-                        " }";
+        String json = getPushConfig();
+
+//                "{" +
+//                        "   \"when\": \"now\"," +
+//                        "   \"devid\": \"CN6Z8Eka3FSQ9IA\"," +
+//                        "   \"prod\": \"1\"," +
+//                        "   \"notifications\": [{" +
+//                        "     \"appid\": \"000000000000001\"," +
+//                        "     \"platform\": \"ANDROID\"," +
+//                        "     \"params\": {" +
+//                        "       \"adtype\": \"PUSH_BANNER_AD\"," +
+//                        "       \"adnetwork\": \"smartpush\"," +
+//                        "       \"title\": \"ANITTA É COM A CABIFY!\"," +
+//                        "       \"detail\": \"Use o código promocional: CabifyeAnitta\"," +
+//                        "       \"category\": \"6\"," +
+//                        "       \"banner\": \"http://ads-smartpush.rhcloud.com/anitta_cabify.jpg\"," +
+//                        "       \"url\": \"http://bit.ly/2emk0wV\"," +
+//                        "       \"icon\": \"http://ads-smartpush.rhcloud.com/ic_cabify.png\"" +
+//                        "     }" +
+//                        "   }]," +
+//                        "   \"filter\": {" +
+//                        "     \"type\": \"ALI\"," +
+//                        "     \"alias\": \""+mAlias+"\"" +
+//                        "   }" +
+//                        " }";
 
         Call<String> call =
                 ApiClient
@@ -634,4 +640,29 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     };
+
+
+    private String getPushConfig() {
+        try {
+            String jsonString =
+                    FileManager.getStringFromInputStream( getAssets().open( "push_config.json" ) );
+
+            JSONObject json =
+                    new JSONArray( jsonString ).getJSONObject( 0 );
+
+            json.getJSONObject( "payload" )
+                    .getJSONObject( "filter" )
+                    .put( "alias",
+                            Utils.PreferenceUtils.readFromPreferences(this, Utils.Constants.SMARTP_ALIAS ) );
+
+            Log.d( "LOG", json.toString(  ) );
+
+            return json.getJSONObject( "payload" ).toString();
+        } catch ( IOException | JSONException e ) {
+            Log.e( "LOG", e.getMessage(), e );
+        }
+
+
+        return null;
+    }
 }

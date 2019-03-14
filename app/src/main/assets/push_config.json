@@ -1,0 +1,30 @@
+[
+  {
+    "id": 1,
+    "name": "PUSH SIMPLES",
+    "payload": {
+      "when": "now",
+      "devid": "CN6Z8Eka3FSQ9IA",
+      "prod": "1",
+      "notifications": [
+        {
+          "appid": "000000000000001",
+          "platform": "ANDROID",
+          "params": {
+            "type": "PUSH_BANNER",
+            "adnetwork": "smartpush",
+            "title": "ANITTA É COM A CABIFY!",
+            "detail": "Use o código promocional: CabifyeAnitta",
+            "banner": "http://ads-smartpush.rhcloud.com/anitta_cabify.jpg",
+            "url": "http://bit.ly/2emk0wV",
+            "icon": "http://ads-smartpush.rhcloud.com/ic_cabify.png"
+          }
+        }
+      ],
+      "filter": {
+        "type": "ALI",
+        "alias": "REPLACE_WITH_MOBILE_ALIAS"
+      }
+    }
+  }
+]
