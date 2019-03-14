@@ -22,18 +22,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import br.com.getmo.inbox.Notification;
 import br.com.smartpush.Smartpush;
 import br.com.smartpush.SmartpushDeviceInfo;
 import br.com.smartpush.SmartpushNotificationBuilder;
 import br.com.smartpush.Utils;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -241,20 +239,20 @@ public class MainActivity extends AppCompatActivity {
 //                        "   }" +
 //                        " }";
 
-        Call<String> call =
+        Call<ResponseBody> call =
                 ApiClient
                         .getClient()
                         .create(ApiInterface.class)
                         .sendPushNotification( json );
 
-        call.enqueue( new Callback<String>() {
+        call.enqueue( new Callback<ResponseBody>() {
             @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                Log.d( TAG, "RESPONSE BODY: "+response.body());
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                Log.d( TAG, "RESPONSE BODY: "+response.body().toString());
             }
 
             @Override
-            public void onFailure(Call<String> call, Throwable t) {
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Log.d( TAG, "ERRO: "+t.getMessage());
             }
         });
