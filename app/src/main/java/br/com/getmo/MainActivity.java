@@ -57,31 +57,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.main );
 
-//        Filter f = new Filter();
-//        Params p = new Params();
-//        Notif n = new Notif();
-//
-//        f.setType("TAG");
-//        f.setRange("30");
-//        f.setOperator("OR");
-//        f.setRules(null);
-//
-//        p.setTitle("Title");
-//        p.setDetail("Detail");
-//
-//        List ln = new ArrayList<Notif>();
-//
-//        n.setAppid("000000000000001");
-//        n.setPlatform("ANDROID");
-//        n.setParams(p);
-//
-//        ln.add(n);
-
         log = findViewById( R.id.log );
 
         initSpinner();
-
-//        initInbox();
 
         Smartpush.subscribe( this );
 
