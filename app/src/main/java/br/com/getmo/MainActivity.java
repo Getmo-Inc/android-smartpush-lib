@@ -226,12 +226,12 @@ public class MainActivity extends AppCompatActivity {
         call.enqueue( new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                Log.d( TAG, "RESPONSE BODY: "+response.body().toString());
+                Log.d( TAG, "RESPONSE SUCCESS" );
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.d( TAG, "ERRO: "+t.getMessage());
+                Log.d( TAG, "RESPONSE FAIL");
             }
         });
     }

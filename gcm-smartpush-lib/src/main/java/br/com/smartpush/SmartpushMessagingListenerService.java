@@ -27,6 +27,7 @@ public abstract class SmartpushMessagingListenerService extends FirebaseMessagin
         Bundle bundle = new Bundle();
         for ( Map.Entry<String, String> entry : mapData.entrySet()) {
             bundle.putString( entry.getKey(), entry.getValue() );
+            Log.d( TAG, entry.getKey() + " : " + entry.getValue() );
         }
         return bundle;
     }
@@ -43,7 +44,7 @@ public abstract class SmartpushMessagingListenerService extends FirebaseMessagin
      */
     @Override
     public void onMessageReceived( RemoteMessage remoteMessage ) {
-
+        Log.d( TAG, "push data received:\n" + remoteMessage.getData().toString() );
         Bundle data = mapToBundle( remoteMessage.getData() );
 
         if( remoteMessage.getData() != null && !remoteMessage.getData().isEmpty() ){
@@ -77,29 +78,29 @@ public abstract class SmartpushMessagingListenerService extends FirebaseMessagin
                             ? data.getString("type" ) : data.getString("adtype" );
 
             if( "smartpush".equals( provider ) ) {
-                if( "ICON_AD".equals( pushType ) ) {
-                    if( !Utils.DeviceUtils.hasPermissions(this,"com.android.launcher.permission.INSTALL_SHORTCUT")){
+                if ("ICON_AD".equals(pushType)) {
+                    if (!Utils.DeviceUtils.hasPermissions(this, "com.android.launcher.permission.INSTALL_SHORTCUT")) {
                         return;
                     }
 
                     addShortcut(data);
-                }
-            } else if ( "LOOPBACK".equals( pushType ) ) {
-                // do nothing, just for test
-            } else {
-                data = SmartpushHttpClient.getPushPayload(this, pushId, data);
+                } else if ("LOOPBACK".equals(pushType)) {
+                    // do nothing, just for test
+                } else {
+                    data = SmartpushHttpClient.getPushPayload(this, pushId, data);
 
-                if ( data.containsKey( NOTIF_VIDEO_URI ) ){
-                    String midiaId =
-                            data.getString( NOTIF_VIDEO_URI, null );
-                    CacheManager
-                            .getInstance( this )
-                            .prefetchVideo( midiaId, CacheManager.ExpirationTime.NONE );
+                    if (data.containsKey(NOTIF_VIDEO_URI)) {
+                        String midiaId =
+                                data.getString(NOTIF_VIDEO_URI, null);
+                        CacheManager
+                                .getInstance(this)
+                                .prefetchVideo(midiaId, CacheManager.ExpirationTime.NONE);
+                    }
+                    new SmartpushNotificationManager(this).onMessageReceived(remoteMessage.getFrom(), data);
                 }
-                new SmartpushNotificationManager( this ).onMessageReceived( remoteMessage.getFrom(), data );
+            } else {
+                handleMessage( remoteMessage );
             }
-        } else {
-            handleMessage( remoteMessage );
         }
     }
 
