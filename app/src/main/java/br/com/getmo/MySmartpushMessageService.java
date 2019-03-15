@@ -5,11 +5,9 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.google.firebase.messaging.RemoteMessage;
@@ -24,8 +22,8 @@ public class MySmartpushMessageService extends SmartpushMessagingListenerService
     protected void handleMessage( RemoteMessage remoteMessage ) {
         // Custom notification implementation
         Log.d( "DEBUG-NOT", "push custom" );
+        Log.d( "DEBUG-NOT", "DATA: "+remoteMessage.getData() );
         Bundle bundle = mapToBundle(remoteMessage.getData());
-        sendNotification(bundle);
     }
 
     Bundle mapToBundle( Map<String, String> mapData ){
