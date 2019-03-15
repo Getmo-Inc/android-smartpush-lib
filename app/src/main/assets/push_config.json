@@ -11,8 +11,8 @@
           "appid": "000000000000001",
           "platform": "ANDROID",
           "params": {
-            "type": "PUSH_BANNER",
-            "adnetwork": "smartpush",
+            "type": "PUSH",
+            "provider": "smartpush",
             "title": "ANITTA É COM A CABIFY!",
             "detail": "Use o código promocional: CabifyeAnitta",
             "banner": "https://pplware.sapo.pt/wp-content/uploads/2018/07/navigation-go.jpg",

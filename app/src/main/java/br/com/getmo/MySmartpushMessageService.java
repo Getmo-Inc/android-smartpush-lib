@@ -35,6 +35,7 @@ public class MySmartpushMessageService extends SmartpushMessagingListenerService
     }
 
     private void sendNotification( Bundle extras ) {
+        Log.d( "LOG", "Notificacao delegada ao dev." );
         Intent intent = new Intent( this, MainActivity.class );
         intent.putExtras( extras );
         intent.addFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP );
@@ -57,9 +58,9 @@ public class MySmartpushMessageService extends SmartpushMessagingListenerService
         notificationManager.notify( 1000 /* ID of notification */, notificationBuilder.build() );
     }
 
-    @Override
-    public void onMessageReceived(RemoteMessage remoteMessage) {
-        Log.d("DEBUG-NOT", "onMessageReceived");
-        handleMessage(remoteMessage);
-    }
+//    @Override
+//    public void onMessageReceived(RemoteMessage remoteMessage) {
+//        Log.d("DEBUG-NOT", "onMessageReceived");
+//        handleMessage(remoteMessage);
+//    }
 }
