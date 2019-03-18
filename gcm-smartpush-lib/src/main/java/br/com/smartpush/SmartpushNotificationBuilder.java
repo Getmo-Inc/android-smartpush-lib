@@ -13,7 +13,23 @@ public class SmartpushNotificationBuilder {
 
     private Context mContext;
 
-    public SmartpushNotificationBuilder(Context context) {
+    public enum PushModel {
+        SIMPLE( "PUSH" ),
+        BANNER( "PUSH" ),
+        CAROUSEL( "CARROUSSEL" );
+
+        private String model;
+
+        private PushModel( String model ) {
+            this.model = model;
+        }
+
+        public String getModel() {
+            return model;
+        }
+    }
+
+    public SmartpushNotificationBuilder( Context context ) {
         this.mContext = context;
     }
 
@@ -47,8 +63,8 @@ public class SmartpushNotificationBuilder {
         return this;
     }
 
-    public SmartpushNotificationBuilder type(String type){
-        this.type = type;
+    public SmartpushNotificationBuilder type( PushModel type ){
+        this.type = type.getModel();
         return this;
     }
 
@@ -152,7 +168,7 @@ public class SmartpushNotificationBuilder {
                 new SmartpushNotificationBuilder( mContext )
                         .title( "Go GETMO!" )
                         .detail( "Offline Notifications!" )
-                        .type( "PUSH" )
+                        .type( PushModel.SIMPLE )
                         .url( "getmo://home" )
                         .build()
                         .createNotification();
@@ -182,7 +198,7 @@ public class SmartpushNotificationBuilder {
                 new SmartpushNotificationBuilder( mContext )
                         .title( "Go GETMO!" )
                         .detail( "Offline Notifications!" )
-                        .type( "PUSH" )
+                        .type( PushModel.BANNER )
                         .banner( "https://pplware.sapo.pt/wp-content/uploads/2018/07/navigation-go.jpg" )
                         .url( "getmo://home" )
                         .build()
@@ -231,7 +247,7 @@ public class SmartpushNotificationBuilder {
                 new SmartpushNotificationBuilder( mContext )
                         .title( "Go GETMO!" )
                         .detail( "Offline Notifications!" )
-                        .type( "CARROUSSEL" )
+                        .type( PushModel.CAROUSEL )
                         .banner( "https://pplware.sapo.pt/wp-content/uploads/2018/07/navigation-go.jpg" )
                         .url( "getmo://home" )
                         .carousel( imageList, productList )
