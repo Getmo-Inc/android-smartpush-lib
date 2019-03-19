@@ -58,9 +58,4 @@ public class MySmartpushMessageService extends SmartpushMessagingListenerService
         notificationManager.notify( 1000 /* ID of notification */, notificationBuilder.build() );
     }
 
-//    @Override
-//    public void onMessageReceived(RemoteMessage remoteMessage) {
-//        Log.d("DEBUG-NOT", "onMessageReceived");
-//        handleMessage(remoteMessage);
-//    }
 }
