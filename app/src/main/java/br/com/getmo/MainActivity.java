@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 
-import br.com.getmo.inbox.Notification;
 import br.com.smartpush.Smartpush;
 import br.com.smartpush.SmartpushDeviceInfo;
 import br.com.smartpush.SmartpushNotification;
@@ -386,18 +385,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent data ) {
             if ( data.getAction().equals( Smartpush.ACTION_LAST_10_NOTIF ) ) {
-
-                String json = data.getStringExtra( Smartpush.EXTRA_VALUE );
-                JSONArray array = null;
-
-                try {
-                    array = new JSONArray( json );
-                    log.setText( "GET LAST 10 MESSAGES: \n" + array.toString( 4 ) );
-                } catch ( JSONException e ) {
-                    Log.e( TAG, e.getMessage(), e );
-                    log.setVisibility( View.VISIBLE );
-                    log.setText( "GET LAST 10 MESSAGES: \nNão há mensagens." );
-                }
+                processInbox( data, "GET LAST 10 MESSAGES:" );
             }
         }
     };
@@ -406,32 +394,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent data) {
             if ( data.getAction().equals( Smartpush.ACTION_MARK_ALL_NOTIF_AS_READ ) ) {
-
-                processInbox( data, "MARK ALL NOTIF AS READ" );
-
-//                String json = data.getStringExtra( Smartpush.EXTRA_VALUE );
-//                JSONArray array = null;
-//
-//                try {
-//                    array = new JSONArray( json );
-//                } catch ( JSONException e ) {
-//                    Log.e( TAG, e.getMessage(), e );
-//                    log.setVisibility( View.VISIBLE );
-//                }
-//
-//                ArrayList<Notification> dataset = new ArrayList<>();
-//                if ( array != null ) {
-//                    for ( int i = 0; i < array.length(); i++ ) {
-//                        try {
-//                            dataset.add( new Notification( array.getJSONObject( i ) ) );
-//                        } catch ( JSONException e ) {
-//                            Log.e( TAG, e.getMessage(), e );
-//                        }
-//                    }
-//                    log.setText("MARK ALL NOTIF AS READ: \n"+dataset.toString());
-//                } else {
-//                    log.setText("Não há mensagens.");
-//                }
+                processInbox( data, "MARK ALL NOTIF AS READ:" );
             }
         }
     };
@@ -440,33 +403,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent data) {
             if ( data.getAction().equals( Smartpush.ACTION_LAST_10_UNREAD_NOTIF ) ) {
-
-                processInbox( data, "GET LAST UNREAD MESSAGES" );
-
-//                String json = data.getStringExtra( Smartpush.EXTRA_VALUE );
-//                JSONArray array = null;
-//
-//                try {
-//                    array = new JSONArray( json );
-//                } catch ( JSONException e ) {
-//                    Log.e( TAG, e.getMessage(), e );
-//                    log.setVisibility( View.VISIBLE );
-//                }
-//
-//                ArrayList<Notification> dataset = new ArrayList<>();
-//                if ( array != null ) {
-//                    for ( int i = 0; i < array.length(); i++ ) {
-//                        try {
-//                            dataset.add( new Notification( array.getJSONObject( i ) ) );
-//                            pushid = dataset.get(0).pushId;
-//                        } catch ( JSONException e ) {
-//                            Log.e( TAG, e.getMessage(), e );
-//                        }
-//                    }
-//                    log.setText("GET LAST UNREAD MESSAGES: \n"+dataset.toString());
-//                } else {
-//                    log.setText("Não há mensagens.");
-//                }
+                processInbox( data, "GET LAST UNREAD MESSAGES:" );
             }
         }
     };
@@ -475,31 +412,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent data ) {
             if ( data.getAction().equals( Smartpush.ACTION_MARK_NOTIF_AS_READ) ) {
-                processInbox( data, "MARK NOTIF AS READ" );
-
-//                String json = data.getStringExtra( Smartpush.EXTRA_VALUE );
-//                JSONArray array = null;
-//
-//                try {
-//                    array = new JSONArray( json );
-//                } catch ( JSONException e ) {
-//                    Log.e( TAG, e.getMessage(), e );
-//                    log.setVisibility( View.VISIBLE );
-//                }
-//
-//                ArrayList<Notification> dataset = new ArrayList<>();
-//                if ( array != null ) {
-//                    for ( int i = 0; i < array.length(); i++ ) {
-//                        try {
-//                            dataset.add( new Notification( array.getJSONObject( i ) ) );
-//                        } catch ( JSONException e ) {
-//                            Log.e( TAG, e.getMessage(), e );
-//                        }
-//                    }
-//                    log.setText("MARK NOTIF AS READ: \n"+dataset.toString());
-//                } else {
-//                    log.setText("Não há mensagens.");
-//                }
+                processInbox( data, "MARK NOTIF AS READ:" );
             }
         }
     };
@@ -528,28 +441,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void processInbox( Intent data, String messagePrefix ) {
-        String json = data.getStringExtra( Smartpush.EXTRA_VALUE );
-        JSONArray array = null;
+        log.setText( messagePrefix );
+        log.append( "\n" );
 
         try {
-            array = new JSONArray( json );
+            JSONArray array = new JSONArray( data.getStringExtra( Smartpush.EXTRA_VALUE ) );
+            if ( array.length() > 0 ) {
+                JSONObject obj = array.getJSONObject(0 );
+                if ( obj.has( "pushid" ) ) {
+                    pushid = obj.getString("pushid");
+                }
+                log.append( array.toString( 4 ) );
+                return;
+            }
         } catch ( JSONException e ) {
             Log.e( TAG, e.getMessage(), e );
-            log.setVisibility( View.VISIBLE );
         }
 
-        ArrayList<Notification> dataset = new ArrayList<>();
-        if ( array != null ) {
-            for ( int i = 0; i < array.length(); i++ ) {
-                try {
-                    dataset.add( new Notification( array.getJSONObject( i ) ) );
-                } catch ( JSONException e ) {
-                    Log.e( TAG, e.getMessage(), e );
-                }
-            }
-            log.setText( messagePrefix + ": \n" + dataset.toString());
-        } else {
-            log.setText("Não há mensagens.");
-        }
+        log.append( "Não há mensagens." );
     }
 }
