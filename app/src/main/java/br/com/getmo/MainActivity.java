@@ -38,6 +38,9 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
+    private final static int PUSH_BANNER = 0;
+    private final static int PUSH_CAROUSEL = 1;
+
     private final static String TAG = "LOG";
     private TextView log;
     private Spinner spinner;
@@ -146,30 +149,8 @@ public class MainActivity extends AppCompatActivity {
                 .unregisterReceiver(mGetDeviceInfoBroadcastReceiver);
     }
 
-    public void push(){
-        String json = getPushConfig();
-
-        Call<ResponseBody> call =
-                ApiClient
-                        .getClient()
-                        .create(ApiInterface.class)
-                        .sendPushNotification( json );
-
-        call.enqueue( new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                Log.d( TAG, "RESPONSE SUCCESS" );
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.d( TAG, "RESPONSE FAIL");
-            }
-        });
-    }
-
-    public void push2(){
-        String json = getPushConfig2();
+    public void push( int push ){
+        String json = getPushConfig( push );
 
         Call<ResponseBody> call =
                 ApiClient
@@ -191,7 +172,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClick( View v ) {
-
         if (v.getId() == R.id.btn_execute_spinner_action) {
 
             switch (spinnerOption){
@@ -253,11 +233,11 @@ public class MainActivity extends AppCompatActivity {
                     break;
 
                 case 14:
-                    push();
+                    push( PUSH_BANNER );
                     break;
 
                 case 15:
-                    push2();
+                    push( PUSH_CAROUSEL );
                     break;
             }
         }
@@ -561,37 +541,13 @@ public class MainActivity extends AppCompatActivity {
     };
 
 
-    private String getPushConfig() {
+    private String getPushConfig( int push ) {
         try {
             String jsonString =
                     FileManager.getStringFromInputStream( getAssets().open( "push_config.json" ) );
 
             JSONObject json =
-                    new JSONArray( jsonString ).getJSONObject( 0 );
-
-            json.getJSONObject( "payload" )
-                    .getJSONObject( "filter" )
-                    .put( "alias",
-                            Utils.PreferenceUtils.readFromPreferences(this, Utils.Constants.SMARTP_ALIAS ) );
-
-            Log.d( "LOG", json.toString(  ) );
-
-            return json.getJSONObject( "payload" ).toString();
-        } catch ( IOException | JSONException e ) {
-            Log.e( "LOG", e.getMessage(), e );
-        }
-
-
-        return null;
-    }
-
-    private String getPushConfig2() {
-        try {
-            String jsonString =
-                    FileManager.getStringFromInputStream( getAssets().open( "push_config_carousel.json" ) );
-
-            JSONObject json =
-                    new JSONArray( jsonString ).getJSONObject( 0 );
+                    new JSONArray( jsonString ).getJSONObject( push );
 
             json.getJSONObject( "payload" )
                     .getJSONObject( "filter" )
