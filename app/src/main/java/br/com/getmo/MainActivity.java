@@ -48,7 +48,6 @@ public class MainActivity extends AppCompatActivity {
     private int lastBroadcast = 0;
 
     private String pushid = "";
-    private String mAlias = "";
 
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
@@ -96,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
         arrayAdapter.add("MARK MESSAGE AS READ");
         arrayAdapter.add("GET LAST MESSAGES");
         arrayAdapter.add("PUSH");
+        arrayAdapter.add("PUSH CAROUSEL");
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             @Override
@@ -149,29 +149,27 @@ public class MainActivity extends AppCompatActivity {
     public void push(){
         String json = getPushConfig();
 
-//                "{" +
-//                        "   \"when\": \"now\"," +
-//                        "   \"devid\": \"CN6Z8Eka3FSQ9IA\"," +
-//                        "   \"prod\": \"1\"," +
-//                        "   \"notifications\": [{" +
-//                        "     \"appid\": \"000000000000001\"," +
-//                        "     \"platform\": \"ANDROID\"," +
-//                        "     \"params\": {" +
-//                        "       \"adtype\": \"PUSH_BANNER_AD\"," +
-//                        "       \"adnetwork\": \"smartpush\"," +
-//                        "       \"title\": \"ANITTA É COM A CABIFY!\"," +
-//                        "       \"detail\": \"Use o código promocional: CabifyeAnitta\"," +
-//                        "       \"category\": \"6\"," +
-//                        "       \"banner\": \"http://ads-smartpush.rhcloud.com/anitta_cabify.jpg\"," +
-//                        "       \"url\": \"http://bit.ly/2emk0wV\"," +
-//                        "       \"icon\": \"http://ads-smartpush.rhcloud.com/ic_cabify.png\"" +
-//                        "     }" +
-//                        "   }]," +
-//                        "   \"filter\": {" +
-//                        "     \"type\": \"ALI\"," +
-//                        "     \"alias\": \""+mAlias+"\"" +
-//                        "   }" +
-//                        " }";
+        Call<ResponseBody> call =
+                ApiClient
+                        .getClient()
+                        .create(ApiInterface.class)
+                        .sendPushNotification( json );
+
+        call.enqueue( new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                Log.d( TAG, "RESPONSE SUCCESS" );
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.d( TAG, "RESPONSE FAIL");
+            }
+        });
+    }
+
+    public void push2(){
+        String json = getPushConfig2();
 
         Call<ResponseBody> call =
                 ApiClient
@@ -256,6 +254,10 @@ public class MainActivity extends AppCompatActivity {
 
                 case 14:
                     push();
+                    break;
+
+                case 15:
+                    push2();
                     break;
             }
         }
@@ -431,7 +433,6 @@ public class MainActivity extends AppCompatActivity {
                 TextView alias = findViewById( R.id.alias );
                 String message = ( registered ) ? device.alias : "Fail :(";
                 alias.setText( message );
-                mAlias = device.alias;
                 // set your user id TAG here!
                 if ( registered ) {
                     Smartpush.setTag(MainActivity.this, "SMARTPUSH_ID", device.alias );
@@ -456,20 +457,6 @@ public class MainActivity extends AppCompatActivity {
                     log.setVisibility( View.VISIBLE );
                     log.setText( "GET LAST 10 MESSAGES: \nNão há mensagens." );
                 }
-
-//                ArrayList<Notification> dataset = new ArrayList<>();
-//                if ( array != null ) {
-//                    for ( int i = 0; i < array.length(); i++ ) {
-//                        try {
-//                            dataset.add( new Notification( array.getJSONObject( i ) ) );
-//                        } catch ( JSONException e ) {
-//                            Log.e( "DEBUG", e.getMessage(), e );
-//                        }
-//                    }
-//                    log.setText("GET LAST MESSAGES: \n"+dataset.toString());
-//                } else {
-//                    log.setText("Não há mensagens.");
-//                }
             }
         }
     };
@@ -578,6 +565,30 @@ public class MainActivity extends AppCompatActivity {
         try {
             String jsonString =
                     FileManager.getStringFromInputStream( getAssets().open( "push_config.json" ) );
+
+            JSONObject json =
+                    new JSONArray( jsonString ).getJSONObject( 0 );
+
+            json.getJSONObject( "payload" )
+                    .getJSONObject( "filter" )
+                    .put( "alias",
+                            Utils.PreferenceUtils.readFromPreferences(this, Utils.Constants.SMARTP_ALIAS ) );
+
+            Log.d( "LOG", json.toString(  ) );
+
+            return json.getJSONObject( "payload" ).toString();
+        } catch ( IOException | JSONException e ) {
+            Log.e( "LOG", e.getMessage(), e );
+        }
+
+
+        return null;
+    }
+
+    private String getPushConfig2() {
+        try {
+            String jsonString =
+                    FileManager.getStringFromInputStream( getAssets().open( "push_config_carousel.json" ) );
 
             JSONObject json =
                     new JSONArray( jsonString ).getJSONObject( 0 );
