@@ -2,6 +2,9 @@ package br.com.smartpush;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
+
+import com.google.android.gms.common.util.Strings;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -13,18 +16,29 @@ public class SmartpushNotificationBuilder {
 
     private Context mContext;
 
-    public enum PushModel {
+    public class SmartpushNotification {
+        private Bundle notification;
+        SmartpushNotification( Bundle data ) {
+            notification = data;
+        }
+
+        public void createNotification(){
+            new SmartpushNotificationManager( mContext ).createNotification( notification );
+        }
+    }
+
+    public enum NotificationModel {
         SIMPLE( "PUSH" ),
         BANNER( "PUSH" ),
         CAROUSEL( "CARROUSSEL" );
 
         private String model;
 
-        private PushModel( String model ) {
+        NotificationModel( String model ) {
             this.model = model;
         }
 
-        public String getModel() {
+        String getModel() {
             return model;
         }
     }
@@ -34,9 +48,8 @@ public class SmartpushNotificationBuilder {
     }
 
     private String title, detail, banner, url, video, type = "";
-    private String carousel = ", \"push.extras\":{";
+    private String carousel = ", \"push.extras\": { ";
     private Boolean hasCarousel = false;
-    private Bundle notification;
 
     public SmartpushNotificationBuilder title(String title){
         this.title = title;
@@ -63,112 +76,104 @@ public class SmartpushNotificationBuilder {
         return this;
     }
 
-    public SmartpushNotificationBuilder type( PushModel type ){
+    public SmartpushNotificationBuilder type( NotificationModel type ){
         this.type = type.getModel();
         return this;
     }
 
-    public SmartpushNotificationBuilder carousel(ArrayList bannerUrl, ArrayList redirectUrl){
-        if(bannerUrl.size() == redirectUrl.size()){
+    public SmartpushNotificationBuilder carousel( ArrayList bannerUrl, ArrayList redirectUrl ){
+        if( bannerUrl.size() == redirectUrl.size() ) {
 
             this.hasCarousel = true;
 
-            for(int i = 0; i < bannerUrl.size(); i++){
-
-                carousel += "\"frame:"+(i+1)+":banner\":\""+bannerUrl.get(i)+"\"," +
-                        "\"frame:"+(i+1)+":url\":\""+redirectUrl.get(i)+"\",";
+            for( int i = 0; i < bannerUrl.size(); i++ ){
+                carousel +=
+                        "\"frame:"+( i + 1 ) + ":banner\":\"" + bannerUrl.get( i ) + "\"," +
+                        "\"frame:"+( i + 1 ) + ":url\":\"" + redirectUrl.get( i ) + "\",";
             }
 
-            carousel = carousel.substring(0,carousel.length()-1);
+            carousel = carousel.substring( 0, carousel.length() - 1 );
             carousel+= "}";
-
         }
 
         return this;
     }
 
-    public SmartpushNotificationBuilder build(){
-        this.notification = jsonStringToBundle( selfToString() );
-        this.notification.putBoolean( "extra.hit", false );
-        return this;
+    public SmartpushNotification build(){
+        Bundle data = jsonStringToBundle( toString() );
+        data.putBoolean( "notification.offline", true );
+        data.putString( "provider", "smartpush" );
+
+        return new SmartpushNotification( data );
     }
 
-    public void createNotification(){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                new SmartpushNotificationManager(mContext).createNotification(notification);
-            }
-        }).start();
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append( "{" );
 
-    }
+        if ( !Strings.isEmptyOrWhitespace( title ) )
+            stringBuilder.append( "\"title\":\"" + title + '\"' );
 
-    String selfToString() {
+        if ( !Strings.isEmptyOrWhitespace( detail ) )
+            stringBuilder.append( ", \"detail\":\"" + detail + '\"' );
 
-        String retorno = "{" +
-                "title='" + title + '\'' +
-                ", detail='" + detail + '\'' +
-                ", banner='" + banner + '\'' +
-                ", type='" + type + '\'' +
-                ", url='" + url + '\'' +
-                ", video='" + video + '\'' +
-                '}';
+        if ( !Strings.isEmptyOrWhitespace( banner ) )
+            stringBuilder.append( ", \"banner\":\"" + banner + '\"' );
 
-        if(hasCarousel){
-            retorno = retorno.substring(0,retorno.length()-1);
-            retorno += carousel + "}";
+        if ( !Strings.isEmptyOrWhitespace( type ) )
+            stringBuilder.append( ", \"type\":\"" + type + '\"' );
+
+        if ( !Strings.isEmptyOrWhitespace( url ) )
+            stringBuilder.append( ", \"url\":\"" + url + '\"' );
+
+
+        if ( !Strings.isEmptyOrWhitespace( video ) )
+            stringBuilder.append( ", \"video\":\"" + video + '\"' );
+
+        if( hasCarousel ){
+            stringBuilder.append( carousel );
         }
 
-        return retorno;
+        stringBuilder.append( "}" );
+
+        Log.d( Utils.TAG, stringBuilder.toString() );
+
+        return stringBuilder.toString();
     }
 
-    private static Bundle jsonStringToBundle(String jsonString){
+    private static Bundle jsonStringToBundle( String jsonString ){
         try {
-            JSONObject jsonObject = toJsonObject(jsonString);
-            return jsonToBundle(jsonObject);
-        } catch (JSONException ignored) {
-
+            return jsonToBundle( toJsonObject( jsonString ) );
+        } catch ( JSONException ignored ) {
+            Log.e( Utils.TAG, ignored.getMessage(), ignored );
         }
         return null;
     }
 
-    private static JSONObject toJsonObject(String jsonString) throws JSONException {
-        return new JSONObject(jsonString);
+    private static JSONObject toJsonObject( String jsonString ) throws JSONException {
+        return new JSONObject( jsonString );
     }
 
-    private static Bundle jsonToBundle(JSONObject jsonObject) throws JSONException {
+    private static Bundle jsonToBundle( JSONObject jsonObject ) throws JSONException {
         Bundle bundle = new Bundle();
         Iterator iter = jsonObject.keys();
-        while(iter.hasNext()){
-            String key = (String)iter.next();
-            String value = jsonObject.getString(key);
-            bundle.putString(key,value);
+        while( iter.hasNext() ){
+            String key = ( String )iter.next();
+            String value = jsonObject.getString( key );
+            bundle.putString( key,value );
         }
+
         return bundle;
     }
 
-    /* SAMPLE */
-    // Simple
-    public void notificationSample(){
-//        final String notification =
-//                "{\n" +
-//                "        \"type\": \"PUSH\",\n" +
-//                "        \"provider\": \"smartpush\",\n" +
-//                "        \"title\": \"Go Getmo\",\n" +
-//                "        \"detail\": \"Notificações que engajam!\",\n" +
-//                "        \"url\": \"getmo://home\",\n" +
-//                "        \"video\": \"lW4pUQdRo3g\"\n" +
-//                "}";
+    public void createSampleSimpleNotification(){
         new Thread(new Runnable() {
             @Override
             public void run() {
-//                new SmartpushNotificationManager( mContext )
-//                        .createNotification( jsonStringToBundle( notification ) );
-
                 new SmartpushNotificationBuilder( mContext )
                         .title( "Go GETMO!" )
                         .detail( "Offline Notifications!" )
-                        .type( PushModel.SIMPLE )
+                        .type( NotificationModel.SIMPLE )
                         .url( "getmo://home" )
                         .build()
                         .createNotification();
@@ -176,64 +181,27 @@ public class SmartpushNotificationBuilder {
         }).start();
     }
 
-    // Banner
-    public void bannerNotificataionSample(){
-//        final String banner =
-//                "{\n" +
-//                "        \"type\": \"PUSH\",\n" +
-//                "        \"provider\": \"smartpush\",\n" +
-//                "        \"title\": \"Go Getmo\",\n" +
-//                "        \"detail\": \"Notificações que engajam!\",\n" +
-//                "        \"banner\": \"https://pplware.sapo.pt/wp-content/uploads/2018/07/navigation-go.jpg\",\n" +
-//                "        \"url\": \"getmo://home\",\n" +
-//                "        \"video\": \"lW4pUQdRo3g\"\n" +
-//                "}";
-
+    public void createSampleBannerNotification(){
         new Thread(new Runnable() {
             @Override
             public void run() {
-//                new SmartpushNotificationManager( mContext )
-//                        .createNotification( jsonStringToBundle( banner ) );
-
                 new SmartpushNotificationBuilder( mContext )
                         .title( "Go GETMO!" )
                         .detail( "Offline Notifications!" )
-                        .type( PushModel.BANNER )
+                        .type( NotificationModel.BANNER )
                         .banner( "https://pplware.sapo.pt/wp-content/uploads/2018/07/navigation-go.jpg" )
                         .url( "getmo://home" )
+                        .video( "lW4pUQdRo3g" )
                         .build()
                         .createNotification();
-
             }
         }).start();
     }
 
-    // Carousel
-    public void carouselNotificationSample() {
-//        final String carousel =
-//                "{\n" +
-//                    "\"banner\":\"https://movietvtechgeeks.com/wp-content/uploads/2017/06/xbox-one-vs-ps4-long-battle-images.jpg\",\n" +
-//                    "\"detail\":\"Escolhemos ofertas especiais para você!\",\n" +
-//                    "\"provider\":\"smartpush\",\n" +
-//                    "\"push.extras\":{\n" +
-//                        "\"frame:1:banner\":\"https:\\/\\/movietvtechgeeks.com\\/wp-content\\/uploads\\/2017\\/06\\/xbox-one-vs-ps4-long-battle-images.jpg\",\n" +
-//                        "\"frame:1:url\":\"buscape:\\/\\/search?productId=27062&site_origem=23708552\",\n" +
-//                        "\"frame:2:banner\":\"https:\\/\\/i.pinimg.com\\/originals\\/fe\\/63\\/26\\/fe6326895705f9f34f250fe274ca9bf3.png\",\n" +
-//                        "\"frame:2:url\":\"buscape:\\/\\/search?productId=606585&utm_source=alertadepreco&utm_medium=push&utm_campaign=606585\",\n" +
-//                        "\"frame:3:banner\":\"https:\\/\\/www.digiseller.ru\\/preview\\/115936\\/p1_2179893_ef9d38d0.jpg\",\n" +
-//                        "\"frame:3:url\":\"buscape:\\/\\/search?productId=623321&utm_source=alertadepreco&utm_medium=push&utm_campaign=623321\"\n" +
-//                    "},\n" +
-//                    "\"url\":\"buscape://search?productId=27062&site_origem=23708552\", \n" +
-//                    "\"type\":\"CARROUSSEL\", \n" +
-//                    "\"title\":\"Buscape\" \n" +
-//                "}";
-
+    public void createSampleCarouselNotification() {
         new Thread( new Runnable() {
             @Override
             public void run() {
-//                new SmartpushNotificationManager( mContext )
-//                        .createNotification( jsonStringToBundle( carousel ) );
-
                 ArrayList imageList = new ArrayList<String>();
                 imageList.add("https://movietvtechgeeks.com/wp-content/uploads/2017/06/xbox-one-vs-ps4-long-battle-images.jpg");
                 imageList.add("https://i.pinimg.com/originals/fe/63/26/fe6326895705f9f34f250fe274ca9bf3.png");
@@ -247,7 +215,7 @@ public class SmartpushNotificationBuilder {
                 new SmartpushNotificationBuilder( mContext )
                         .title( "Go GETMO!" )
                         .detail( "Offline Notifications!" )
-                        .type( PushModel.CAROUSEL )
+                        .type( NotificationModel.CAROUSEL )
                         .banner( "https://pplware.sapo.pt/wp-content/uploads/2018/07/navigation-go.jpg" )
                         .url( "getmo://home" )
                         .carousel( imageList, productList )

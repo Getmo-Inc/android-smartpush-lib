@@ -61,56 +61,12 @@ public class MainActivity extends AppCompatActivity {
 
         Smartpush.subscribe( this );
 
-        /*ArrayList imageList = new ArrayList<String>();
-        imageList.add("https://movietvtechgeeks.com/wp-content/uploads/2017/06/xbox-one-vs-ps4-long-battle-images.jpg");
-        imageList.add("https://i.pinimg.com/originals/fe/63/26/fe6326895705f9f34f250fe274ca9bf3.png");
-
-        ArrayList productList = new ArrayList<String>();
-        productList.add("buscape://search?productId=27062&site_origem=23708552");
-        productList.add("buscape://search?productId=606585&utm_source=alertadepreco&utm_medium=push&utm_campaign=606585");
-
-        new SmartpushNotificationBuilder(this)
-                .title("GO GETMO !")
-                .detail("Getmo Offline Notifications!")
-                .type("CARROUSSEL")
-                .banner("https://pplware.sapo.pt/wp-content/uploads/2018/07/navigation-go.jpg")
-                .url("getmo://home")
-                .video("lW4pUQdRo3g")
-                .carousel(imageList, productList)
-                .build()
-                .createNotification();*/
-
-        /* Offline Notification Sample */
-
-        // Notification
-//        new SmartpushNotificationBuilder(this).notificationSample();
-
-        // Banner Notification
-//        new SmartpushNotificationBuilder(this).bannerNotificataionSample();
-
-        // Carousel Notification
-//        new SmartpushNotificationBuilder(this).carouselNotificationSample();
-
-        /* End Offline Sample */
-
         // optional - Tracking :: Call this method always! if app was opened by push one event will
         // be saved, if no nothing will happen.
 //        Smartpush.hitClick( this, getIntent().getExtras() );
 
 //        //Tracking
 //        Smartpush.hit( this, null, "MAIN", null, "OPENED", null );
-
-//        // Nearestzone
-//        Smartpush.nearestZone( this, -30.13265805301679, -51.229606855819725 );
-//        Smartpush.nearestZone( this, -30.132658053017, -51.22960685582 );
-
-//        new SmartpushNotificationManager( this ).scheduleNotificationRefreshTime();
-
-//        SmartpushService.getAppList( this );
-
-        /*Smartpush.getLastMessages(this, new Date(0));
-        Smartpush.getLastUnreadMessages(this, new Date(0));
-        Smartpush.getGeozones(this);*/
 
         Intent intent = getIntent();
         String action = intent.getAction();
@@ -264,13 +220,13 @@ public class MainActivity extends AppCompatActivity {
                 case 5: Smartpush.getTagValues(this, "NEWS_FEED");
                     break;
 
-                case 6: new SmartpushNotificationBuilder(this).notificationSample();
+                case 6: new SmartpushNotificationBuilder(this).createSampleSimpleNotification();
                     break;
 
-                case 7: new SmartpushNotificationBuilder(this).bannerNotificataionSample();
+                case 7: new SmartpushNotificationBuilder(this).createSampleBannerNotification();
                     break;
 
-                case 8: new SmartpushNotificationBuilder(this).carouselNotificationSample();
+                case 8: new SmartpushNotificationBuilder(this).createSampleCarouselNotification();
                     break;
 
                 case 9: String geo = Smartpush.getGeozones(this);
