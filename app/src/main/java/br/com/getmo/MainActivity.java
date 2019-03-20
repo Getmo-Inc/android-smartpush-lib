@@ -29,7 +29,7 @@ import java.util.Date;
 import br.com.getmo.inbox.Notification;
 import br.com.smartpush.Smartpush;
 import br.com.smartpush.SmartpushDeviceInfo;
-import br.com.smartpush.SmartpushNotificationBuilder;
+import br.com.smartpush.SmartpushNotification;
 import br.com.smartpush.Utils;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -218,13 +218,13 @@ public class MainActivity extends AppCompatActivity {
                 case 5: Smartpush.getTagValues(this, "NEWS_FEED");
                     break;
 
-                case 6: new SmartpushNotificationBuilder(this).createSampleSimpleNotification();
+                case 6: SmartpushNotification.createSampleSimpleNotification( this );
                     break;
 
-                case 7: new SmartpushNotificationBuilder(this).createSampleBannerNotification();
+                case 7: SmartpushNotification.createSampleBannerNotification( this );
                     break;
 
-                case 8: new SmartpushNotificationBuilder(this).createSampleCarouselNotification();
+                case 8: SmartpushNotification.createSampleCarouselNotification( this );
                     break;
 
                 case 9: String geo = Smartpush.getGeozones(this);
