@@ -131,7 +131,7 @@
                 <data
                     android:scheme="getmo"
                     android:host="home" />
-                <!-- note that the leading "/" is required for pathPrefix-->
+                <!-- note that the leading "/" is required for pat  hPrefix-->
             </intent-filter>
         </activity>
 
