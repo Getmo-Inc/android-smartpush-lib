@@ -11,7 +11,7 @@ import static br.com.smartpush.Utils.TAG;
 /**
  * Created by fabio.licks on 09/02/16.
  */
-final class GeoResponse {
+class GeoResponse {
 
     public boolean status;
 

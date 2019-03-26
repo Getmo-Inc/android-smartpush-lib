@@ -7,7 +7,7 @@ import java.util.ArrayList;
 /**
  * Created by fabio.licks on 02/10/15.
  */
-final class GeoRequest {
+class GeoRequest {
 
     private String devid;
     private String appid;

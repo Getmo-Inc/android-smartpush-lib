@@ -13,53 +13,13 @@ class AppInfo {
     public static final String SINC_STATE = "SINC_STATE";
     public static final String STATE = "APP_STATE";
 
-    private int _id;
-    private String packageName;
-    private boolean sinc;
-    private int state;
+    public int _id;
+    public String packageName;
+    public boolean sinc;
+    public int state;
 
     // Control evaluating
-    private boolean match;
-
-    public int getId() {
-        return _id;
-    }
-
-    public void setId( int id ) {
-        this._id = id;
-    }
-
-    public String getPackageName() {
-        return packageName;
-    }
-
-    public void setPackageName( String packageName ) {
-        this.packageName = packageName;
-    }
-
-    public boolean isSinc() {
-        return sinc;
-    }
-
-    public void setSinc( boolean sinc ) {
-        this.sinc = sinc;
-    }
-
-    public int getState() {
-        return state;
-    }
-
-    public void setState( int state ) {
-        this.state = state;
-    }
-
-    public boolean isMatch() {
-        return match;
-    }
-
-    public void setMatch(boolean match) {
-        this.match = match;
-    }
+    public boolean match;
 
     @Override
     public boolean equals( Object o ) {

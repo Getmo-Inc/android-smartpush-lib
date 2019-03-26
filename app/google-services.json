@@ -1,0 +1,73 @@
+{
+  "project_info": {
+    "project_number": "668563098210",
+    "firebase_url": "https://smartpush-demo-app.firebaseio.com",
+    "project_id": "smartpush-demo-app",
+    "storage_bucket": "smartpush-demo-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:668563098210:android:b81eb4385a74e3a7",
+        "android_client_info": {
+          "package_name": "br.com.getmo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "668563098210-k21lqfuftokgcdop48v6jmncg1gdei9d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDRbJdP-JRV7Iiy1N25WD_ttQn58Xc-Jdk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:668563098210:android:e81ba19537ba1906",
+        "android_client_info": {
+          "package_name": "br.com.getmo.smartpushshowcase"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "668563098210-k21lqfuftokgcdop48v6jmncg1gdei9d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDRbJdP-JRV7Iiy1N25WD_ttQn58Xc-Jdk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

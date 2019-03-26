@@ -24,7 +24,7 @@ import static br.com.smartpush.Utils.Constants.NOTIF_URL;
 /**
  * Created by fabio.licks on 02/09/15.
  */
-public class SmartpushFragmentWebView extends Fragment {
+public final class SmartpushFragmentWebView extends Fragment {
 
     private ProgressBar progress;
     private WebView      webview;

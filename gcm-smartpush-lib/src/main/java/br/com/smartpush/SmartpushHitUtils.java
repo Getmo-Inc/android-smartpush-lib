@@ -6,7 +6,7 @@ import android.os.Bundle;
 /**
  * Created by fabio.licks on 09/02/16.
  */
-final class SmartpushHitUtils {
+class SmartpushHitUtils {
 
     private Context context;
 
@@ -29,14 +29,10 @@ final class SmartpushHitUtils {
     };
 
     public enum Action {
-        SEND, RECEIVED, CLICKED, REDIRECTED, INSTALLED, ONLINE, REJECTED;
+        SEND, RECEIVED, CLICKED, REDIRECTED, INSTALLED, ONLINE, REJECTED, BLOCKED;
     };
 
     public static String getValueFromPayload( Fields field, Bundle payload ) {
         return ( payload != null && payload.containsKey( field.getParamName() ) ) ? payload.getString( field.getParamName() ) : "";
-    }
-
-    public static boolean shouldISendHitsToGetmo(Bundle payload ) {
-        return ( payload.getInt( "send_hits_to_getmo", 1 ) == 1 ) ? true : false;
     }
 }

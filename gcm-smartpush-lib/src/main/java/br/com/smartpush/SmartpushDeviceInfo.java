@@ -1,11 +1,13 @@
 package br.com.smartpush;
 
+import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public final class SmartpushDeviceInfo implements Parcelable {
+import org.json.JSONException;
+import org.json.JSONObject;
 
-    public static final String EXTRA_DEVICE_INFO = "br.com.smartpush.extra.EXTRA_DEVICE_INFO";
+public final class SmartpushDeviceInfo implements Parcelable {
 
     public String alias;
 	public String regId;
@@ -59,4 +61,33 @@ public final class SmartpushDeviceInfo implements Parcelable {
 			return new SmartpushDeviceInfo[size];
 		}
 	};
+
+	public static SmartpushDeviceInfo bind( Context context, JSONObject json ) throws JSONException {
+		SmartpushDeviceInfo deviceInfo =
+				new SmartpushDeviceInfo(
+						Utils.PreferenceUtils.readFromPreferences(
+								context, Utils.Constants.SMARTP_REGID ) );
+
+		if ( json.has( "alias" ) ) {
+			deviceInfo.alias  = json.getString( "alias" );
+		}
+
+		if ( json.has( "regid" ) ) {
+			deviceInfo.regId  = json.getString( "regid" );
+		}
+
+		if ( json.has( "optout" ) ) {
+			deviceInfo.optout = json.getString( "optout" );
+		}
+
+		if ( json.has( "created_at" ) ) {
+			JSONObject creation = json.getJSONObject( "created_at" );
+			if ( creation != null && creation.has( "date" ) ) {
+				deviceInfo.createdAt =
+						creation.getString("date" );
+			}
+		}
+
+		return deviceInfo;
+	}
 }
