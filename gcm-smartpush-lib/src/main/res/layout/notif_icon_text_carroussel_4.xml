@@ -188,7 +188,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/background_navigation_control_rect"
-            app:srcCompat="@drawable/ic_chevron_left_white_36dp"
+            android:src="@drawable/ic_arrow_left"
             android:layout_centerVertical="true"
             android:layout_marginLeft="5dp"/>
 
@@ -197,7 +197,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/background_navigation_control_rect"
-            app:srcCompat="@drawable/ic_chevron_right_white_36dp"
+            android:src="@drawable/ic_arrow_right"
             android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
             android:layout_marginRight="5dp"/>
