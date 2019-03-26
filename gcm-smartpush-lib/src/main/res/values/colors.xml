@@ -13,4 +13,5 @@
     <!--color name="text_shadow_white">#FFFFFF</color-->
     <color name="red">#E93E45</color>
     <color name="red_over">#D1383E</color>
+    <color name="red_pressed">#D8565B</color>
 </resources>
