@@ -105,12 +105,11 @@ class ActionTrackEvents {
                     bundle.getString( SmartpushHitUtils.Fields.LABEL.getParamName() ) );
         }
 
-        if ( !SmartpushHitUtils.Action.RECEIVED.name().equals( action ) ) {
+        if ( !SmartpushHitUtils.Action.RECEIVED.name().equals( action ) &&
+                !SmartpushHitUtils.Action.REJECTED.name().equals( action ) ) {
             SmartpushHttpClient.post( "hit", fields, context, false );
         }
 
         SmartpushHttpClient.sendToAnalytics( context, pushId, action );
     }
-
-
 }
