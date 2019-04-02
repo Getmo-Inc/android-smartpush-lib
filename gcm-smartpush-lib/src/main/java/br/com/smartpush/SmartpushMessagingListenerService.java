@@ -87,9 +87,10 @@ public abstract class SmartpushMessagingListenerService extends FirebaseMessagin
                 } else if ("LOOPBACK".equals(pushType)) {
                     // do nothing, just for test
                 } else {
-                    data = SmartpushHttpClient.getPushPayload(this, pushId, data);
+                    if ( "SLIDER".equals( pushType ) || "CARROUSSEL".equals( pushType ) || "CARROSSEL".equals( pushType ) )
+                        data = SmartpushHttpClient.getPushPayload(this, pushId, data);
 
-                    if (data.containsKey(NOTIF_VIDEO_URI)) {
+                    if ( data.containsKey( NOTIF_VIDEO_URI ) ) {
                         String midiaId =
                                 data.getString(NOTIF_VIDEO_URI, null);
                         CacheManager
