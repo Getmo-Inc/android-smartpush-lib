@@ -110,6 +110,7 @@ class SmartpushNotificationManager {
 //        SmartpushLog.d( Utils.TAG, "PACKAGE_NAME: " + mContext.getApplicationContext().getPackageName() );
 
         if ( data != null && !data.isEmpty() ) {  // has effect of unparcelling Bundle
+
 //            String pushId =
 //                    SmartpushHitUtils.getValueFromPayload(
 //                            SmartpushHitUtils.Fields.PUSH_ID, data );

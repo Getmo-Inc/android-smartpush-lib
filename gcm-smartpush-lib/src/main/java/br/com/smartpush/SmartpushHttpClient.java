@@ -344,14 +344,14 @@ class SmartpushHttpClient {
         return newData;
     }
 
-    public static void sendToAnalytics( Context context, String pushId, String action ) {
+    public static void sendToAnalytics( Context context, String alias, String pushId, String action ) {
         // SEND HIT TO GOOGLE ANALYTICS
         String urlUA =
                 "https://www.google-analytics.com/collect?v=1&tid=UA-108900354-1" +
                         "&cid=" +
                         Utils.PreferenceUtils.readFromPreferences( context, Utils.Constants.SMARTP_REGID ) +
                         "&t=pageview" +
-                        "&dp=%2Fhits%2Fmobile%2F" + pushId + "%2F" +
+                        "&dp=%2Fhits%2Fmobile%2F" + alias + "%2F" + pushId + "%2F" +
                         Utils.Smartpush.getMetadata(context, Utils.Constants.SMARTP_APP_ID) + "%2F" + action;
 
 

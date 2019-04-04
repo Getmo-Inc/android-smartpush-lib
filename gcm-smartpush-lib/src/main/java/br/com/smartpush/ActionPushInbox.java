@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.TimeZone;
 
 class ActionPushInbox {
+    public  static final String ACTION_HIDE_NOTIF = "action.HIDE_NOTIF";
 
     public static void startActionLastMessages( Context context, Date startingDate ) {
         Intent intent = new Intent( context, SmartpushService.class ) ;
@@ -44,6 +45,15 @@ class ActionPushInbox {
 
         Intent intent = new Intent( context, SmartpushService.class ) ;
         intent.setAction( Smartpush.ACTION_MARK_NOTIF_AS_READ ) ;
+        intent.putExtra( Smartpush.EXTRA_VALUE, pushId );
+        context.startService( intent );
+    }
+
+    public static void startActionHideMessage( Context context, String pushId ) {
+        if ( pushId == null ) return;
+
+        Intent intent = new Intent( context, SmartpushService.class ) ;
+        intent.setAction( ACTION_HIDE_NOTIF ) ;
         intent.putExtra( Smartpush.EXTRA_VALUE, pushId );
         context.startService( intent );
     }
@@ -220,4 +230,33 @@ class ActionPushInbox {
                                 .putExtra( Smartpush.EXTRA_VALUE, SmartpushHttpClient
                                         .post( "notifications/read-all", params, context, false ) ) );
     }
+
+    public static void handleActionHideMessage( Context context, Intent data ) {
+        HashMap<String, String> params = new HashMap<String, String>();
+
+        params.put( "devid",
+                Utils.Smartpush.getMetadata(
+                        context, Utils.Constants.SMARTP_API_KEY ) );
+
+        params.put( "appid",
+                Utils.Smartpush.getMetadata(
+                        context, Utils.Constants.SMARTP_APP_ID ) );
+
+        params.put( "pushid",
+                data.getStringExtra( Smartpush.EXTRA_VALUE ) );
+
+        params.put( "hwid",
+                Utils.PreferenceUtils.readFromPreferences(
+                        context, Utils.Constants.SMARTP_HWID ) );
+
+        params.put( "regid",
+                Utils.PreferenceUtils.readFromPreferences(
+                        context, Utils.Constants.SMARTP_REGID ) );
+
+        params.put( "_method", "PUT");
+
+        SmartpushHttpClient
+                .post( "notifications/hide", params, context, false );
+    }
+
 }

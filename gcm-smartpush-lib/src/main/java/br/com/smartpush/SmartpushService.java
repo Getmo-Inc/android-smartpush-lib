@@ -58,6 +58,9 @@ public final class SmartpushService extends IntentService {
                 case Smartpush.ACTION_MARK_NOTIF_AS_READ:
                     ActionPushInbox.handleActionMarkMessageAsRead( context, intent );
                     return;
+                case ActionPushInbox.ACTION_HIDE_NOTIF:
+                    ActionPushInbox.handleActionHideMessage( context, intent );
+                    return;
                 case Smartpush.ACTION_MARK_ALL_NOTIF_AS_READ:
                     ActionPushInbox.handleActionMarkAllMessagesAsRead( context, intent );
                     return;

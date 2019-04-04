@@ -210,53 +210,67 @@ public class MainActivity extends AppCompatActivity {
         if (v.getId() == R.id.btn_execute_spinner_action) {
 
             switch (spinnerOption){
-                case 0: Smartpush.getUserInfo(this);
+                case 0:
+                    Smartpush.getUserInfo(this);
                     break;
 
-                case 1: boolean status = Smartpush.areNotificationsEnabled(this);
+                case 1:
+                    boolean status = Smartpush.areNotificationsEnabled(this);
                     Log.d( TAG, "Notification State: " + status );
                     log.setText( "NOTIFICATION STATUS: " + ( status ? "ENABLE" : "DISABLE" ) );
                     break;
 
-                case 2: pushStatus = !pushStatus;
+                case 2:
+                    pushStatus = !pushStatus;
                     Smartpush.blockPush(this, pushStatus );
                     Log.d( TAG, "PUSH Status: " + ( !pushStatus ? "ENABLE" : "DISABLE" ) );
                     log.setText( "PUSH Status: " + ( !pushStatus ? "ENABLE" : "DISABLE" ) );
                     break;
 
-                case 3: setTags();
+                case 3:
+                    setTags();
                     break;
 
-                case 4: delTags();
+                case 4:
+                    delTags();
                     break;
 
-                case 5: Smartpush.getTagValues(this, "NEWS_FEED");
+                case 5:
+                    Smartpush.getTagValues(this, "NEWS_FEED");
                     break;
 
-                case 6: SmartpushNotification.createSampleSimpleNotification( this );
+                case 6:
+                    SmartpushNotification.createSampleSimpleNotification( this );
                     break;
 
-                case 7: SmartpushNotification.createSampleBannerNotification( this );
+                case 7:
+                    SmartpushNotification.createSampleBannerNotification( this );
                     break;
 
-                case 8: SmartpushNotification.createSampleCarouselNotification( this );
+                case 8:
+                    SmartpushNotification.createSampleCarouselNotification( this );
                     break;
 
-                case 9: String geo = Smartpush.getGeozones(this);
+                case 9:
+                    String geo = Smartpush.getGeozones(this);
                     Log.d(TAG, "GEOZONES: "+ geo);
                     log.setText("GEOZONES: \n"+geo);
                     break;
 
-                case 10: Smartpush.markAllMessagesAsRead(this);
+                case 10:
+                    Smartpush.markAllMessagesAsRead(this);
                     break;
 
-                case 11: Smartpush.getLastUnreadMessages(this, null);
+                case 11:
+                    Smartpush.getLastUnreadMessages(this, null);
                     break;
 
-                case 12: Smartpush.markMessageAsRead(this, pushid);
+                case 12:
+                    Smartpush.markMessageAsRead(this, pushid);
                     break;
 
-                case 13: Smartpush.getLastMessages(this, null);
+                case 13:
+                    Smartpush.getLastMessages(this, null);
                     break;
 
                 case 14:
@@ -357,7 +371,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d( TAG,"DEVICE_INFO.DATA: " + ( deviceInfo != null ? deviceInfo.toString() : "FAIL" ) );
             log.setText( "GET DEVICE_INFO:" );
             log.append( "\nDEVICE_INFO.DATA: " + ( deviceInfo != null ? deviceInfo.toString() : "FAIL" ) );
-//            pushStatus = ( deviceInfo != null ? deviceInfo.optout : "0" );
+            pushStatus = ( deviceInfo != null && deviceInfo.optout == "0" ) ? true : false;
         }
     };
 

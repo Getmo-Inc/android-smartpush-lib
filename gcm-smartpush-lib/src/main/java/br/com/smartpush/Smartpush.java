@@ -23,11 +23,11 @@ import java.util.Date;
 
 import static br.com.smartpush.Utils.TAG;
 
-
 /**
  * Created by fabio.licks on 12/02/16.
  */
 public final class Smartpush {
+    public static final String PROVIDER = "smartpush";
 
     public static final String ACTION_REGISTRATION_RESULT = "action.REGISTRATION_RESULT";
     public static final String ACTION_GET_TAG_VALUES = "action.GET_TAG_VALUES";
@@ -179,6 +179,12 @@ public final class Smartpush {
         }
     }
 
+    public static void deleteMessage( final Context context, String pushId ) {
+        if ( isRegistered( context ) ) {
+            ActionPushInbox.startActionHideMessage( context, pushId );
+        }
+    }
+
     public static void markAllMessagesAsRead( final Context context ) {
         if ( isRegistered(context) ) {
             ActionPushInbox.startActionMarkAllMessagesAsRead( context );
@@ -222,18 +228,7 @@ public final class Smartpush {
                     }
                 });
     }
-//
-//    public static void subscribe( final Context context ) {
-//        if ( Smartpush.checkPlayServices( context ) ) {
-//            if ( checkSmartpush( context ) ) {
-//                SmartpushService.subscrive( context );
-//                SmartpushService.getMsisdn( context );
-//                SmartpushService.getMccMnc( context );
-////                SmartpushService.getAppList( context );
-//            }
-//        }
-//    }
-//
+
 //    /**
 //     * Check the device to make sure it has the Google Play Services APK.
 //     */

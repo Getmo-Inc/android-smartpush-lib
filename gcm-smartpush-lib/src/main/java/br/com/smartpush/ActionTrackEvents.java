@@ -75,11 +75,16 @@ class ActionTrackEvents {
         Bundle bundle = data.getExtras();
 
         String pushId = "";
+        String alias  = "";
 
         if ( bundle != null
                 && bundle.containsKey( SmartpushHitUtils.Fields.PUSH_ID.getParamName() ) ) {
             pushId = bundle.getString( SmartpushHitUtils.Fields.PUSH_ID.getParamName() );
             fields.put( SmartpushHitUtils.Fields.PUSH_ID.getParamName(), pushId );
+        }
+
+        if ( bundle != null && bundle.containsKey( "alias" ) ) {
+            alias = bundle.getString( "alias" );
         }
 
         if ( bundle != null
@@ -110,6 +115,6 @@ class ActionTrackEvents {
             SmartpushHttpClient.post( "hit", fields, context, false );
         }
 
-        SmartpushHttpClient.sendToAnalytics( context, pushId, action );
+        SmartpushHttpClient.sendToAnalytics( context, alias, pushId, action );
     }
 }

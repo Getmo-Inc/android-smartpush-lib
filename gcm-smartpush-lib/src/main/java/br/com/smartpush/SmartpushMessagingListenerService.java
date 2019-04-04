@@ -10,6 +10,8 @@ import android.util.Log;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Map;
 
 import static br.com.smartpush.Utils.Constants.LAUNCH_ICON;
@@ -29,13 +31,20 @@ public abstract class SmartpushMessagingListenerService extends FirebaseMessagin
             bundle.putString( entry.getKey(), entry.getValue() );
             Log.d( TAG, entry.getKey() + " : " + entry.getValue() );
         }
+
+        if ( !bundle.containsKey( "alias" ) ) {
+            // Adiciona um alias, quando nenhum for fornecido...
+            bundle.putString( "alias",
+                    new SimpleDateFormat( "yyyyMMdd" )
+                            .format( Calendar.getInstance().getTime() ) );
+        }
+
         return bundle;
     }
 
     @Override
     public void onNewToken( String token ) {
         Log.d( TAG, "Refreshed token: " + token );
-
         ActionPushSubscribe.subscribe(this, token );
     }
 
@@ -54,19 +63,20 @@ public abstract class SmartpushMessagingListenerService extends FirebaseMessagin
 
             Intent evt =
                     ActionTrackEvents.startActionTrackAction(
-                            this, pushId, null, null, SmartpushHitUtils.Action.RECEIVED.name(), null, false );
+                            this, pushId, null, null,
+                            SmartpushHitUtils.Action.RECEIVED.name(), null, false );
 
             ActionTrackEvents.handleActionTrackAction( this, evt );
 
             NotificationManagerCompat nmc = NotificationManagerCompat.from( this );
-            if( nmc != null ) {
-                if( !nmc.areNotificationsEnabled() ) {
-                    evt = ActionTrackEvents.startActionTrackAction(
-                            this, pushId, null, null, SmartpushHitUtils.Action.BLOCKED.name(), null, false );
 
-                    ActionTrackEvents.handleActionTrackAction( this, evt );
-                    return ;
-                }
+            if( nmc != null && !nmc.areNotificationsEnabled() ) {
+                evt = ActionTrackEvents.startActionTrackAction(
+                        this, pushId, null, null,
+                        SmartpushHitUtils.Action.BLOCKED.name(), null, false );
+
+                ActionTrackEvents.handleActionTrackAction( this, evt );
+                return ;
             }
 
             String provider =
@@ -84,11 +94,10 @@ public abstract class SmartpushMessagingListenerService extends FirebaseMessagin
                     }
 
                     addShortcut(data);
-                } else if ("LOOPBACK".equals(pushType)) {
+                } else if ( "LOOPBACK".equals( pushType ) ) {
                     // do nothing, just for test
                 } else {
-                    if ( "SLIDER".equals( pushType ) || "CARROUSSEL".equals( pushType ) || "CARROSSEL".equals( pushType ) )
-                        data = SmartpushHttpClient.getPushPayload(this, pushId, data);
+                    data = SmartpushHttpClient.getPushPayload(this, pushId, data);
 
                     if ( data.containsKey( NOTIF_VIDEO_URI ) ) {
                         String midiaId =
