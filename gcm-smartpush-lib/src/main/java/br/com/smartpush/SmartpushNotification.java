@@ -229,11 +229,11 @@ public class SmartpushNotification {
         }).start();
     }
 
-    public PendingIntent addMainAction( Bundle extras ) {
-        return new SmartpushNotificationManager( mContext ).addMainAction( extras );
+    public static PendingIntent addMainAction( Context context, Bundle extras ) {
+        return new SmartpushNotificationManager( context ).addMainAction( extras );
     }
 
-    public PendingIntent addDeleteAction( Bundle extras ) {
-        return new SmartpushNotificationManager( mContext ).addDeleteAction( extras );
+    public static PendingIntent addDeleteAction( Context context, Bundle extras ) {
+        return new SmartpushNotificationManager( context ).addDeleteAction( extras );
     }
 }
