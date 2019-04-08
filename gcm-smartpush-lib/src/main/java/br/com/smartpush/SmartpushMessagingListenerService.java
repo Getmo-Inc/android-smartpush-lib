@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 
+import com.google.android.gms.common.util.Strings;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -32,7 +33,7 @@ public abstract class SmartpushMessagingListenerService extends FirebaseMessagin
             Log.d( TAG, entry.getKey() + " : " + entry.getValue() );
         }
 
-        if ( !bundle.containsKey( "alias" ) ) {
+        if ( !bundle.containsKey( "alias" ) || Strings.isEmptyOrWhitespace( bundle.getString( "alias" ) ) ) {
             // Adiciona um alias, quando nenhum for fornecido...
             bundle.putString( "alias",
                     new SimpleDateFormat( "yyyyMMdd" )
