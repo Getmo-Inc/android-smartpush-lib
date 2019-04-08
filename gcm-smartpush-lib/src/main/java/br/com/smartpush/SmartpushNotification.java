@@ -1,6 +1,8 @@
 package br.com.smartpush;
 
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -225,5 +227,13 @@ public class SmartpushNotification {
                         .createNotification();
             }
         }).start();
+    }
+
+    public PendingIntent addMainAction( Bundle extras ) {
+        return new SmartpushNotificationManager( mContext ).addMainAction( extras );
+    }
+
+    public PendingIntent addDeleteAction( Bundle extras ) {
+        return new SmartpushNotificationManager( mContext ).addDeleteAction( extras );
     }
 }
