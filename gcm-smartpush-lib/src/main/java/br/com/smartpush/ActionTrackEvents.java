@@ -47,6 +47,8 @@ class ActionTrackEvents {
     }
 
     public static void handleActionTrackAction( Context context, Intent data ) {
+        SmartpushLog.d( Utils.TAG, "----------> " + Utils.ArrayUtils.bundle2string( data.getExtras() ) );
+
         HashMap<String,String> fields = new HashMap<>();
         fields.put( "uuid",
                 Utils.PreferenceUtils.readFromPreferences(

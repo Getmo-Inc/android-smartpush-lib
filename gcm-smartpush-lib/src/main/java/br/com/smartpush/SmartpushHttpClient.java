@@ -6,6 +6,8 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 
+import com.google.android.gms.common.util.Strings;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -22,6 +24,8 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -339,6 +343,13 @@ class SmartpushHttpClient {
             } catch ( Exception e ) {
                 SmartpushLog.e( TAG, e.getMessage(), e );
             }
+        }
+
+        if ( !newData.containsKey( "alias" ) || Strings.isEmptyOrWhitespace( newData.getString( "alias" ) ) ) {
+            // Adiciona um alias, quando nenhum for fornecido...
+            newData.putString( "alias",
+                    new SimpleDateFormat( "yyyyMMdd" )
+                            .format( Calendar.getInstance().getTime() ) );
         }
 
         return newData;

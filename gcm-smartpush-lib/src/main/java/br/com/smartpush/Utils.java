@@ -125,8 +125,10 @@ final public class Utils {
 
         public static String bundle2string( Bundle bundle) {
             StringBuffer buf = new StringBuffer( "Bundle{ ");
-            for ( String key : bundle.keySet() )
-                buf.append( " " + key + " => " + bundle.get(key) + ";");
+            if ( bundle != null ) {
+                for (String key : bundle.keySet())
+                    buf.append(" " + key + " => " + bundle.get(key) + ";");
+            }
             buf.append(" }Bundle");
             return buf.toString(); }
     }

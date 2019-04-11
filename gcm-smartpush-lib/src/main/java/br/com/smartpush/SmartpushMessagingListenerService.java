@@ -28,16 +28,19 @@ public abstract class SmartpushMessagingListenerService extends FirebaseMessagin
 
     Bundle mapToBundle( Map<String, String> mapData ){
         Bundle bundle = new Bundle();
-        for ( Map.Entry<String, String> entry : mapData.entrySet()) {
-            bundle.putString( entry.getKey(), entry.getValue() );
-            Log.d( TAG, entry.getKey() + " : " + entry.getValue() );
-        }
 
-        if ( !bundle.containsKey( "alias" ) || Strings.isEmptyOrWhitespace( bundle.getString( "alias" ) ) ) {
-            // Adiciona um alias, quando nenhum for fornecido...
-            bundle.putString( "alias",
-                    new SimpleDateFormat( "yyyyMMdd" )
-                            .format( Calendar.getInstance().getTime() ) );
+        if ( mapData != null ) {
+            for (Map.Entry<String, String> entry : mapData.entrySet()) {
+                bundle.putString(entry.getKey(), entry.getValue());
+                Log.d(TAG, entry.getKey() + " : " + entry.getValue());
+            }
+
+            if ( !bundle.containsKey("alias")
+                    || Strings.isEmptyOrWhitespace(bundle.getString("alias"))) {
+                bundle.putString("alias",
+                        new SimpleDateFormat("yyyyMMdd")
+                                .format(Calendar.getInstance().getTime()));
+            }
         }
 
         return bundle;
@@ -57,7 +60,7 @@ public abstract class SmartpushMessagingListenerService extends FirebaseMessagin
         Log.d( TAG, "push data received:\n" + remoteMessage.getData().toString() );
         Bundle data = mapToBundle( remoteMessage.getData() );
 
-        if( remoteMessage.getData() != null && !remoteMessage.getData().isEmpty() ){
+        if( data != null && !data.isEmpty() ){
 
             String pushId =
                     SmartpushHitUtils.getValueFromPayload( SmartpushHitUtils.Fields.PUSH_ID, data );
