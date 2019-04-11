@@ -10,8 +10,8 @@ android {
 
     defaultConfig {
         minSdkVersion 16
-        versionCode 914
-        versionName "9.1.4"
+        versionCode 915
+        versionName "9.1.5"
         vectorDrawables {
             useSupportLibrary = true
         }

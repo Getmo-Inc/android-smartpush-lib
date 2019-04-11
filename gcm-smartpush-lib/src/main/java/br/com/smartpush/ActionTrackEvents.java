@@ -11,13 +11,16 @@ class ActionTrackEvents {
     // TRACKING/ANALYTICS
     public static final String ACTION_TRACK_ACTION = "action.TRACK_ACTION";
 
-    public static Intent startActionTrackAction( Context context, String pushId, String screenName, String category, String action, String label, boolean runAsService ) {
+    public static Intent startActionTrackAction( Context context, String alias, String pushId, String screenName, String category, String action, String label, boolean runAsService ) {
         if ( !( ( pushId != null ) || ( screenName != null && action != null ) ) ) {
             return null;
         }
 
         Intent intent = new Intent( context, SmartpushService.class ) ;
         intent.setAction( ACTION_TRACK_ACTION ) ;
+
+        if ( alias != null )
+            intent.putExtra( "alias", alias );
 
         if ( pushId != null )
             intent.putExtra(

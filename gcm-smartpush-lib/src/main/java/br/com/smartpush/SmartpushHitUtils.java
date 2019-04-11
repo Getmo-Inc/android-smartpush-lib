@@ -11,6 +11,7 @@ class SmartpushHitUtils {
     private Context context;
 
     public enum Fields {
+        ALIAS      ( "alias" ),
         PUSH_ID    ( "campaignId" ),
         SCREEN_NAME( "screen_name" ),
         CATEGORY   ( "category" ),

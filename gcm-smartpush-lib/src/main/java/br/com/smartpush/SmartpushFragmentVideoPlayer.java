@@ -401,8 +401,11 @@ public final class SmartpushFragmentVideoPlayer extends Fragment implements
                     SmartpushHitUtils.getValueFromPayload(
                             SmartpushHitUtils.Fields.PUSH_ID, root.getIntent().getExtras());
 
+            String alias = SmartpushHitUtils
+                    .getValueFromPayload( SmartpushHitUtils.Fields.ALIAS, root.getIntent().getExtras() );
+
             if (!"".equals(pushId)) {
-                Smartpush.hit( root, pushId, "PLAYER", null, action, null);
+                Smartpush.hit( root, alias, pushId, "PLAYER", null, action, null);
             }
         }
         //

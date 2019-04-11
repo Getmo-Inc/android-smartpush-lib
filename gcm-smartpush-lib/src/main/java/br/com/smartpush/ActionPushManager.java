@@ -83,7 +83,7 @@ class ActionPushManager {
 
         Intent evt =
                 ActionTrackEvents.startActionTrackAction(
-                        context, pushId, null, null, SmartpushHitUtils.Action.CLICKED.name(), label, false );
+                        context, data.getString( "alias" ), pushId, null, null, SmartpushHitUtils.Action.CLICKED.name(), label, false );
         ActionTrackEvents.handleActionTrackAction( context, evt );
 
 // TODO remover após testes
@@ -102,7 +102,7 @@ class ActionPushManager {
 
         Intent evt =
                 ActionTrackEvents.startActionTrackAction(
-                        context, pushId, null, null, SmartpushHitUtils.Action.REJECTED.name(), null, false );
+                        context, extras.getString( "alias" ), pushId, null, null, SmartpushHitUtils.Action.REJECTED.name(), null, false );
         ActionTrackEvents.handleActionTrackAction( context, evt );
 
 // TODO remover após testes

@@ -65,9 +65,12 @@ public abstract class SmartpushMessagingListenerService extends FirebaseMessagin
             String pushId =
                     SmartpushHitUtils.getValueFromPayload( SmartpushHitUtils.Fields.PUSH_ID, data );
 
+            String alias = SmartpushHitUtils
+                    .getValueFromPayload( SmartpushHitUtils.Fields.ALIAS, data );
+
             Intent evt =
                     ActionTrackEvents.startActionTrackAction(
-                            this, pushId, null, null,
+                            this, alias, pushId, null, null,
                             SmartpushHitUtils.Action.RECEIVED.name(), null, false );
 
             ActionTrackEvents.handleActionTrackAction( this, evt );
@@ -76,7 +79,7 @@ public abstract class SmartpushMessagingListenerService extends FirebaseMessagin
 
             if( nmc != null && !nmc.areNotificationsEnabled() ) {
                 evt = ActionTrackEvents.startActionTrackAction(
-                        this, pushId, null, null,
+                        this, alias, pushId, null, null,
                         SmartpushHitUtils.Action.BLOCKED.name(), null, false );
 
                 ActionTrackEvents.handleActionTrackAction( this, evt );

@@ -143,21 +143,21 @@ public final class Smartpush {
         }
     }
 
-    public static void hit( final Context context, String pushId, String screenName, String category, String action, String label ) {
+    public static void hit( final Context context, String alias, String pushId, String screenName, String category, String action, String label ) {
         if ( isRegistered( context ) ) {
-            ActionTrackEvents.startActionTrackAction( context, pushId, screenName, category, action, label, true );
+            ActionTrackEvents.startActionTrackAction( context, alias, pushId, screenName, category, action, label, true );
         }
     }
 
-    public static void hit( final Context context, String pushId, String screenName, String category, SmartpushHitUtils.Action action, String label ) {
+    public static void hit( final Context context, String alias, String pushId, String screenName, String category, SmartpushHitUtils.Action action, String label ) {
         if ( isRegistered( context ) ) {
-            ActionTrackEvents.startActionTrackAction( context, pushId, screenName, category, action.name(), label, true );
+            ActionTrackEvents.startActionTrackAction( context, alias, pushId, screenName, category, action.name(), label, true );
         }
     }
 
     public static void hit( final Context context, String screenName, String category, String action, String label ) {
         if ( isRegistered(context) ) {
-            ActionTrackEvents.startActionTrackAction( context, null, screenName, category, action, label, true );
+            ActionTrackEvents.startActionTrackAction( context, null,null, screenName, category, action, label, true );
         }
     }
 

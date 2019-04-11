@@ -54,9 +54,12 @@ public final class SmartpushActivity extends AppCompatActivity {
             String pushId = SmartpushHitUtils
                     .getValueFromPayload( SmartpushHitUtils.Fields.PUSH_ID, extras );
 
+            String alias = SmartpushHitUtils
+                    .getValueFromPayload( SmartpushHitUtils.Fields.ALIAS, extras );
+
             if ( extras != null && !"".equals( pushId ) ) {
                 if ( extras.containsKey( Utils.Constants.REDIRECTED ) ) {
-                    Smartpush.hit(this, pushId, null, null, SmartpushHitUtils.Action.REDIRECTED, null);
+                    Smartpush.hit(this, alias, pushId, null, null, SmartpushHitUtils.Action.REDIRECTED, null);
                 }
             }
             // [END] Tracking
@@ -95,9 +98,12 @@ public final class SmartpushActivity extends AppCompatActivity {
         String pushId = SmartpushHitUtils
                 .getValueFromPayload( SmartpushHitUtils.Fields.PUSH_ID, extras );
 
+        String alias = SmartpushHitUtils
+                .getValueFromPayload( SmartpushHitUtils.Fields.ALIAS, extras );
+
         if ( extras != null && !"".equals( pushId ) ) {
             if ( extras.containsKey( Utils.Constants.REDIRECTED ) ) {
-                Smartpush.hit(this, pushId, null, null, SmartpushHitUtils.Action.REDIRECTED, null);
+                Smartpush.hit(this, alias, pushId, null, null, SmartpushHitUtils.Action.REDIRECTED, null);
             }
         }
         // [END] Tracking
@@ -115,8 +121,11 @@ public final class SmartpushActivity extends AppCompatActivity {
                     SmartpushHitUtils.getValueFromPayload(
                             SmartpushHitUtils.Fields.PUSH_ID, getIntent().getExtras());
 
+            String alias = SmartpushHitUtils
+                    .getValueFromPayload( SmartpushHitUtils.Fields.ALIAS, getIntent().getExtras() );
+
             if ( !"".equals( pushId ) ) {
-                Smartpush.hit( this, pushId, "PLAYER", null, "CANCEL", null );
+                Smartpush.hit( this, alias, pushId, "PLAYER", null, "CANCEL", null );
             }
             //
         }
