@@ -32,15 +32,16 @@ public abstract class SmartpushMessagingListenerService extends FirebaseMessagin
         if ( mapData != null ) {
             for (Map.Entry<String, String> entry : mapData.entrySet()) {
                 bundle.putString(entry.getKey(), entry.getValue());
-                Log.d(TAG, entry.getKey() + " : " + entry.getValue());
+                Log.d(TAG, entry.getKey() + " : " + entry.getValue() );
             }
+        }
 
-            if ( !bundle.containsKey("alias")
-                    || Strings.isEmptyOrWhitespace(bundle.getString("alias"))) {
-                bundle.putString("alias",
-                        new SimpleDateFormat("yyyyMMdd")
-                                .format(Calendar.getInstance().getTime()));
-            }
+        if ( !bundle.containsKey( "alias" )
+                || Strings.isEmptyOrWhitespace(bundle.getString("alias" ) ) ) {
+            bundle.putString( "alias",
+                    new SimpleDateFormat("yyyyMMdd" )
+                            .format( Calendar.getInstance().getTime() ) );
+            Log.d(TAG, "new alias" + " : " + bundle.getString( "alias" ) );
         }
 
         return bundle;

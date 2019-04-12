@@ -5,6 +5,11 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 
+import com.google.android.gms.common.util.Strings;
+
+import java.io.StringBufferInputStream;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
 
 class ActionTrackEvents {
@@ -19,26 +24,31 @@ class ActionTrackEvents {
         Intent intent = new Intent( context, SmartpushService.class ) ;
         intent.setAction( ACTION_TRACK_ACTION ) ;
 
-        if ( alias != null )
-            intent.putExtra( "alias", alias );
+        if ( !Strings.isEmptyOrWhitespace( alias ) ) {
+            intent.putExtra("alias", alias);
+        } else {
+            intent.putExtra("alias",
+                    new SimpleDateFormat( "yyyyMMdd" )
+                            .format( Calendar.getInstance().getTime() ));
+        }
 
-        if ( pushId != null )
+        if ( !Strings.isEmptyOrWhitespace( pushId ) )
             intent.putExtra(
                     SmartpushHitUtils.Fields.PUSH_ID.getParamName(), pushId );
 
-        if ( screenName != null )
+        if ( !Strings.isEmptyOrWhitespace( screenName ) )
             intent.putExtra(
                     SmartpushHitUtils.Fields.SCREEN_NAME.getParamName(), screenName );
 
-        if ( category != null )
+        if ( !Strings.isEmptyOrWhitespace( category ) )
             intent.putExtra(
                     SmartpushHitUtils.Fields.CATEGORY.getParamName(), category );
 
-        if ( action != null )
+        if ( !Strings.isEmptyOrWhitespace( action ) )
             intent.putExtra(
                     SmartpushHitUtils.Fields.ACTION.getParamName(), action );
 
-        if ( label != null )
+        if ( !Strings.isEmptyOrWhitespace( label ) )
             intent.putExtra(
                     SmartpushHitUtils.Fields.LABEL.getParamName(), label );
 
@@ -90,6 +100,8 @@ class ActionTrackEvents {
 
         if ( bundle != null && bundle.containsKey( "alias" ) ) {
             alias = bundle.getString( "alias" );
+        } else {
+            alias = new SimpleDateFormat( "yyyyMMdd" ).format( Calendar.getInstance().getTime() );
         }
 
         if ( bundle != null

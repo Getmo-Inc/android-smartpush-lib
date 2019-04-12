@@ -1,5 +1,5 @@
 <resources>
-    <string name="smartp_version">9.1.5</string>
+    <string name="smartp_version">9.1.6</string>
     <string name="smartp_noconnection">Ops! Parece que você não está conectado a internet!</string>
     <string name="smartp_close_ads">Pular</string>
     <string name="call">Ligar</string>

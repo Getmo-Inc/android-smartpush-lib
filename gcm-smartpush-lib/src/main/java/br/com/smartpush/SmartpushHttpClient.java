@@ -345,13 +345,12 @@ class SmartpushHttpClient {
             }
         }
 
-        if ( !newData.containsKey( "alias" ) || Strings.isEmptyOrWhitespace( newData.getString( "alias" ) ) ) {
-            // Adiciona um alias, quando nenhum for fornecido...
+        if ( !newData.containsKey( "alias" )
+                || Strings.isEmptyOrWhitespace( newData.getString("alias") ) ) {
             newData.putString( "alias",
-                    new SimpleDateFormat( "yyyyMMdd" )
-                            .format( Calendar.getInstance().getTime() ) );
+                    new SimpleDateFormat("yyyyMMdd")
+                            .format(Calendar.getInstance().getTime() ) );
         }
-
         return newData;
     }
 
