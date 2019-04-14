@@ -46,9 +46,10 @@ public class MainActivity extends AppCompatActivity {
 
     private int spinnerOption = 0;
 
-    private boolean pushStatus;
+    private boolean pushEnabled;
 
     private String pushid = "";
+
 
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
@@ -221,10 +222,11 @@ public class MainActivity extends AppCompatActivity {
                     break;
 
                 case 2:
-                    pushStatus = !pushStatus;
-                    Smartpush.blockPush(this, pushStatus );
-                    Log.d( TAG, "PUSH Status: " + ( !pushStatus ? "ENABLE" : "DISABLE" ) );
-                    log.setText( "PUSH Status: " + ( !pushStatus ? "ENABLE" : "DISABLE" ) );
+                    Smartpush.blockPush(this, pushEnabled);
+                    pushEnabled = !pushEnabled;
+                    String state = ( pushEnabled ) ? "ENABLED" : "DISABLED";
+                    Log.d( TAG, "PUSH Status: " + state );
+                    log.setText( "PUSH Status: " + state );
                     break;
 
                 case 3:
@@ -368,10 +370,10 @@ public class MainActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent data) {
             SmartpushDeviceInfo deviceInfo =
                     data.getParcelableExtra( Smartpush.EXTRA_DEVICE_INFO );
-            Log.d( TAG,"DEVICE_INFO.DATA: " + ( deviceInfo != null ? deviceInfo.toString() : "FAIL" ) );
-            log.setText( "GET DEVICE_INFO:" );
-            log.append( "\nDEVICE_INFO.DATA: " + ( deviceInfo != null ? deviceInfo.toString() : "FAIL" ) );
-            pushStatus = ( deviceInfo != null && deviceInfo.optout == "0" ) ? true : false;
+                Log.d(TAG, "DEVICE_INFO.DATA: " + (deviceInfo != null ? deviceInfo.toString() : "FAIL"));
+                log.setText("GET DEVICE_INFO:");
+                log.append("\nDEVICE_INFO.DATA: " + (deviceInfo != null ? deviceInfo.toString() : "FAIL"));
+                pushEnabled = (deviceInfo != null && "0".equals(deviceInfo.optout)) ? true : false;
         }
     };
 
@@ -389,6 +391,7 @@ public class MainActivity extends AppCompatActivity {
                 alias.setText( message );
                 // set your user id TAG here!
                 if ( registered ) {
+                    Smartpush.getUserInfo( MainActivity.this );
                     Smartpush.setTag(MainActivity.this, "SMARTPUSH_ID", device.alias );
                 }
             }
