@@ -28,6 +28,7 @@ class ActionGetCarrier {
     @TargetApi(Build.VERSION_CODES.LOLLIPOP_MR1)
     static void getMccMnc( Context context ) {
         ArrayList<String> values = new ArrayList<>();
+
         boolean supportMultiSim =
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1;
 
@@ -44,11 +45,13 @@ class ActionGetCarrier {
             List<SubscriptionInfo> subInfoList =
                     subscriptionManager.getActiveSubscriptionInfoList();
 
-            for( SubscriptionInfo info : subInfoList ) {
-                int mcc = info.getMcc();
-                int mnc = info.getMnc();
+            if ( subInfoList != null ) {
+                for ( SubscriptionInfo info : subInfoList ) {
+                    int mcc = info.getMcc();
+                    int mnc = info.getMnc();
 
-                values.add( String.valueOf( mcc ) + String.valueOf( mnc ) );
+                    values.add(String.valueOf(mcc) + String.valueOf(mnc));
+                }
             }
         } else {
             TelephonyManager telephonyManager =
@@ -66,8 +69,7 @@ class ActionGetCarrier {
         }
 
         SmartpushLog.d( TAG, new JSONArray( values ).toString() );
-        if ( values == null || values.size() == 0 ) {
-
+        if ( values.size() > 0 ) {
             Log.d( Utils.TAG, "__CARRIER__:" + new Utils.ArrayUtils<String>().toJsonArrayString( values ) );
 
             Intent data = ActionTagManager.configActionSetTag("__CARRIER__", values );
