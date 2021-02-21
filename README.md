@@ -1,36 +1,19 @@
-﻿# android-smartpush-lib
+﻿# Smartpush Messaging Client
 
-A [SMARTPUSH](http://admin.getmo.com.br) é a plataforma de mensagens (push, webpush, sms, email, redes sociais, e chatbots) da [GETMO](http://novo.getmo.com.br). 
+O [SMARTPUSH](http://admin.getmo.com.br) é a plataforma de multicanal de mensagens da [GETMO](https://www.getmo.com.br). 
 
-#### Requisitos e Dependências
+O Smartpush Messaging Client é uma biblioteca android desenvolvida pela GETMO que administra o processo de registro dos dispositivos android permitindo o envio de mensagens push, além outras funcionalidades como novos modelos de notificações (banner, gif, carrossel, video, entre outras), mensagens geolocalizadas, construção de perfil (tags), agendamentos, e muitas outras.  
 
-- Android minSdkVersion **16**
-- Google Play Services GCM **12.0.1**
+---
+## <a name="starting"></a>Adicionando o SMARTPUSH a sua app 
 
-### Removendo a biblioteca SMARTPUSH como módulo
-Se você já conhece e implementa a biblioteca android do **SMARTPUSH** como um módulo, siga os passos a seguir para remove-la e readiciona-la como uma dependência, mas se você é novo por aqui, apenas siga para o próximo tópico.
+A biblioteca android do **SMARTPUSH** é responsável por integrar sua aplicação aos serviços do **SMARTPUSH** para a gestão do cadastro de dispositivos, tags, geofences, processamento e monitoramento de mensagens push.   
 
-1. Abra seu arquivo build.gradle a nível de app e apague a linha de dependência
-```json
-dependencies {
-        implementation project(':gcm-smartpush-lib-release')
- }
-```
-2. Clique com o botão direito em cima do seu módulo gcm-smartpush-lib-release e abra o local do arquivo
-![Step2](images/remove_module_1.png)
-3. Identifique e exclua a pasta do módulo
-![Step3](images/remove_module_2.png)
-4. Volte ao AndroidStudio e abra o arquivo settings.gradle e apague o módulo ':gcm-smartpush-lib-release'
 
-Agora você está pronto para seguir para a próxima etapa e adicionar nossa biblioteca como uma dependência
+### Configurando as dependências do FCM e do SMARTPUSH
+1. Adicione o [Firebase](https://firebase.google.com/docs/android/setup?authuser=0) ao seu projeto. O Firebase é o responsável pela entrega do push nos dispositivos.
 
-### Adicionando a biblioteca Android SMARTPUSH 
-
-A biblioteca android do **SMARTPUSH** é responsável por integrar sua aplicação mobile ao backend do **SMARTPUSH** para a gestão do cadastro de dispositivos, tags, geofences, processamento e monitoramento de mensagens push.   
-
-Para adicionar suporte a push em sua aplicação android siga as instruções a seguir.
-
-1. Adicione ao seu arquivo build.gradle a nível de projeto, dentro de allprojects repositories
+2. Adicione o repositório do [jitpack.io](https://jitpack.io) ao seu arquivo build.gradle a nível de projeto, dentro de allprojects repositories. É através dele que você tem acesso a versão mais atual do **Smartpush Messaging Client**.
 ```
 allprojects {
     repositories {
@@ -38,56 +21,38 @@ allprojects {
     }
 }
 ```
-2. Adicione nossa biblioteca à suas dependências ao arquivo build.gradle a nível de módulo
-```json
+2. Adicione as dependências abaixo ao arquivo build.gradle a nível de módulo
+```
 dependencies {
-    implementation 'org.bitbucket.getmo:android-smartpush-lib:5.1.7'
+    // Import the BoM for the Firebase platform
+    implementation platform('com.google.firebase:firebase-bom:26.3.0')
+
+    // Declare the dependencies for the FCM and Analytics libraries
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+    implementation 'com.google.firebase:firebase-messaging'
+    implementation 'com.google.firebase:firebase-analytics'
+    
+    // Import Smartpush library
+    implementation 'org.bitbucket.getmo:android-smartpush-lib:9.2.0'
  }
 ```
 
-3. Sincronize o projeto apertando o botão "Sync Now" para baixar a biblioteca para seu projeto.
+3. Sincronize o projeto apertando o botão "Sync Now" no Android Studio para baixar as dependências necessárias ao seu projeto.
 
-> **Importante** 
->
-> A plataforma Android continua crescendo, e o tamanho dos aplicativos para Android também. Quando um aplicativo e as bibliotecas às quais ele faz referência alcançam determinado tamanho, ocorrem erros de compilação que indicam que o aplicativo chegou ao limite da arquitetura de compilação de aplicativos Android.  
-> 
-> Você pode ler mais sobre esse problema [aqui](https://developer.android.com/studio/build/multidex.html?hl=pt-br).
+Feito isso, o próximo passo é configurar sua app para usar a biblioteca e permitir o cadastramento dos dispositivos, das tags, geofences e o processamento das mensagens push.
 
-Então se ocorrer um erro de compilação uma solução possível é importar apenas as dependências que são necessárias, no caso da biblioteca **Google Play Service** altere o arquivo **build.gradle** da sua aplicação da seguinte forma:
- 
-```json
-dependencies {
-    implementation project(':gcm-smartpush-lib-release')
-    implementation 'com.google.android.gms:play-services-gcm:16.0.0'
- }
-```
-
-
-Feito isso, o próximo passo é configurar sua app para usar a biblioteca e permitir o cadastramento dos dispositivos, das tags, geofences e o processamento das
-mensagens push.
-
-
-Para isso vamos começar pelo arquivo de manifesto (AndroidManifest.xml) da sua aplicação. 
 
 ### Editando o arquivo de Manifesto
 
 Adicione os seguintes itens ao manifesto do app:
 
-* Dentro da tag ```<manifest>``` adicione as permissões abaixo. Elas são necessarias para ativar o recebimento de push a partir da GCM;
+* Dentro da tag ```<manifest>``` adicione as permissões abaixo.
 
 ```xml
     <uses-permission
         android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
-    <permission
-        android:name="[PACOTE_SUA_APLICACAO].permission.C2D_MESSAGE"
-        android:protectionLevel="signature" />
-
-    <uses-permission
-        android:name="[PACOTE_SUA_APLICACAO].permission.C2D_MESSAGE" />
 ```
-
-> Não esqueça de substituir [PACOTE_SUA_APLICACAO] pelo pacote correto da sua aplicação.
 
 * Dentro da tag ```<application>``` adicione as tags de metadados a seguir;
 
@@ -99,11 +64,7 @@ Adicione os seguintes itens ao manifesto do app:
     <meta-data
         android:name="br.com.smartpush.APIKEY"
         android:value="[SUA_API_KEY]"/>
-```
 
-> Não esqueça de substituir [SEU_APP_ID] e [SUA_API_KEY] pelos códigos obtidos no painel de controle do [SMARTPUSH](https://admin.getmo.com.br). Em caso de dúvida sobre como obter esses códigos consulte [aqui]().
-
-```xml
     <meta-data
         android:name="br.com.smartpush.default_notification_small_icon"
         android:resource="@drawable/[NOTIFICATION_SMALL_ICON]" />
@@ -117,36 +78,11 @@ Adicione os seguintes itens ao manifesto do app:
         android:resource="@color/[SUA_COR]" />
 ```
 
-> Não esqueça de substituir [NOTIFICATION_SMALL_ICON], [NOTIFICATION_BIG_ICON] e [SUA_COR] pelos recursos correspondentes na sua aplicação. Estas propriedades definem os icones pequeno e grande, e também a cor, que devem ser utilizados na notificação.
+> Você deve substituir [SEU_APP_ID] e [SUA_API_KEY] pelos códigos obtidos no painel de controle do [SMARTPUSH](https://admin.getmo.com.br). Em caso de dúvida sobre como obter esses códigos consulte [aqui]().
+>
+> Você deve substituir [NOTIFICATION_SMALL_ICON], [NOTIFICATION_BIG_ICON] e [SUA_COR] pelos recursos correspondentes na sua aplicação. Estas propriedades definem os icones pequeno e grande, e também a cor, que devem ser utilizados na notificação.
 
-* Ainda na tag ```<application>``` configure o BroadcastReceiver **com.google.android.gms.gcm.GcmReceiver** ele irá monitorar a chegada de push e encaminhará para o tratador na sua aplicação.
-
-```xml
-    <receiver
-        android:name="com.google.android.gms.gcm.GcmReceiver"
-        android:exported="true"
-        android:permission="com.google.android.c2dm.permission.SEND" >
-        <intent-filter>
-            <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-            <category android:name="[PACOTE_SUA_APLICACAO]" />
-        </intent-filter>
-    </receiver>
-```
-> Não esqueça de substituir [PACOTE_SUA_APLICACAO] pelo pacote correto da sua aplicação.
-
-* Ainda na tag ```<application>``` configure o Service **SmartpushIDListenerService**  para processar a criação, a rotação e a atualização dos tokens de registro.
-
-```xml
-    <service
-        android:name="br.com.smartpush.SmartpushIDListenerService"
-        android:exported="false">
-        <intent-filter>
-            <action android:name="com.google.android.gms.iid.InstanceID" />
-        </intent-filter>
-    </service>
-```
-
-* Ainda na tag ```<application>``` configure o Service **SmartpushService** para processar as notificações customizadas (Carrossel, banner, video, etc) e para monitorar os eventos (IMPRESSAO, CLICK, PREVIEW, REDIRECT, etc).
+* Ainda na tag ```<application>``` configure o Service **SmartpushService** conforme a seguir. Este serviço é responsável por processar as notificações customizadas (Carrossel, banner, video, etc) e reportar os eventos (IMPRESSAO, CLICK, PREVIEW, REDIRECT, etc).
 
 ```xml
     <service
@@ -154,7 +90,7 @@ Adicione os seguintes itens ao manifesto do app:
         android:exported="true"/>
 ```
 
-* Ainda na tag ```<application>``` configure a Activity **SmartpushActivity**, está activity é a responsável por tratar do Player de Video embedado e que é executado a partir de um push.
+* Ainda na tag ```<application>``` configure a Activity **SmartpushActivity** conforme a seguir. Esta activity é responsável por carregar o Player de Video embedado que pode ser executado a partir de um push.
 
 ```xml
     <activity
@@ -170,47 +106,15 @@ Adicione os seguintes itens ao manifesto do app:
     </activity>
 ```
 
-* A última configuração necessária dentro da tag ```<application>``` é de um Service que estenda a classe **SmartpushListenerService** para tratar a criação das notificações, ou outro comportamento desejado, a partir da chegada de um push.
-
-```xml
-    <service
-        android:name=".MySmartpushListenerService"
-        android:exported="false" >
-        <intent-filter>
-            <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-        </intent-filter>
-    </service>
-```
-
-> O nome da classe pode ser alterada de acordo com sua própria politica de nomeação. O importante é que ela estenda a classe **SmartpushListenerService**.
- 
-Nessa parte da configuração, o Android Studio, irá indicar um erro, acontece que esse serviço ainda precisa ser criado. Veremos um exemplo mais adiante.
-
 ### Criando o serviço para tratar do push e criar notificações
 
-Vamos criar um serviço simples para tratar do push e criar uma notificação. Veja o exemplo abaixo:
+Vamos criar um serviço simples para tratar do push e criar uma notificação. Para isso crie um serviço que extenda a classe **SmartpushMessagingListenerService**. Veja o exemplo a seguir:
 
 ```java
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
-import android.media.RingtoneManager;
-import android.net.Uri;
-import android.os.Bundle;
-import android.support.v4.app.NotificationCompat;
-
-import br.com.smartpush.SmartpushListenerService;
-
-/**
- * Created by GETMO on 10/02/16.
- */
-public class MySmartpushListenerService extends SmartpushListenerService {
+public class MySmartpushListenerService extends SmartpushMessagingListenerService {
 
     @Override
-    protected void handleMessage( Bundle data ) {
-        String message = data.getString( "detail" );
-
+    protected void handleMessage( RemoteMessage data ) {
         /**
          * Production applications would usually process the message here.
          * Eg: - Syncing with server.
@@ -221,52 +125,27 @@ public class MySmartpushListenerService extends SmartpushListenerService {
         /**
          * In some cases it may be useful to show a notification indicating to the user
          * that a message was received.
+         *
+         * If you intent to use our notifications leave this method empty.
          */
-
-        sendNotification( message, data );
+                                                        
     }
 
-    /**
-     * Create and show a simple notification containing the received GCM message.
-     *
-     * @param message GCM message received.
-     */
-    private void sendNotification( String message, Bundle extras ) {
-        Intent intent = new Intent( this, MainActivity.class );
-        intent.putExtras( extras );
-        intent.addFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP );
-        PendingIntent pendingIntent =
-                PendingIntent
-                        .getActivity(this, 0 /* Request code */, intent, PendingIntent.FLAG_ONE_SHOT);
-
-        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        Notification.Builder notificationBuilder = new Notification.Builder( this )
-                .setSmallIcon( R.drawable.ic_stat_ic_notification )
-                .setContentTitle( "Push Notification!" )
-                .setContentText( message )
-                .setAutoCancel( true )
-                .setSound( defaultSoundUri )
-                .setContentIntent( pendingIntent );
-
-        NotificationManager notificationManager =
-                ( NotificationManager ) getSystemService( Context.NOTIFICATION_SERVICE );
-                                                                    
-        if ( android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O ) {
-            int importance = NotificationManager.IMPORTANCE_HIGH;
-            NotificationChannel notificationChannel
-                    = new NotificationChannel( NOTIFICATION_CHANNEL_ID, "ALERT", importance );
-            notificationChannel.enableLights(true);
-            notificationChannel.setLightColor(Color.RED);
-            notificationChannel.enableVibration(true);
-            notificationChannel.setVibrationPattern(
-                    new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
-            notificationBuilder.setChannelId( NOTIFICATION_CHANNEL_ID );
-            mNotificationManager.createNotificationChannel(notificationChannel);
-        }
-
-        notificationManager.notify( 1000 /* ID of notification */, notificationBuilder.build() );
-    }
 }
+```
+> O nome da classe pode ser alterada de acordo com sua própria politica de nomeação. O importante é que ela estenda a classe **SmartpushListenerService**.
+
+Não esqueça de configurar o serviço no arquivo de manifesto para tratar a criação das notificações, ou outro comportamento desejado/esperado, a partir da chegada de um push.
+
+
+```xml
+    <service
+        android:name=".MySmartpushListenerService"
+        android:exported="true">
+        <intent-filter>
+            <action android:name="com.google.firebase.MESSAGING_EVENT" />
+        </intent-filter>
+    </service>
 ```
 
 ### Registrando o dispositivo para receber push
@@ -287,6 +166,7 @@ Veja um exemplo:
         // do something else...
     }
 ```
+> A chamada de registro é não-bloqueante, ou seja ela é executada numa linha de execução paralela. 
 
 Pronto, com isso terminamos a configuração básica para ativar o push. 
 
@@ -312,10 +192,57 @@ Agora, compile seu projeto, instale em um dispositivo, abra a aplicação para q
 
 A informação importante aqui é o "**alias**" ele é um identificador gerado pela plataforma Smartpush que permite localizar o seu dispositivo na base de dispositivos. 
 
-> Você pode criar seus próprios identificadores, veremos isso quando falarmos em **TAGs**. 
-
 Copie o valor do código "**alias**" e teste o envio de push. Para saber como enviar um push a partir do painel do Smartpush acesse esse [link]().
 
-Para explorar os demais recursos da plataforma Smartpush como criação de **TAGs**, **GEOFENCE**, entre outros acesse os projetos de exemplo disponiveis no [Github](https://github.com/Getmo-Inc/android-smartpush-samples).
+### Executando operações logo após o registro do dispositivo
+
+Em alguns casos você pode querer acionar outros métodos da SDK **Smartpush Messaging Client** logo após, e somente após, a realização do subscribe, para isso defina um listener (Broadcastreceiver) para a action **Smartpush.ACTION_REGISTRATION_RESULT**. Veja um exemplo:
+
+```java
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        LocalBroadcastManager
+                .getInstance( this )
+                .registerReceiver( mRegistrationBroadcastReceiver,
+                        new IntentFilter(
+                                Smartpush.ACTION_REGISTRATION_RESULT ) );
+        // do something else...
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        LocalBroadcastManager
+                .getInstance( this )
+                .unregisterReceiver( mRegistrationBroadcastReceiver );
+        // do something else...
+    }
+
+    private BroadcastReceiver mRegistrationBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive( Context context, Intent data ) {
+            if ( data.getAction().equals( Smartpush.ACTION_REGISTRATION_RESULT) ) {
+                SmartpushDeviceInfo device =
+                        data.getParcelableExtra( Smartpush.EXTRA_DEVICE_INFO );
+
+                boolean registered = ( device != null && !Strings.isEmptyOrWhitespace( device.alias ) );
+
+                // set your user id TAG here!
+                if ( registered ) {
+                    Smartpush.getUserInfo( MainActivity.this );
+                    Smartpush.setTag(MainActivity.this, "SMARTPUSH_ID", device.alias );
+                }
+            }
+        }
+    };
+
+```
+
+> No exemplo aproveitamos o final do registro para gravar uma **TAG** chamada **SMARTPUSH_ID**. Você pode criar seus próprios identificadores, veremos isso quando falarmos em **TAGs**. 
+
+Para explorar outros recursos da plataforma Smartpush como a criação de **TAGs**, **GEOFENCE**, entre outros acesse os projetos de exemplo disponiveis no [Github](https://github.com/Getmo-Inc/android-smartpush-samples).
 
 Bom era isso! Esperamos que o tutorial seja útil e se tiver qualquer dúvida ou dica envie um email a nossa equipe **developer@getmo.com.br**, teremos o maior prazer em te auxiliar.
