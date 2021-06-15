@@ -3,8 +3,7 @@ package br.com.smartpush;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.v4.content.LocalBroadcastManager;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import org.json.JSONArray;
 
@@ -80,7 +79,7 @@ class ActionTagManager {
         context.startService( intent );
     }
 
-    public static Intent configActionSetTag(String key, @NonNull ArrayList<String> values ) {
+    public static Intent configActionSetTag(String key, ArrayList<String> values ) {
         String temp = ( new JSONArray( values ) ).toString();
 
         Intent intent = new Intent( ) ;

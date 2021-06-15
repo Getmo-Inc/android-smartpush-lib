@@ -3,8 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/android-smartpush-lib.iml" filepath="$PROJECT_DIR$/android-smartpush-lib.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/gcm-smartpush-lib/gcm-smartpush-lib.iml" filepath="$PROJECT_DIR$/gcm-smartpush-lib/gcm-smartpush-lib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/android-smartpush-lib.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/android-smartpush-lib.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/gcm-smartpush-lib/android-smartpush-lib.gcm-smartpush-lib.iml" filepath="$PROJECT_DIR$/.idea/modules/gcm-smartpush-lib/android-smartpush-lib.gcm-smartpush-lib.iml" />
     </modules>
   </component>
 </project>

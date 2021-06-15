@@ -3,7 +3,6 @@ package br.com.smartpush;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.support.annotation.NonNull;
 import android.telephony.TelephonyManager;
 
 /**
@@ -18,7 +17,7 @@ class SmartpushConnectivityUtil {
      * @param context Application Context
      * @return NetworkInfo object
      */
-    private static NetworkInfo getNetworkInfo( @NonNull Context context ){
+    private static NetworkInfo getNetworkInfo( Context context ){
         ConnectivityManager cm =
                 ( ConnectivityManager ) context.getSystemService( Context.CONNECTIVITY_SERVICE );
 
@@ -30,7 +29,7 @@ class SmartpushConnectivityUtil {
 	 * @param context Application Context
 	 * @return connection state as boolean
 	 */
-	public static boolean isConnected( @NonNull Context context ){
+	public static boolean isConnected( Context context ){
 	    NetworkInfo info = getNetworkInfo( context );
 	    return ( info != null && info.isConnected() );
 	}
@@ -40,7 +39,7 @@ class SmartpushConnectivityUtil {
 	 * @param context Application Context
 	 * @return wifi connection as boolean
 	 */
-	public static boolean isConnectedWifi( @NonNull Context context ){
+	public static boolean isConnectedWifi( Context context ){
 	    NetworkInfo info = getNetworkInfo(context);
 	    return ( info != null && info.isConnected() && info.getType() == ConnectivityManager.TYPE_WIFI );
 	}
@@ -50,7 +49,7 @@ class SmartpushConnectivityUtil {
 	 * @param context Application Context
 	 * @return mobile connection as boolean
 	 */
-	public static boolean isConnectedMobile( @NonNull Context context ){
+	public static boolean isConnectedMobile( Context context ){
 	    NetworkInfo info = getNetworkInfo( context );
 	    return ( info != null && info.isConnected() && info.getType() == ConnectivityManager.TYPE_MOBILE );
 	}
@@ -60,7 +59,7 @@ class SmartpushConnectivityUtil {
 	 * @param context Application Context
 	 * @return fast connection as boolean
 	 */
-	public static boolean isConnectedFast( @NonNull Context context){
+	public static boolean isConnectedFast( Context context){
 	    NetworkInfo info = getNetworkInfo( context );
 	    return ( info != null
 				&& info.isConnected()

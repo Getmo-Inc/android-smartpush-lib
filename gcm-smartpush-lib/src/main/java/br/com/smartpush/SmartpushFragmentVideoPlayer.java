@@ -9,8 +9,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
@@ -93,7 +92,7 @@ public final class SmartpushFragmentVideoPlayer extends Fragment implements
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(View view, Bundle savedInstanceState) {
         SmartpushLog.d( TAG, "onViewCreated" );
         loading       = ( ProgressBar )view.findViewById( R.id.loading );
         surfaceView   = ( SurfaceView ) view.findViewById( R.id.surface );

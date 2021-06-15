@@ -5,18 +5,14 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
-import android.support.annotation.NonNull;
-import android.support.v4.app.NotificationManagerCompat;
+import androidx.core.app.NotificationManagerCompat;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.util.Strings;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.InstanceIdResult;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -210,17 +206,17 @@ public final class Smartpush {
 
 // TODO revisar e remover ...
     public static void subscribe( final Context context ) {
-        FirebaseInstanceId.getInstance().getInstanceId()
-                .addOnCompleteListener( new OnCompleteListener<InstanceIdResult>() {
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener( new OnCompleteListener<String>() {
                     @Override
-                    public void onComplete( @NonNull Task<InstanceIdResult> task ) {
+                    public void onComplete( Task<String> task ) {
                         if ( !task.isSuccessful() ) {
-                            Log.w( TAG, "getInstanceId failed", task.getException() );
+                            Log.w( TAG, "Fetching FCM registration token failed", task.getException() );
                             return;
                         }
 
                         // Get new Instance ID token
-                        String token = task.getResult().getToken();
+                        String token = task.getResult();
 
                         // Log and toast
                         Log.d( TAG, "------------------> " + token );
@@ -314,6 +310,6 @@ public final class Smartpush {
     }
 
     public static String printVersion() {
-        return "Smartpush - version " + BuildConfig.VERSION_NAME ;
+        return "Smartpush - version 9.x";
     }
 }

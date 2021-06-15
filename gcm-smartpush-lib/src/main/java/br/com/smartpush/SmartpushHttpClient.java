@@ -1,6 +1,8 @@
 package br.com.smartpush;
 
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
@@ -211,10 +213,20 @@ class SmartpushHttpClient {
     }
 
     private static String genUserAgent( Context _c ) {
+        String version = "";
+        int    verCode = 0;
+
+        PackageInfo pInfo = null;
+        try {
+            pInfo = _c.getPackageManager().getPackageInfo(_c.getPackageName(), 0);
+            version = pInfo.versionName;//Version Name
+            verCode = pInfo.versionCode;//Version Code
+        } catch (PackageManager.NameNotFoundException e) { }
+
         StringBuilder userAgent = new StringBuilder();
 
         userAgent.append( "Smartpush;v" )
-                 .append( BuildConfig.VERSION_NAME )
+                 .append( version )
                  .append( ";android;" )
                  .append( Build.VERSION.SDK_INT );
 
