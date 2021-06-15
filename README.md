@@ -25,7 +25,7 @@ allprojects {
 ```
 dependencies {
     // Import the BoM for the Firebase platform
-    implementation platform('com.google.firebase:firebase-bom:26.3.0')
+    implementation platform('com.google.firebase:firebase-bom:28.0.1')
 
     // Declare the dependencies for the FCM and Analytics libraries
     // When using the BoM, you don't specify versions in Firebase library dependencies
@@ -33,7 +33,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics'
     
     // Import Smartpush library
-    implementation 'org.bitbucket.getmo:android-smartpush-lib:9.2.0'
+    implementation 'org.bitbucket.getmo:android-smartpush-lib:11.4'
  }
 ```
 
