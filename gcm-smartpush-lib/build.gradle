@@ -6,7 +6,7 @@ group = 'com.github.fabiolicks'
 
 android {
     compileSdkVersion 30
-    buildToolsVersion '31.0.0 rc5'
+    buildToolsVersion '30.0.3'
 
     defaultConfig {
         minSdkVersion 16
@@ -34,10 +34,20 @@ android {
 }
 
 dependencies {
+    def appcompat_version = "1.2.0"
+    def fragment_version = "1.3.3"
+
+    implementation "androidx.appcompat:appcompat:$appcompat_version"
+    // For loading and tinting drawables on older versions of the platform
+    implementation "androidx.appcompat:appcompat-resources:$appcompat_version"
+    // Java language implementation
+    implementation "androidx.fragment:fragment:$fragment_version"
+    //noinspection GradleCompatible
+
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     //testCompile 'junit:junit:4.12'
     //noinspection GradleCompatible
-    implementation 'com.android.support:appcompat-v7:28.0.0'
+//    implementation 'com.android.support:appcompat-v7:28.0.0'
 
     // Import the BoM for the Firebase platform
     implementation platform('com.google.firebase:firebase-bom:28.0.1')
@@ -45,8 +55,7 @@ dependencies {
     // Declare the dependencies for the Firebase Cloud Messaging and Analytics libraries
     // When using the BoM, you don't specify versions in Firebase library dependencies
     implementation 'com.google.firebase:firebase-messaging'
-//    implementation 'com.google.firebase:firebase-analytics'
 
-//    implementation 'com.google.firebase:firebase-messaging:17.5.0'
-//    implementation 'com.android.support:support-vector-drawable:28.0.0'
+    //noinspection GradleCompatible
+    implementation 'com.android.support:support-vector-drawable:28.0.0'
 }
