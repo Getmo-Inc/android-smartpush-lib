@@ -33,7 +33,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics'
     
     // Import Smartpush library
-    implementation 'org.bitbucket.getmo:android-smartpush-lib:11.4'
+    implementation 'org.bitbucket.getmo:android-smartpush-lib:11.4.1'
  }
 ```
 
