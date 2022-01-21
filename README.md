@@ -55,7 +55,7 @@ Antes de mais nada recomendamos que você crie um arquivo chamado **smartpush.xm
 </resources>
 ```
 
-> Tanto o APP_ID, quanto o API_KEY são obtidos diretamente no painel de controle da plataforma SMARTPUSH. Em caso de dúvida sobre como obter esses códigos consulte [aqui]().
+> Tanto o APP_ID, quanto o API_KEY são obtidos diretamente no painel de controle da plataforma SMARTPUSH. Em caso de dúvida sobre como obter esses códigos consulte [aqui](CREDENCIAIS.md).
 
 Agora vamos adicionar as seguintes configurações ao arquivo de manifesto do app:
 
