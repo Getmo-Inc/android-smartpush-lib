@@ -25,7 +25,7 @@ allprojects {
 ```
 dependencies {
     // Import the BoM for the Firebase platform
-    implementation platform('com.google.firebase:firebase-bom:28.0.1')
+    implementation platform('com.google.firebase:firebase-bom:29.0.3')
 
     // Declare the dependencies for the FCM and Analytics libraries
     // When using the BoM, you don't specify versions in Firebase library dependencies
@@ -37,33 +37,49 @@ dependencies {
  }
 ```
 
-3. Sincronize o projeto apertando o botão "Sync Now" no Android Studio para baixar as dependências necessárias ao seu projeto.
+3. Sincronize o projeto no Android Studio para baixar as dependências necessárias ao seu projeto.
 
 Feito isso, o próximo passo é configurar sua app para usar a biblioteca e permitir o cadastramento dos dispositivos, das tags, geofences e o processamento das mensagens push.
 
 
-### Editando o arquivo de Manifesto
+### Preparando o arquivo de Manifesto
 
-Adicione os seguintes itens ao manifesto do app:
+Antes de mais nada recomendamos que você crie um arquivo chamado **smartpush.xml** para armazenar as credenciais da plataforma SMARTPUSH na pasta **..\app\src\main\res\values** conforme abaixo.
 
-* Dentro da tag ```<manifest>``` adicione as permissões abaixo.
-
-```xml
-    <uses-permission
-        android:name="android.permission.ACCESS_NETWORK_STATE"/>
-
+#### smartpush.xml
+```
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="smartpush_appid">[SEU_APP_ID]</string>
+    <string name="smartpush_apikey">[SEU_DEV_API_KEY]</string>
+</resources>
 ```
 
-* Dentro da tag ```<application>``` adicione as tags de metadados a seguir;
+> Tanto o APP_ID, quanto o API_KEY são obtidos diretamente no painel de controle da plataforma SMARTPUSH. Em caso de dúvida sobre como obter esses códigos consulte [aqui]().
+
+Agora vamos adicionar as seguintes configurações ao arquivo de manifesto do app:
+
+#### AndroidManifest.xml
+Dentro do escopo da tag ```<manifest>``` adicione a permissão a seguir.
 
 ```xml
-    <meta-data
-        android:name="br.com.smartpush.APPID"
-        android:value="[SEU_APP_ID]" />
+<manifest>
+    <uses-permission
+        android:name="android.permission.ACCESS_NETWORK_STATE"/>
+</manifest>
+```
 
+Dentro do escopo da tag ```<application>``` adicione as tags de metadados a seguir;
+
+```xml
+<application>
     <meta-data
-        android:name="br.com.smartpush.APIKEY"
-        android:value="[SUA_API_KEY]"/>
+            android:name="br.com.smartpush.APPID"
+            android:value="@string/smartpush_appid" />
+
+        <meta-data
+            android:name="br.com.smartpush.APIKEY"
+            android:value="@string/smartpush_apikey" />
 
     <meta-data
         android:name="br.com.smartpush.default_notification_small_icon"
@@ -76,23 +92,33 @@ Adicione os seguintes itens ao manifesto do app:
     <meta-data
         android:name="br.com.smartpush.default_notification_color"
         android:resource="@color/[SUA_COR]" />
+
+    ...
+    
+</application>
 ```
 
-> Você deve substituir [SEU_APP_ID] e [SUA_API_KEY] pelos códigos obtidos no painel de controle do [SMARTPUSH](https://admin.getmo.com.br). Em caso de dúvida sobre como obter esses códigos consulte [aqui]().
->
 > Você deve substituir [NOTIFICATION_SMALL_ICON], [NOTIFICATION_BIG_ICON] e [SUA_COR] pelos recursos correspondentes na sua aplicação. Estas propriedades definem os icones pequeno e grande, e também a cor, que devem ser utilizados na notificação.
 
-* Ainda na tag ```<application>``` configure o Service **SmartpushService** conforme a seguir. Este serviço é responsável por processar as notificações customizadas (Carrossel, banner, video, etc) e reportar os eventos (IMPRESSAO, CLICK, PREVIEW, REDIRECT, etc).
+Ainda na tag ```<application>``` adicione a configuração do Service **SmartpushService** conforme a seguir. Este serviço é responsável por processar as notificações customizadas (Carrossel, banner, video, etc) e reportar os eventos (IMPRESSAO, CLICK, PREVIEW, REDIRECT, etc).
 
 ```xml
+<application>
+    ...
+    
     <service
         android:name="br.com.smartpush.SmartpushService"
         android:exported="true"/>
+    
+</application>
 ```
 
-* Ainda na tag ```<application>``` configure a Activity **SmartpushActivity** conforme a seguir. Esta activity é responsável por carregar o Player de Video embedado que pode ser executado a partir de um push.
+Ainda na tag ```<application>``` adicione a configuração da Activity **SmartpushActivity** conforme a seguir. Esta activity é responsável por carregar o Player de Video embedado que pode ser executado a partir de um push.
 
 ```xml
+<application>
+    ...
+
     <activity
         android:name="br.com.smartpush.SmartpushActivity"
         android:hardwareAccelerated="true"
@@ -104,11 +130,13 @@ Adicione os seguintes itens ao manifesto do app:
             <category android:name="android.intent.category.DEFAULT" />
         </intent-filter>
     </activity>
+    
+</application>
 ```
 
-### Criando o serviço para tratar do push e criar notificações
+### Criando o serviço responsável por tratar do push e criar notificações
 
-Vamos criar um serviço simples para tratar do push e criar uma notificação. Para isso crie um serviço que extenda a classe **SmartpushMessagingListenerService**. Veja o exemplo a seguir:
+Vamos criar um serviço simples para tratar do push e criar uma notificação. Para isso crie um serviço que extenda a classe **SmartpushMessagingListenerService**. 
 
 ```java
 public class MySmartpushListenerService extends SmartpushMessagingListenerService {
@@ -135,10 +163,15 @@ public class MySmartpushListenerService extends SmartpushMessagingListenerServic
 ```
 > O nome da classe pode ser alterada de acordo com sua própria politica de nomeação. O importante é que ela estenda a classe **SmartpushListenerService**.
 
+> Se você não precisar criar suas próprias notificações customizadas, deixe o método **handleMessage** vazio como no exemplo a acima.
+
 Não esqueça de configurar o serviço no arquivo de manifesto para tratar a criação das notificações, ou outro comportamento desejado/esperado, a partir da chegada de um push.
 
 
 ```xml
+<application>
+    ...
+    
     <service
         android:name=".MySmartpushListenerService"
         android:exported="true">
@@ -146,11 +179,15 @@ Não esqueça de configurar o serviço no arquivo de manifesto para tratar a cri
             <action android:name="com.google.firebase.MESSAGING_EVENT" />
         </intent-filter>
     </service>
+
+</application>
 ```
 
 ### Registrando o dispositivo para receber push
 
 Na Activity principal da sua aplicação adicione no método _onCreate_ uma chamada ao serviço de registro da plataforma Smartpush para ativar a chegada de push e a criação de notificações.
+
+> Caso esteja usando a biblioteca em um projeto em React Native coloque o trecho de código abaixo na MainActivity como no exemplo.
 
 Veja um exemplo:
 
@@ -158,15 +195,14 @@ Veja um exemplo:
 @Override
     protected void onCreate( Bundle savedInstanceState ) {
         super.onCreate( savedInstanceState );
-        setContentView( R.layout.main );
-
+        
         // Register at Smartpush!
         Smartpush.subscribe( this );
         
         // do something else...
     }
 ```
-> A chamada de registro é não-bloqueante, ou seja ela é executada numa linha de execução paralela. 
+> A chamada de registro é não-bloqueante, ou seja ela é executada numa linha de execução paralela. E deve ser chamada sempre, não se preocupe em gerenciar se um dispositivoesta já está inscrito, ou não. 
 
 Pronto, com isso terminamos a configuração básica para ativar o push. 
 
@@ -177,20 +213,11 @@ Agora, compile seu projeto, instale em um dispositivo, abra a aplicação para q
 04-08 21:40:56.971 13209-13209/? D/LOG: checkSmartpush() : Metadata, pass!
 04-08 21:40:56.971 13209-13209/? D/LOG: checkSmartpush() : Activity, pass!
 04-08 21:40:56.971 13209-13209/? D/LOG: checkSmartpush() : end - Configurations tests : br.com.mycompany.MyApp
-04-08 21:40:57.242 13209-14152/? D/LOG: GCM Registration Token: dXbwAUTsFfQ:APA91bH0oEItl6TeUowjFE_vTxWEYwbwdbokn-sA0BGgWAvcgfNoF9mS-sgMPJbIGX9y7ktVeX2mTOq15tc13KTvygY_xIVstxlJdplJZ5_VIKxIUephAua79YhssZ0AF86T4YBTDIgk
-04-08 21:40:57.262 13209-14152/? D/LOG: url : https://api.getmo.com.br/device
-04-08 21:40:57.262 13209-14152/? D/LOG: method: POST
-04-08 21:40:57.262 13209-14152/? D/LOG: params : device=SM-J320M&platformId=ANDROID&devid=CN6Z8Eka3FSQ9IG&uuid=702E265C2321AC0E&appid=AK0Z1AzB1tr31TT&manufacturer=SAMSUNG&regid=dXbwAUTsFfQ%3AAPA91bH0oEItl6TeUowjFE_vTxWEYwbwdbokn-sA0BGgWAvcgfNoF9mS-sgMPJbIGX9y7ktVeX2mTOq15tc13KTvygY_xIVstxlJdplJZ5_VIKxIUephAua79YhssZ0AF86T4YBTDIgk&framework=5.1.1
+...
 04-08 21:40:59.314 13209-14152/? D/LOG: rsp : {"status":true,"message":"Success","alias":"E1E18049","hwid":"702E265C2321AC0E"}
-04-08 21:40:59.314 13209-14152/? D/LOG: {
-                                            "status": true,
-                                            "message": "Success",
-                                            "alias": "E1E18049",
-                                            "hwid": "702E265C2321AC0E"
-                                        }
 ```
 
-A informação importante aqui é o "**alias**" ele é um identificador gerado pela plataforma Smartpush que permite localizar o seu dispositivo na base de dispositivos. 
+A informação importante aqui é o "**alias**" ele é um identificador gerado pela plataforma Smartpush que permite localizar o seu dispositivo na base de dispositivos e interagir com ele. 
 
 Copie o valor do código "**alias**" e teste o envio de push. Para saber como enviar um push a partir do painel do Smartpush acesse esse [link]().
 
