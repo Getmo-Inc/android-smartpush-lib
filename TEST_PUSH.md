@@ -67,13 +67,11 @@ Depois disso fica simples. É só executar os passos a seguir:
 2. Abra a aplicação para que ela se registre na plataforma SMARTPUSH
 3. Talvez seja necessário fechar e abrir a app novamente para garantir que a TAG foi registrada
 
-### Enviando um push utilizando um ALIAS ou TAG
+Pronto, agora que você já sabe como identificar um device é só enviar um push utilizando uma **TAG** ou **ALIAS**. Você pode enviar um push através do painel [SMARTPUSH](https://admin.getmo.com.br) ou utilizando nossa [API REST](https://github.com/Getmo-Inc/Docs/blob/master/REST-API.md). 
 
-Veja a seguir como enviar um push usando uma **TAG** ou **ALIAS**.
+#### Enviando um push filtrando por um ALIAS
+Exemplo de envio para um app iOS através da API REST.
 
-> É possivel configurar um push para todas as plataformas (ANDROID, IOS, CHROME, FIREFOX, SAFARI, SMS) da sua app de uma única vez.
-
-#### Enviando com o ALIAS
 ```
 curl --location --request POST 'https://api.getmo.com.br/push' \
 --header 'Content-Type: application/json' \
@@ -92,17 +90,6 @@ curl --location --request POST 'https://api.getmo.com.br/push' \
                         "body": "Notificações que engajam!"
                     }
                 }
-            }
-        },
-        {
-            "appid": "[SEU_APP_ID_ANDROID_AQUI]",
-            "platform": "ANDROID",
-            "params": {
-                "title": "Go Getmo!",
-                "detail": "Notificações que engajam 2!!",
-                "link": "https://www.getmo.com.br",
-                "provider": "smartpush",
-                "type": "PUSH"
             }
         }
     ],
@@ -113,8 +100,11 @@ curl --location --request POST 'https://api.getmo.com.br/push' \
 }'
 ```
 > Não esqueça de substituir os valores onde tem [SUA/SEU_XXX] com a informação correspondente.
+> 
+> Você pode enviar para diversas plataformas (ANDROID, IOS, CHROME, SAFARI, FIREFOX e SMS) de uma única vez.
 
-#### Enviando com a TAG
+#### Enviando um push filtrando por uma TAG
+Exemplo de envio para um app ANDROID.
 ```
 curl --location --request POST 'https://api.getmo.com.br/push' \
 --header 'Content-Type: application/json' \
@@ -123,18 +113,6 @@ curl --location --request POST 'https://api.getmo.com.br/push' \
     "devid": "[SEU_DEV_ID_AQUI]",
     "prod": "1",
     "notifications": [
-        {
-            "appid": "[SEU_APP_ID_IOS_AQUI]",
-            "platform": "IOS",
-            "params": {
-                "aps": {
-                    "alert": {
-                        "title": "Go Getmo",
-                        "body": "Notificações que engajam!"
-                    }
-                }
-            }
-        },
         {
             "appid": "[SEU_APP_ID_ANDROID_AQUI]",
             "platform": "ANDROID",
@@ -157,3 +135,5 @@ curl --location --request POST 'https://api.getmo.com.br/push' \
 ```
 
 > Não esqueça de substituir os valores onde tem [SUA/SEU_XXX] com a informação correspondente.
+> 
+> Você pode enviar para diversas plataformas (ANDROID, IOS, CHROME, SAFARI, FIREFOX e SMS) de uma única vez.
