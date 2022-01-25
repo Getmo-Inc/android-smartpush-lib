@@ -59,7 +59,7 @@ Para testar o envio de push, sugerimos que você crie uma TAG, por exemplo "DEVI
     Smartpush.setTag( this, "DEVICE_ID", "<INFO_IDENTIFICACAO_DO_DEVICE>" );
 
 #### Exemplo TAG iOS
-    <under construction>
+    [SmartpushSDK.sharedInstance setString:value forTag:key];
 
 Depois disso fica simples. É só executar os passos a seguir:
 
