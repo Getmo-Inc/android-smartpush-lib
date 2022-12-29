@@ -12,12 +12,14 @@ Follow these steps to deploy a new version.
 `versionName` and `PUBLISH_VERSION`
 
 ### Setup the values into the `local.properties`
+```
 signing.keyId=KEY_ID
 signing.password=PASSWORD
 signing.key=KEY_64
 ossrhUsername=sonatype_USERNAME
 ossrhPassword=sonatype_PASSWORD
 sonatypeStagingProfileId=sonatype_profileID
+```
 
 ### Run the deploy command
 ```
