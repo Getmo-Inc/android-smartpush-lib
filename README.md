@@ -33,5 +33,6 @@ https://s01.oss.sonatype.org/#stagingRepositories
 https://repo1.maven.org/maven2/br/com/getmo/smartpush
 
 ### To use
+```
 implementation 'br.com.getmo:smartpush:11.0'
-
+```
