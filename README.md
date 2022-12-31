@@ -13,14 +13,7 @@ A biblioteca android do **SMARTPUSH** é responsável por integrar sua aplicaç�
 ### Configurando as dependências do FCM e do SMARTPUSH
 1. Adicione o [Firebase](https://firebase.google.com/docs/android/setup?authuser=0) ao seu projeto. O Firebase é o responsável pela entrega do push nos dispositivos.
 
-2. Adicione o repositório do [jitpack.io](https://jitpack.io) ao seu arquivo build.gradle a nível de projeto, dentro de allprojects repositories. É através dele que você tem acesso a versão mais atual do **Smartpush Messaging Client**.
-```
-allprojects {
-    repositories {
-        maven { url 'https://jitpack.io' }
-    }
-}
-```
+
 2. Adicione as dependências abaixo ao arquivo build.gradle a nível de módulo
 ```
 dependencies {
@@ -33,7 +26,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics'
     
     // Import Smartpush library
-    implementation 'org.bitbucket.getmo:android-smartpush-lib:11.4.1'
+    implementation 'br.com.getmo:smartpush:11.4.1'
  }
 ```
 
