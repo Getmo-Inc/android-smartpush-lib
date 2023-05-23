@@ -103,6 +103,13 @@ class SmartpushNotificationManager {
         mContext = context;
     }
 
+    private int pendingIntentFlag() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            return PendingIntent.FLAG_IMMUTABLE;
+        }
+        return 0;
+    }
+
     public void onMessageReceived( String from, Bundle data ) {
         SmartpushLog.d( Utils.TAG, "----------> " + Utils.ArrayUtils.bundle2string( data ) );
 
@@ -530,7 +537,7 @@ class SmartpushNotificationManager {
             String act = extras.getString( "CALL" );
             if ( act != null ) {
                 builder.addAction( R.drawable.ic_call_white_24dp, mContext.getString( R.string.call ),
-                        PendingIntent.getActivity( mContext, 0, SmartpushIntentUtils.dialPhone( act ), 0 ) );
+                        PendingIntent.getActivity( mContext, 0, SmartpushIntentUtils.dialPhone( act ), pendingIntentFlag() ) );
                 count++;
             }
 
@@ -542,7 +549,7 @@ class SmartpushNotificationManager {
                             PendingIntent
                                     .getActivity(
                                             mContext, 0, SmartpushIntentUtils.sendSms(
-                                                    mContext, params[0], params[1]), 0) );
+                                                    mContext, params[0], params[1]), pendingIntentFlag()) );
                     count++;
                 }
             }
@@ -555,7 +562,7 @@ class SmartpushNotificationManager {
                             PendingIntent
                                     .getActivity(
                                             mContext, 0, SmartpushIntentUtils.sendEmail(
-                                                    params[0], params[1], params[2]), 0) );
+                                                    params[0], params[1], params[2]), pendingIntentFlag()) );
                     count++;
                 }
             }
@@ -569,7 +576,7 @@ class SmartpushNotificationManager {
                                     .getActivity(
                                             mContext, 0, SmartpushIntentUtils.showLocation(
                                                     Float.parseFloat(params[0]),
-                                                    Float.parseFloat(params[1]), 13), 0) );
+                                                    Float.parseFloat(params[1]), 13), pendingIntentFlag()) );
                     count++;
                 }
             }
@@ -580,7 +587,7 @@ class SmartpushNotificationManager {
                 if ( params.length == 2 ) {
                     builder.addAction( R.drawable.ic_share_white_24dp, mContext.getString( R.string.share ),
                             PendingIntent.getActivity( mContext, 0,
-                                    SmartpushIntentUtils.shareText( params[ 0 ], params[ 1 ] ), 0 ) );
+                                    SmartpushIntentUtils.shareText( params[ 0 ], params[ 1 ] ), pendingIntentFlag() ) );
                 }
             }
         }

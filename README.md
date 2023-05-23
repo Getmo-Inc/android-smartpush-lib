@@ -9,7 +9,7 @@ Follow these steps to deploy a new version.
 
 ### Update version number
 #### Into `gcm-smartpush-lib/build.gradle` update both values
-`versionName` and `PUBLISH_VERSION`
+`versionName`
 
 ### Setup the values into the `local.properties`
 ```
@@ -34,5 +34,5 @@ https://repo1.maven.org/maven2/br/com/getmo/smartpush
 
 ### To use
 ```
-implementation 'br.com.getmo:smartpush:11.0'
+implementation 'br.com.getmo:smartpush:{versionName}'
 ```
