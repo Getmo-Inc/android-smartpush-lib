@@ -20,7 +20,7 @@ class ActionGetMsisdn {
 //    public static void getMsisdn( Context context ) {
 //        Intent intent = new Intent( context, SmartpushService.class ) ;
 //        intent.setAction( ACTION_GET_MSISDN );
-//        context.startService( intent );
+//        SmartpushService.start(intent, context);
 //    }
 
     /**

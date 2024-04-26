@@ -23,7 +23,7 @@ class ActionPushInbox {
             intent.putExtra( Smartpush.EXTRA_VALUE, formatter.format( startingDate ) );
         }
 
-        context.startService( intent );
+        SmartpushService.start(intent, context);
     }
 
     public static void startActionLastUnreadMessage( Context context, Date startingDate ) {
@@ -37,7 +37,7 @@ class ActionPushInbox {
             intent.putExtra( Smartpush.EXTRA_VALUE, formatter.format( startingDate ) );
         }
 
-        context.startService( intent );
+        SmartpushService.start(intent, context);
     }
 
     public static void startActionMarkMessageAsRead( Context context, String pushId ) {
@@ -46,7 +46,7 @@ class ActionPushInbox {
         Intent intent = new Intent( context, SmartpushService.class ) ;
         intent.setAction( Smartpush.ACTION_MARK_NOTIF_AS_READ ) ;
         intent.putExtra( Smartpush.EXTRA_VALUE, pushId );
-        context.startService( intent );
+        SmartpushService.start(intent, context);
     }
 
     public static void startActionHideMessage( Context context, String pushId ) {
@@ -55,13 +55,13 @@ class ActionPushInbox {
         Intent intent = new Intent( context, SmartpushService.class ) ;
         intent.setAction( ACTION_HIDE_NOTIF ) ;
         intent.putExtra( Smartpush.EXTRA_VALUE, pushId );
-        context.startService( intent );
+        SmartpushService.start(intent, context);
     }
 
     public static void startActionMarkAllMessagesAsRead( Context context ) {
         Intent intent = new Intent( context, SmartpushService.class ) ;
         intent.setAction( Smartpush.ACTION_MARK_ALL_NOTIF_AS_READ ) ;
-        context.startService( intent );
+        SmartpushService.start(intent, context);
     }
 
     public static void startActionGetMessageExtraPayload( Context context, String pushId ) {
@@ -70,7 +70,7 @@ class ActionPushInbox {
         Intent intent = new Intent( context, SmartpushService.class ) ;
         intent.setAction( Smartpush.ACTION_GET_NOTIF_EXTRA_PAYLOAD ) ;
         intent.putExtra( Smartpush.EXTRA_VALUE, pushId );
-        context.startService( intent );
+        SmartpushService.start(intent, context);
     }
 
 

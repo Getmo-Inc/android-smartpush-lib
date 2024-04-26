@@ -53,7 +53,7 @@ class ActionTrackEvents {
                     SmartpushHitUtils.Fields.LABEL.getParamName(), label );
 
         if ( runAsService ) {
-            context.startService(intent);
+            SmartpushService.start(intent, context);
         }
 
         return intent;

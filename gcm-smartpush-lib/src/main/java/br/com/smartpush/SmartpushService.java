@@ -3,6 +3,7 @@ package br.com.smartpush;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
@@ -88,6 +89,14 @@ public final class SmartpushService extends IntentService {
                                     context, ActionPushManager.closeNotificationCenter( context, intent ) );
                     return;
             }
+        }
+    }
+
+    static void start(Intent intent, Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.startForegroundService(intent);
+        } else {
+            context.startService(intent);
         }
     }
 }

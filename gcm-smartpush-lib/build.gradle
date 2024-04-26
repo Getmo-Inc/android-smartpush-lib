@@ -1,17 +1,17 @@
 apply plugin: 'com.android.library'
 
-apply plugin: 'com.github.dcendents.android-maven'
+//apply plugin: 'com.github.dcendents.android-maven'
 
 group = 'com.github.fabiolicks'
 
-version = '11.4.2'
+version = '11.5.0'
 
 android {
-    compileSdkVersion 30
-    buildToolsVersion '30.0.3'
+    compileSdk 33
 
     defaultConfig {
         minSdkVersion 16
+        targetSdkVersion 33
         versionCode 110
         versionName version
         vectorDrawables {

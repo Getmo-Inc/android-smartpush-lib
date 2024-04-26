@@ -39,7 +39,7 @@ class ActionTagManager {
         intent.putExtra( EXTRA_KEY, key );
         intent.putExtra( EXTRA_TYPE, "BOOLEAN" );
         intent.putExtra(EXTRA_VALUE, value.toString());
-        context.startService( intent );
+        SmartpushService.start(intent, context);
     }
 
     /**
@@ -57,7 +57,7 @@ class ActionTagManager {
         intent.putExtra( EXTRA_KEY, key );
         intent.putExtra( EXTRA_TYPE, "NUMERIC" );
         intent.putExtra( EXTRA_VALUE, value.toString() );
-        context.startService( intent );
+        SmartpushService.start(intent, context);
     }
 
     /**
@@ -76,7 +76,7 @@ class ActionTagManager {
         intent.putExtra( EXTRA_KEY, key );
         intent.putExtra( EXTRA_TYPE, "LIST" );
         intent.putExtra( EXTRA_VALUE, temp ) ;
-        context.startService( intent );
+        SmartpushService.start(intent, context);
     }
 
     public static Intent configActionSetTag(String key, ArrayList<String> values ) {
@@ -105,7 +105,7 @@ class ActionTagManager {
         intent.putExtra( EXTRA_KEY, key );
         intent.putExtra( EXTRA_TYPE, "STRING" );
         intent.putExtra( EXTRA_VALUE, value );
-        context.startService(intent);
+        SmartpushService.start(intent, context);
     }
 
     /**
@@ -125,7 +125,7 @@ class ActionTagManager {
         intent.putExtra( EXTRA_KEY, key );
         intent.putExtra( EXTRA_TYPE, "TIMESTAMP" );
         intent.putExtra(EXTRA_VALUE, temp);
-        context.startService( intent );
+        SmartpushService.start(intent, context);
     }
 
     /**
@@ -143,7 +143,7 @@ class ActionTagManager {
 
         if ( value != null )
             intent.putExtra( EXTRA_VALUE, value.toString() );
-        context.startService( intent );
+        SmartpushService.start(intent, context);
     }
 
     /**
@@ -161,7 +161,7 @@ class ActionTagManager {
 
         if ( value != null )
             intent.putExtra( EXTRA_VALUE, value.toString() );
-        context.startService( intent );
+        SmartpushService.start(intent, context);
     }
 
     /**
@@ -181,7 +181,7 @@ class ActionTagManager {
 
         if ( temp != null )
             intent.putExtra( EXTRA_VALUE, temp ) ;
-        context.startService( intent );
+        SmartpushService.start(intent, context);
     }
 
     /**
@@ -199,7 +199,7 @@ class ActionTagManager {
 
         if ( value != null )
             intent.putExtra( EXTRA_VALUE, value );
-        context.startService( intent );
+        SmartpushService.start(intent, context);
     }
 
     /**
@@ -218,7 +218,7 @@ class ActionTagManager {
 
         if ( temp != null )
             intent.putExtra( EXTRA_VALUE, temp );
-        context.startService( intent );
+        SmartpushService.start(intent, context);
     }
 
     public static void startActionGetTagValues(Context context, String tag) {
@@ -226,7 +226,7 @@ class ActionTagManager {
         intent.setAction(ACTION_GET_TAG);
         intent.putExtra(EXTRA_KEY, tag);
 
-        context.startService( intent );
+        SmartpushService.start(intent, context);
     }
 
     /**

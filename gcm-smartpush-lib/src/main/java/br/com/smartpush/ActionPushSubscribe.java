@@ -11,7 +11,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 
 import static br.com.smartpush.Utils.TAG;
-
+import static br.com.smartpush.ContextExtensionsKt.*;
 class ActionPushSubscribe {
 
     public static final String ACTION_REGISTRATION = "action.REGISTRATION";
@@ -24,7 +24,7 @@ class ActionPushSubscribe {
         Intent intent = new Intent( context, SmartpushService.class ) ;
         intent.setAction( ACTION_REGISTRATION );
         intent.putExtra( ACTION_REGISTRATION, token );
-        context.startService( intent );
+        SmartpushService.start(intent, context);
     }
 
     private static void notify( Context context, SmartpushDeviceInfo deviceInfo ) {

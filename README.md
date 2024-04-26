@@ -8,8 +8,7 @@ Follow these steps to deploy a new version.
 2. The keys to the next step
 
 ### Update version number
-#### Into `gcm-smartpush-lib/build.gradle` update both values
-`versionName`
+#### Into `gcm-smartpush-lib/build.gradle` update the `versionName`
 
 ### Setup the values into the `local.properties`
 ```

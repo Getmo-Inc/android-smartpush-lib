@@ -23,7 +23,7 @@ class ActionGetAppList {
     public static void getAppList( Context context ) {
         Intent intent = new Intent( context, SmartpushService.class ) ;
         intent.setAction( ACTION_GET_APP_LIST );
-        context.startService(intent);
+        SmartpushService.start(intent, context);
     }
 
     // TODO implementar LIST APPS na forma de broadcast!

@@ -17,7 +17,7 @@ class ActionGetDeviceInfo {
     public static void startActionGetDeviceUserInfo( Context context ) {
         Intent intent = new Intent( context, SmartpushService.class ) ;
         intent.setAction( ACTION_GET_DEVICE_USER_INFO ) ;
-        context.startService( intent );
+        SmartpushService.start(intent, context);
     }
 
     /**

@@ -29,7 +29,7 @@ class ActionNearestzone {
         intent.setAction(ACTION_NEARESTZONE) ;
         intent.putExtra(EXTRA_LAT, lat);
         intent.putExtra(EXTRA_LNG, lng);
-        context.startService( intent );
+        SmartpushService.start(intent, context);
     }
 
     public static void handleActionNearestZone( Context context, Intent data ) {

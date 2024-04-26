@@ -23,7 +23,7 @@ class ActionPushBlock {
         Intent intent = new Intent( context, SmartpushService.class ) ;
         intent.setAction(ACTION_BLOCK_PUSH) ;
         intent.putExtra(EXTRA_VALUE, status);
-        context.startService( intent );
+        SmartpushService.start(intent, context);
     }
 
     /**

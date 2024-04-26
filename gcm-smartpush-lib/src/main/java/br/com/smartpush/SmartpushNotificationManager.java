@@ -381,7 +381,7 @@ class SmartpushNotificationManager {
                     remoteViews
                             .setOnClickPendingIntent(
                                     R.id.btnNext,
-                                    PendingIntent.getService( mContext, 0, itNext, PendingIntent.FLAG_UPDATE_CURRENT ) );
+                                    PendingIntent.getService( mContext, 0, itNext, PendingIntent.FLAG_UPDATE_CURRENT | pendingIntentFlag() ) );
 
                     Intent itPrevious = new Intent(mContext, SmartpushService.class)
                             .setAction( ActionPushManager.ACTION_NOTIF_UPDATABLE_PREV )
@@ -394,7 +394,7 @@ class SmartpushNotificationManager {
                             .setOnClickPendingIntent(
                                     R.id.btnPrevious,
                                     PendingIntent.getService(mContext, 0, itPrevious,
-                                            PendingIntent.FLAG_UPDATE_CURRENT ) );
+                                            PendingIntent.FLAG_UPDATE_CURRENT  | pendingIntentFlag()) );
 
                     // Adjust viewflipper visibility & move cards
                     if ( data.getBoolean( "flip.next", false ) ) {
@@ -439,7 +439,7 @@ class SmartpushNotificationManager {
                         .setOnClickPendingIntent(
                                 R.id.root,
                                 PendingIntent.getService( mContext, 0, actionIntent,
-                                        PendingIntent.FLAG_UPDATE_CURRENT ) );
+                                        PendingIntent.FLAG_UPDATE_CURRENT  | pendingIntentFlag()) );
 
                 for ( int i = 0; slides != null && i < slides.size(); i++ ) {
                     SlideInfo slide = slides.get( i );
@@ -506,7 +506,7 @@ class SmartpushNotificationManager {
                         SmartpushService.SERVICE_ID,
                         serviceIntent,
                         // FLAG to avoid creating a second service if there's already one running
-                        PendingIntent.FLAG_CANCEL_CURRENT );
+                        PendingIntent.FLAG_CANCEL_CURRENT  | pendingIntentFlag());
 
         // Creates and return the PendingIntent
         return servicePendingIntent;
@@ -523,7 +523,7 @@ class SmartpushNotificationManager {
                         SmartpushService.SERVICE_ID,
                         serviceIntent,
                         // FLAG to avoid creating a second service if there's already one running
-                        PendingIntent.FLAG_CANCEL_CURRENT );
+                        PendingIntent.FLAG_CANCEL_CURRENT  | pendingIntentFlag());
 
         // Creates and return the PendingIntent
         return servicePendingIntent;
@@ -657,7 +657,7 @@ class SmartpushNotificationManager {
                         SmartpushService.SERVICE_ID,
                         serviceIntent,
                         // FLAG to avoid creating a second service if there's already one running
-                        PendingIntent.FLAG_CANCEL_CURRENT );
+                        PendingIntent.FLAG_CANCEL_CURRENT  | pendingIntentFlag());
 
         Calendar cal = Calendar.getInstance();
         cal.add( Calendar.MINUTE, 1 );
