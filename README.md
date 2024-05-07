@@ -26,7 +26,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics'
     
     // Import Smartpush library
-    implementation 'br.com.getmo:smartpush:11.4.1'
+    implementation 'br.com.getmo:smartpush:11.5.1'
  }
 ```
 
